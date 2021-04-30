@@ -1,0 +1,8 @@
+export const ADD_PLACE = 'ADD_PLACE'
+export const NOTIFY = 'NOTIFY'
+export const TIMMER = 'TIMMER'
+export const USER = 'USER'
+export const MAP = 'MAP'
+export const AUDIOID = 'AUDIOID'
+export const LOADING = 'LOADING'
+export const SETTING = 'SETTING'
