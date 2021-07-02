@@ -26,6 +26,7 @@ import * as Keychain from "react-native-keychain";
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {About, Education, Experience, Skill} from '../Profile/Tabs';
 import {Colors} from '../../utils/config';
+import PinCode from '../../components/PinCode';
 const {width,height} = Dimensions.get('window')
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -38,9 +39,9 @@ const renderTabBar = props => (
         {...props}
         scrollEnabled={false}
         // labelStyle={{color:Colors.primary}}
-        activeColor={Colors.primary}
-        inactiveColor={Colors.primaryBlur}
-        indicatorStyle={{backgroundColor:Colors.primary}}
+        activeColor={Colors.textColor}
+        inactiveColor={Colors.primary}
+        indicatorStyle={{backgroundColor:Colors.textColor}}
         style={{ backgroundColor: 'white' }}
     />
 );
@@ -50,11 +51,13 @@ class Index extends Component {
         this.state={
             index:0,
             data:[],
+            showPin:true,
             cashout:[],
             routes:[
                 { key: '0', title: 'Transaction' },
                 { key: '1', title: 'Cash Out' },
             ],
+            start:true,
             loading:true,
             refreshing:false
         }
@@ -62,15 +65,17 @@ class Index extends Component {
     }
     componentDidMount(): void {
         this.fadeIn()
-        this.handleGetTransaction()
-        setTimeout(()=>{
-            // this.fadeIn();
-            this.setState({loading: false})
-        }, 2000);
-        // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+        this.handleGetTransaction();
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            if(!this.state.start){
+                this.handleGetTransaction(false);
+            }
+        });
+        this.setState({start:false})
+
     }
-    handleTab=(index)=>{
-        this.setState({index:index})
+    componentWillUnmount() {
+        this._unsubscribe();
     }
     handleGetTransaction=async ()=>{
         const credentials = await Keychain.getGenericPassword();
@@ -94,7 +99,7 @@ class Index extends Component {
                          data.push(item)
                      }
                  }
-                this.setState({data,cashout})
+                this.setState({data,cashout,loading:false})
             }
         })
     }
@@ -108,12 +113,17 @@ class Index extends Component {
             duration: 600
         }).start();
     };
+    handleClose=()=>{
+        this.setState({showPin:false});
+        this.props.navigation.goBack()
+    }
     FirstRoute = (loading,refreshing,data,type) => {
         return(<>
             {data.length>0?<FlatList
                 contentContainerStyle={{marginTop:0,width:'95%',alignSelf:'center'}}
                 refreshControl={<RefreshControl
-                    colors={["#9Bd35A", "#689F38"]}
+                    colors={["#9Bd35A", Colors.textColor]}
+                    tintColor={Colors.textColor}
                     refreshing={refreshing}
                     onRefresh={()=>this.handleGetTransaction(true)} />}
                 data={data}
@@ -122,10 +132,10 @@ class Index extends Component {
                     return(
 
                     <>
-                    <View style={{width:'100%',height:100,borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?30:0}}>
+                    <View style={{width:'100%',height:100,borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?100:0}}>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
                             <View style={{width:'10%'}}>
-                                <Icons name={'arrow-down'} color={'green'} size={20}/>
+                                <Icons name={item.type=='Cash Out'?'arrow-up':'arrow-down'} color={'green'} size={20}/>
                             </View>
                             <View style={{width:'30%'}}>
                                 <Text style={{fontSize:16}}>
@@ -133,7 +143,7 @@ class Index extends Component {
                                 </Text>
                             </View>
                             <View style={{width:'20%'}}>
-                                <Text style={{fontSize:15,color:'#1582F4'}}>
+                                <Text style={{fontSize:15,color:Colors.textColor}}>
                                     ${item.amount}
                                 </Text>
                             </View>
@@ -145,10 +155,10 @@ class Index extends Component {
                         </View>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
                             <View style={{width:'10%'}}>
-                                <Icons name={'user'} color={'#1582F4'} size={20}/>
+                                <Icons name={'user'} color={Colors.textColor} size={20}/>
                             </View>
                             <View style={{width:'60%'}}>
-                                <Text style={{fontSize:16}}>
+                                <Text style={{fontSize:13}}>
                                     {item.description}
                                 </Text>
                             </View>
@@ -158,7 +168,7 @@ class Index extends Component {
 
                             </View>
                             <View style={{width:'40%'}}>
-                                <Text style={{fontSize:13,color:'#1582F4'}}>
+                                <Text style={{fontSize:13,color:Colors.textColor}}>
                                     #{ref.account}
                                 </Text>
                             </View>
@@ -180,8 +190,8 @@ class Index extends Component {
                 onRefresh={()=>this.handleGetTransaction(true)} />}>
                 <View style={{width:width,height:height*0.5,justifyContent:'center',alignItems:'center'}}>
                     {loading?
-                        <ActivityIndicator size={'large'} color={'#0D70D9'} />:
-                        <Text style={{fontSize:20,color:'#0D70D9'}}>
+                        <ActivityIndicator size={'large'} color={Colors.textColor} />:
+                        <Text style={{fontSize:20,color:Colors.textColor}}>
                             No Data
                         </Text>}
                 </View>
@@ -191,8 +201,8 @@ class Index extends Component {
             </>
     )}
     render() {
-        const {loading,index,routes,refreshing,data,cashout} = this.state;
-        const {user} = this.props;
+        const {showPin,loading,index,routes,refreshing,data,cashout} = this.state;
+        const {user,setting} = this.props;
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
@@ -200,28 +210,28 @@ class Index extends Component {
                     <HeaderText title={"My Money"} handleBack={()=>this.props.navigation.goBack()} rightIcon={index=='0'?'add':'attach-money'} handleRight={()=>this.props.navigation.navigate(index=='0'?'CashIn':'CashOut',{balance:user.userWallet.setledCash})}/>
                     <View style={{width:width*0.95,alignSelf:'center',borderRadius:20,
                         backgroundColor:'#ffffff',marginTop:0,paddingBottom:10,justifyContent:'center',alignItems:'center'}}>
-                        <View style={{marginTop:10,width:width*(0.95)-20,height:130,flexDirection:'row',alignItems:'center',backgroundColor:'rgba(21,130,244,0.22)',borderRadius:10}}>
+                        <View style={{marginTop:10,width:width*(0.95)-20,height:130,flexDirection:'row',alignItems:'center',backgroundColor:Colors.Blur,borderRadius:10}}>
                             <View style={{width:'50%',borderRightWidth:1,borderRightColor:'#fff',borderStyle: 'dashed',height:'70%',alignItems:'center'}}>
-                                <Text style={{color:'#1582F4',fontWeight:'bold',fontSize:16,height:'25%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontWeight:'bold',fontSize:16,height:'25%',textAlignVertical:'center'}}>
                                     Your Balance
                                 </Text>
-                                <Text style={{color:'#1582F4',fontSize:20,fontWeight:'bold',height:'50%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontSize:20,fontWeight:'bold',height:'50%',textAlignVertical:'center'}}>
 
                                 ${user.userWallet.setledCash?user.userWallet.setledCash:0}
                                 </Text>
-                                <Text style={{color:'#1582F4',fontSize:15,height:'25%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontSize:15,height:'25%',textAlignVertical:'center'}}>
                                 Available
                                 </Text>
                             </View>
                             <View style={{width:'45%',height:'70%',marginLeft:10,alignItems:'center'}}>
-                                <Text style={{color:'#1582F4',fontWeight:'bold',fontSize:16,height:'25%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontWeight:'bold',fontSize:16,height:'25%',textAlignVertical:'center'}}>
                                     Your Balance
                                 </Text>
-                                <Text style={{color:'#1887ff',fontSize:20,fontWeight:'bold',height:'50%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontSize:20,fontWeight:'bold',height:'50%',textAlignVertical:'center'}}>
 
                                     ${user.userWallet.lockedCash}
                                 </Text>
-                                <Text style={{color:'#1582F4',fontSize:15,height:'25%',textAlignVertical:'center'}}>
+                                <Text style={{color:Colors.textColor,fontSize:15,height:'25%',textAlignVertical:'center'}}>
                                     Blocked
                                 </Text>
                             </View>
@@ -240,11 +250,11 @@ class Index extends Component {
                         />
                     </View>
 
-
+                    {showPin&&<PinCode touchId={setting.touchId} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}
 
 
                 </View>
-                <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
             </View>
@@ -278,6 +288,7 @@ const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
         user: state.user.user,
+        setting: state.setting.setting,
     }
 }
 

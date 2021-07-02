@@ -22,6 +22,9 @@ import {connect} from 'react-redux';
 import User from '../../api/User';
 import {Button} from 'react-native-elements';
 import {Confirm} from '../../components/Dialog';
+import {Colors} from '../../utils/config';
+import {setNotify} from '../../redux/actions/notification';
+import {setFocus} from '../../redux/actions/screenfocus';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
@@ -30,6 +33,7 @@ class Index extends Component {
         this.state={
             active:0,
             refreshing:false,
+            start:true,
             confirm:false,
             data:[],
             value:0,
@@ -46,7 +50,33 @@ class Index extends Component {
     componentDidMount(): void {
         this.fadeIn()
         this.handleGetPost(false)
+
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            this.props.setFocus({
+                "MyTask": true,
+                "MyPost": false,
+                "isProgress": false,
+                "isComplete": false,
+            })
+            if(!this.state.start){
+                this.handleGetPost(false)
+            }
+        });
+        this._unsubscribeBlur = this.props.navigation.addListener('blur', (action, state) => {
+            this.props.setFocus({
+                "MyTask": false,
+                "MyPost": false,
+                "isProgress": false,
+                "isComplete": false,
+            })
+        });
+        this.setState({start:false})
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+    }
+
+    componentWillUnmount() {
+        this._unsubscribe();
+        this._unsubscribeBlur();
     }
     handleGetPost=async (refreshing)=>{
         await User.GetList('/api/JobCandidate/CurrentUser').then((rs) => {
@@ -67,6 +97,16 @@ class Index extends Component {
                 this.setState({data:rs.data,completed:completed,inprogress:items,refreshing:false,loading:false})
             }
         })
+        this.handleSetNotify()
+    }
+    handleSetNotify=(status)=>{
+        const {notify,focus} = this.props;
+        notify.isMyTask=false;
+        focus.MyTask=true;
+        this.props.setNotify(notify)
+        this.props.setFocus(focus)
+        User.Put("/api/ManuNotification/"+notify.id,notify)
+        this.props.navigation.navigate("MyTask",{refresh:true});
     }
     handleSubmit=async ()=>{
         const {id,value} = this.state;
@@ -75,15 +115,20 @@ class Index extends Component {
         await User.GetList(url)
         this.handleGetPost(true);
         this.setState({refreshing:false})
-
     }
     handleCancel=async ()=>{
         const {id} = this.state;
         this.setState({cancel:false,refreshing:true})
-        const url="/api/JobPost/ChangeStatus/"+id+"/cancel"
-        await User.Put(url)
+        const url="/api/JobCandidate/"+id
+        // await User.Delete(url)
         this.handleGetPost(true);
         this.setState({refreshing:false})
+
+        // this.setState({cancel:false,refreshing:true})
+        // const url="/api/JobPost/ChangeStatus/"+id+"/cancel"
+        // await User.Put(url)
+        // this.handleGetPost(true);
+        // this.setState({refreshing:false})
 
     }
     handleNext=()=>{
@@ -135,31 +180,34 @@ class Index extends Component {
                 onSwitch={this.handleSwitch}
                 renderItem={active==0?<>
                     {data.length>0?<FlatList
-                        contentContainerStyle={{marginTop:10}}
+                        contentContainerStyle={{marginTop:0}}
                         refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={data}
                         renderItem={({item,index}) =><ItemPost status={item.status} agent onPress={()=>this.handleAction(1,item.jobPost)} handleAction={this.handleAction} item={item.jobPost} index={index} bottom={(index+1)==data.length?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
-                    />:<ScrollView refreshControl={<RefreshControl
-                        colors={["#9Bd35A", "#689F38"]}
+                    />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
+                        colors={["#9Bd35A", Colors.textColor]}
+                        tintColor={Colors.textColor}
                         refreshing={refreshing}
                         onRefresh={()=>this.handleGetPost(true)} />}>
-                        <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
+                        <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
                             {loading?
-                                <ActivityIndicator size={'large'} color={'#0D70D9'} />:
-                                <Text style={{fontSize:20,color:'#0D70D9'}}>
+                                <ActivityIndicator size={'large'} color={Colors.textColor} />:
+                                <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>}
                         </View>
                     </ScrollView>}</>:active==1?<>
                     {inprogress.length>0?<FlatList
-                        contentContainerStyle={{marginTop:10}}
+                        contentContainerStyle={{marginTop:0}}
                         refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={inprogress}
@@ -167,11 +215,12 @@ class Index extends Component {
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
-                        colors={["#9Bd35A", "#689F38"]}
+                        colors={["#9Bd35A", Colors.textColor]}
+                        tintColor={Colors.textColor}
                         refreshing={refreshing}
                         onRefresh={()=>this.handleGetPost(true)} />}>
-                        <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{fontSize:20,color:'#0D70D9'}}>
+                        <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{fontSize:20,color:Colors.textColor}}>
                                 No Data
                             </Text>
                         </View>
@@ -179,9 +228,10 @@ class Index extends Component {
                 </>:
                     <>
                         {completed.length>0?<FlatList
-                            contentContainerStyle={{marginTop:10}}
+                            contentContainerStyle={{marginTop:0,paddingBottom:completed.length>3?0:300}}
                             refreshControl={<RefreshControl
-                                colors={["#9Bd35A", "#689F38"]}
+                                colors={["#9Bd35A", Colors.textColor]}
+                                tintColor={Colors.textColor}
                                 refreshing={refreshing}
                                 onRefresh={()=>this.handleGetPost(true)} />}
                             data={completed}
@@ -189,11 +239,12 @@ class Index extends Component {
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
                         />:<ScrollView showsVerticalScrollIndicator={false}  refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}>
-                            <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
-                                <Text style={{fontSize:20,color:'#0D70D9'}}>
+                            <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>
                             </View>
@@ -202,9 +253,9 @@ class Index extends Component {
                 }
                 onAdd={()=>this.props.navigation.navigate('AddPost',{title:'Add Post',view:false})}
             />
-        {!confirm&&proModal&&<Modal statusBarTranslucent={true} visible={true} animationType={'fade'} transparent={true}>
+        {proModal&&<Modal statusBarTranslucent={true} visible={true} animationType={'fade'} transparent={true}>
             <TouchableOpacity onPress={()=>this.setState({proModal:false})} style={{width,height:height,backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
-                <TouchableOpacity style={{width:'95%',height:'40%',borderRadius:10,backgroundColor:'#fff',justifyContent:'center'}}>
+                <TouchableOpacity activeOpacity={1} style={{width:'95%',height:'40%',borderRadius:10,backgroundColor:'#fff',justifyContent:'center'}}>
                     <View style={{height:50}}>
                     <SliderPicker
                         // minLabel={'min'}
@@ -215,14 +266,14 @@ class Index extends Component {
                             this.setState({ value: position });
                         }}
                         defaultValue={value}
-                        labelFontColor={"#6c7682"}
+                        labelFontColor={Colors.textColor}
                         // labelFontWeight={'600'}
                         showFill={true}
-                        fillColor={'green'}
+                        fillColor={Colors.primary}
                         showNumberScale={false}
                         showSeparatorScale={true}
                         buttonBackgroundColor={'#fff'}
-                        buttonBorderColor={"#6c7682"}
+                        buttonBorderColor={Colors.textColor}
                         buttonBorderWidth={2}
                         scaleNumberFontWeight={'300'}
                         buttonDimensionsPercentage={5}
@@ -240,27 +291,61 @@ class Index extends Component {
                         })}
 
                     </View>
-                    <View style={{width:100,height:100,borderWidth:2,marginTop:20,borderColor:'#0D70D9',
+                    <View style={{width:100,height:100,borderWidth:2,marginTop:20,borderColor:Colors.textColor,
                         alignSelf:'center',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{fontSize:25,color:'#0D70D9'}}>{value>0&&value}0%</Text>
+                        <Text style={{fontSize:25,color:Colors.textColor}}>{value>0&&value}0%</Text>
                     </View>
-                    <Button
+                    {confirm?
+                    <>
+                        <Text style={{alignSelf:'center',marginTop:20,fontSize:18}}>
+                            Are you sure to accept?
+                        </Text>
+                    <View style={{flexDirection:'row',justifyContent:'center'}}>
+                        <Button
+                            title={"NO"}
+                            onPress={()=>this.setState({confirm:false})}
+                            titleStyle={{fontSize: 20}}
+                            containerStyle={{alignSelf: 'center', marginTop: 10}}
+                            buttonStyle={{
+                                paddingVertical: 13,
+                                width: width * 0.40,
+                                borderRadius: 10,
+                                backgroundColor: '#f43a16'
+                            }}
+                        />
+                        <View style={{width:width*0.05}}/>
+                        <Button
+                            title={"YES"}
+                            onPress={this.handleSubmit}
+                            titleStyle={{fontSize: 20}}
+                            containerStyle={{alignSelf: 'center', marginTop: 10}}
+                            buttonStyle={{
+                                paddingVertical: 13,
+                                width: width * 0.40,
+                                borderRadius: 10,
+                                backgroundColor: '#1582F4'
+                            }}
+                        />
+
+                    </View>
+                    </>:
+                        <Button
                         disabled={!((value/10)>currentValue)}
                         title={"Update Progress"}
-                        onPress={()=>this.setState({confirm:true})}
+                        onPress={this.handleSubmit}
                         titleStyle={{fontSize: 20}}
                         containerStyle={{alignSelf: 'center', marginVertical: 20}}
                         buttonStyle={{
                             paddingVertical: 13,
                             width: width * 0.6,
                             borderRadius: 10,
-                            backgroundColor: '#1582F4'
+                            backgroundColor: Colors.textColor
                         }}
-                    />
+                    />}
                 </TouchableOpacity>
             </TouchableOpacity>
         </Modal>}
-            {confirm&&<Confirm handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleSubmit} title={'Warning'} subtitle={'Are you sure to submit?'} visible={confirm}/>}
+            {/*{confirm&&<Confirm handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleSubmit} title={'Warning'} subtitle={'Are you sure to submit?'} visible={confirm}/>}*/}
             {cancel&&<Confirm handleClose={()=>this.setState({cancel:false})} handleConfirm={this.handleCancel} title={'Warning'} subtitle={'Are you sure to cancel?'} visible={cancel}/>}
 
         </>
@@ -290,7 +375,10 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
+        setting: state.setting.setting,
         user: state.user.user,
+        notify: state.notify.notify,
+        focus: state.focus.focus,
     }
 }
 
@@ -299,6 +387,12 @@ const mapDispatchToProps = dispatch => {
         set: (loading) => {
             dispatch(setLoading(loading))
 
+        },
+        setNotify: (notify) => {
+            dispatch(setNotify(notify))
+        },
+        setFocus: (focus) => {
+            dispatch(setFocus(focus))
         }
     }
 }

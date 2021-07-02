@@ -26,6 +26,7 @@ import {ItemFavorite} from '../../components/Items';
 import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
+import {Colors} from '../../utils/config';
 const {width,height} = Dimensions.get('window')
 
 const list=[
@@ -80,7 +81,8 @@ class Index extends Component {
     handleSubmit=async ()=>{
         const {pin1,amount,check,showPin} = this.state;
         const {user} = this.props;
-
+        const credentials = await Keychain.getGenericPassword();
+        const token = credentials.password;
         this.setState({loading:true})
         await User.Post("/api/User/set-pin", {
             "userId": user.id,
@@ -89,8 +91,8 @@ class Index extends Component {
         await User.CheckUser().then((rs) => {
             if(rs.status){
                 this.props.setUser(rs.data)
-                Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
-                this.props.navigation.goBack();
+                Keychain.setGenericPassword(JSON.stringify(rs.data), token)
+                this.props.navigation.replace('RootBottomTab')
             }
         })
         this.setState({loading:false})
@@ -111,7 +113,7 @@ class Index extends Component {
                         containerStyle={{marginTop:50}}
                         inputContainerStyle={{width:'100%'}}
                         value={pin1}
-                        labelStyle={{color:'#1582F4'}}
+                        labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({pin1:pin1.length==4&&pin1.length<val.length?pin1:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
@@ -129,7 +131,7 @@ class Index extends Component {
                         containerStyle={{marginTop:20}}
                         inputContainerStyle={{width:'100%'}}
                         value={pin2}
-                        labelStyle={{color:'#1582F4'}}
+                        labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({pin2:pin2.length==4&&pin2.length<val.length?pin2:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
@@ -147,19 +149,19 @@ class Index extends Component {
 
                     <View style={{height:100,width:width,alignSelf:'center',alignItems:'center'}}>
                         <TouchableOpacity disabled={!(pin2.length==4&&pin1==pin2)} onPress={this.handleSubmit}
-                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:RFPercentage(8),backgroundColor:(pin2.length==4&&pin1==pin2)?'#1582F4':'rgba(21,130,244,0.74)',borderRadius:10}}>
+                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:RFPercentage(8),backgroundColor:(pin2.length==4&&pin1==pin2)?Colors.textColor:Colors.primaryBlur,borderRadius:10}}>
 
                             <Text style={{color:'#fff',fontSize:25}}>Submit</Text>
 
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{position:'absolute',width,height:150,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
             </View>
         {loading&&<View style={{width,height:height*1.2,position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
-            <ActivityIndicator size={'large'} color={'#1582F4'}/>
+            <ActivityIndicator size={'large'} color={Colors.primary}/>
         </View>}
         </>
         );

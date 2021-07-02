@@ -128,7 +128,6 @@ class Index extends Component {
         this.myRef.current?.setModalVisible()
     }
     handleSubmitApply=async (id)=>{
-        this.props.set(true)
         await User.SubmitRequestJob({userId:this.props.user.id,jobId:id}).then((rs) => {
             if(rs.status){
                 this.myRef.current?.setModalVisible(false)

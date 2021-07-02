@@ -20,9 +20,15 @@ import Icon from 'react-native-vector-icons/Feather';
 import * as Keychain from "react-native-keychain";
 import {BottomSheet,ListItem} from 'react-native-elements'
 import Api from '../../api/User';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Colors} from '../../utils/config'
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import OptionsMenu from 'react-native-option-menu';
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import {setLoading} from '../../redux/actions/loading';
+import {setNotify} from '../../redux/actions/notification';
+import {connect} from 'react-redux';
+import {setSetting} from '../../redux/actions/setting';
 const {width,height} = Dimensions.get('window')
 const profileType = [
     { title: 'Task ForceOrganizer' },
@@ -90,14 +96,14 @@ const list = [
         subtitle: 'Vice Chairman'
     },
 ]
-export default class Index extends Component {
+class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
             index:0,
             switches:{
                 1:true,
-                4:false
+                4:props.setting.touchId
             },
             logout:false,
             notification:false,
@@ -124,7 +130,7 @@ export default class Index extends Component {
                 this.setState({logout:true})
                 break;
             case 7:
-                this.props.NextScreen("TermCondition");
+                // this.props.NextScreen("TermCondition");
                 break;
             case 6:
                 alert("Not yet available")
@@ -161,6 +167,12 @@ export default class Index extends Component {
         const newState={... this.state}
         newState.switches[index]=!newState.switches[index]
         this.setState(newState)
+        if(index==4){
+            const {setting} = this.props;
+            setting.touchId=newState.switches[index];
+            this.props.setSetting(setting)
+            AsyncStorage.setItem('setting', JSON.stringify(setting))
+        }
     }
     render() {
         const {map,switches,isVisible,logout} = this.state
@@ -174,10 +186,10 @@ export default class Index extends Component {
                                     i==0?
                                         <View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
                                             <View style={{width:'20%',alignItems:'center'}}>
-                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':'#0D70D9'}/>
+                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
                                             <View style={{width:'50%'}}>
-                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':'#0D70D9'}}>{l.title}</Text>
+                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
                                             </View>
                                             <OptionsMenu
                                                 customButton={<>
@@ -193,10 +205,10 @@ export default class Index extends Component {
                                                     ()=>this.handleProfileType(2)]}/>
                                         </View> :i==3?<View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
                                             <View style={{width:'20%',alignItems:'center'}}>
-                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':'#0D70D9'}/>
+                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
                                             <View style={{width:'50%'}}>
-                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':'#0D70D9'}}>{l.title}</Text>
+                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
                                             </View>
                                             <OptionsMenu
                                                 customButton={<>
@@ -207,18 +219,18 @@ export default class Index extends Component {
                                                 </>}
                                                 buttonStyle={{width:'20%'}}
                                                 destructiveIndex={2}
-                                                options={["Khmer","English","Close"]}
+                                                options={["ភាសាខ្មែរ","English","Close"]}
                                                 actions={[()=>alert(true),
                                                     ()=>alert(false)]}/>
                                         </View>:
                                     <TouchableOpacity onPress={()=>this.handleSelect(i)} style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
                                         <View style={{width:'20%',alignItems:'center'}}>
                                             {l.icons?
-                                            <Icons name={l.icon} size={RFPercentage(3)} color={l.red?'red':'#0D70D9'}/>:
-                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':'#0D70D9'}/>}
+                                            <Icons name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>:
+                                                <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>}
                                         </View>
                                         <View style={{width:'50%'}}>
-                                            <Text style={{fontSize:RFPercentage(2),color:l.red?'red':'#0D70D9'}}>{l.title}</Text>
+                                            <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
                                         </View>
                                         <View style={{width:'25%',justifyContent:'flex-end',alignItems:'flex-end',flexDirection:'row'}}>
                                             {l.switch?
@@ -257,31 +269,28 @@ export default class Index extends Component {
         );
     }
 }
-const styles = StyleSheet.create({
-    scene: {
-        flex: 1,
-    },
-    textStyle:{
-        color:'#5e5e5e',
-        fontSize:13,
-        marginTop:2
-    },
-    container: {
-        flex: 1,
-        paddingTop: 40,
-        alignItems: "center"
-    },
-    cardItem:{
-        width:'90%',height:height*0.1,backgroundColor:'#fff',borderRadius:10,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        flexDirection:'row',
-        elevation: 5,
-        marginVertical: 10,
+const mapStateToProps = state => {
+    return {
+        loading: state.loading.loading,
+        setting: state.setting.setting,
+        user: state.user.user,
+        notify: state.notify.notify,
+        focus: state.focus.focus,
     }
-});
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        set: (loading) => {
+            dispatch(setLoading(loading))
+
+        },
+        setNotify: (notify) => {
+            dispatch(setNotify(notify))
+        },
+        setSetting: (data) => {
+            dispatch(setSetting(data))
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Index)

@@ -14,6 +14,7 @@ import assets from '../../assets'
 import { Button,Input } from 'react-native-elements';
 // import auth from '@react-native-firebase/auth';
 // import { LoginManager, AccessToken } from 'react-native-fbsdk';
+import {Colors} from '../../utils/config'
 import Icons from 'react-native-vector-icons/FontAwesome';
 const {width,height} = Dimensions.get('window')
 // import { GoogleSignin } from '@react-native-community/google-signin';
@@ -130,7 +131,6 @@ class SignIn extends Component {
         this.props.set(true)
         Keyboard.dismiss();
         await Request.GetToken(values.phone,values.password).then((rs) => {
-            console.log(rs)
            if(rs.status)
            {
                Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
@@ -197,12 +197,12 @@ class SignIn extends Component {
                           <View style={{width:'50%',flexDirection:'row'}}>
                               {/*<Text style={{color:'#7F838D'}}>Sign up later? </Text>*/}
                               {/*<TouchableOpacity onPress={()=>this.handleNext()}>*/}
-                              {/*<Text style={{color:'#1582F4'}}>Skip</Text>*/}
+                              {/*<Text style={{color:Colors.textColor}}>Skip</Text>*/}
                               {/*</TouchableOpacity>*/}
                           </View>
                           <View style={{width:'50%',alignItems:'flex-end'}}>
                               <TouchableOpacity>
-                              <Text style={{color:'#1582F4'}}>Forgot Password?</Text>
+                              <Text style={{color:Colors.textColor}}>Forgot Password?</Text>
                               </TouchableOpacity>
                           </View>
                       </View>
@@ -212,7 +212,7 @@ class SignIn extends Component {
                           onPress={this.handleLogin}
                           titleStyle={{fontSize:RFPercentage(3)}}
                           buttonStyle={{width:width*0.8,borderRadius:5,marginTop:20,height:RFPercentage(7)
-                              ,backgroundColor:'#1582F4',alignSelf:'center'}}
+                              ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                       />
                   </View>
               </Animated.View>
@@ -258,7 +258,7 @@ class SignIn extends Component {
 
                         <View style={{width:'100%',flexDirection:'row',marginTop:30,justifyContent:'center'}}>
                             <Text style={{color:'#7F838D'}}>Don't have an account? </Text>
-                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('Signup',{profileType:params.profileType})}>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('Signup',{profileType:params&&params.profileType?params.profileType:'1'})}>
                                 <Text style={{color:'#1582F4'}}>Sign up now</Text>
                             </TouchableOpacity>
                         </View>

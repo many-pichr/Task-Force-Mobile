@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import {
     StartScreen, ChooseProfile, Signin, Message, Chat, Profile, Category,
     Signup, ChooseCategory, JobList, Home, AddPost, Comment, Review, Settings,
-    MyFavorite, MyPost, Otp, ViewPost, CashOut, CashIn, MyMoney, TermCondition,PinCode,
+    MyFavorite, MyPost, Otp, ViewPost, CashOut, CashIn, MyMoney, TermCondition,PinCode,FormAbout,Notification
 } from './src/screens/index';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Feather';
@@ -14,6 +14,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { enableScreens } from "react-native-screens";
 import {Colors} from './src/utils/config';
+import {setLoading} from './src/redux/actions/loading';
+import {setNotify} from './src/redux/actions/notification';
+import {Marker} from "react-native-maps";
+import {SvgXml} from 'react-native-svg';
+import {map_blue, map_red} from './src/screens/Home/svg';
+import {connect} from 'react-redux';
 enableScreens();
 
 console.disableYellowBox = true;
@@ -21,18 +27,18 @@ console.disableYellowBox = true;
 const RootStack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();
 
-const BottomMenu = () => {
+const BottomMenu = ({notify}) => {
 
     return (
         <BottomTab.Navigator
-            initialRouteName="Discover"
+            initialRouteName="Home"
 
             activeColor={Colors.primary}
             barStyle={{ backgroundColor: "#fff",height:60,justifyContent:'center' }}
             sceneAnimationEnabled={Platform.OS === "ios"} // TODO: Since it has buggy with android elevation
         >
             <BottomTab.Screen
-                name="Home"
+                name={"Home"}
                 component={Home}
                 options={{
                     tabBarIcon: ({ focused }) => (
@@ -45,9 +51,10 @@ const BottomMenu = () => {
                 }}
             />
             <BottomTab.Screen
-                name="My Post"
+                name="MyPost"
                 component={MyPost}
                 options={{
+                    tabBarBadge: notify.isMyPost?'':false,
                     tabBarIcon: ({ focused }) => (
                         <MaterialIcons
                             name="list-alt"
@@ -102,6 +109,20 @@ const BottomMenu = () => {
         </BottomTab.Navigator>
     );
 };
+const mapStateToProps = state => {
+    return {
+        notify: state.notify.notify,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setNotify: (notify) => {
+            dispatch(setNotify(notify))
+        }
+    }
+}
+const Tabs =  connect(mapStateToProps, mapDispatchToProps)(BottomMenu)
 const RootStackNavigator = ()=> {
     return (
         <SafeAreaProvider>
@@ -109,7 +130,7 @@ const RootStackNavigator = ()=> {
                 <RootStack.Navigator initialRouteName="Start" headerMode="none"
                                      screenOptions={{gestureEnabled: true}}
                 >
-                    <RootStack.Screen name="RootBottomTab" component={BottomMenu} />
+                    <RootStack.Screen name="RootBottomTab" component={Tabs} />
                     {/*<RootStack.Screen name="RootBottomTabAgent" component={BottomMenuAgent} />*/}
                     <RootStack.Screen name="Start" component={StartScreen}/>
                     <RootStack.Screen name="Choose" component={ChooseProfile}/>
@@ -118,6 +139,7 @@ const RootStackNavigator = ()=> {
                     <RootStack.Screen name="ChooseCategory" component={ChooseCategory}/>
                     <RootStack.Screen name="MyFavorite" component={MyFavorite}/>
                     <RootStack.Screen name="JobList" component={JobList}/>
+                    <RootStack.Screen name="MyPost" component={MyPost}/>
                     <RootStack.Screen name="AddPost" component={AddPost}/>
                     <RootStack.Screen name="Comment" component={Comment}/>
                     <RootStack.Screen name="Review" component={Review}/>
@@ -132,6 +154,8 @@ const RootStackNavigator = ()=> {
                     <RootStack.Screen name="ViewUser" component={Profile}/>
                     <RootStack.Screen name="TermCondition" component={TermCondition}/>
                     <RootStack.Screen name="PinCode" component={PinCode}/>
+                    <RootStack.Screen name="FormAbout" component={FormAbout}/>
+                    <RootStack.Screen name="Notification" component={Notification}/>
                 </RootStack.Navigator>
             </NavigationContainer>
         </SafeAreaProvider>

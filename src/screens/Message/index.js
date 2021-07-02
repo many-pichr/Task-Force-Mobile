@@ -17,7 +17,7 @@ import {
 import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import moment from 'moment'
-import Icons from 'react-native-vector-icons/Feather';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
 import ContentLoader from 'react-native-masked-loader';
 import data from '../Home/data';
@@ -25,6 +25,8 @@ import Svg, { Rect } from 'react-native-svg';
 import User from '../../api/User';
 import {setLoading} from '../../redux/actions/loading';
 import {connect} from 'react-redux';
+import FastImage from 'react-native-fast-image';
+import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const avatarSize=((width*0.9)*0.9)/5
 function getMaskedElement() {
@@ -46,11 +48,17 @@ class Index extends Component {
             refreshing:false
         }
         this.myRef = React.createRef();
+        this._unsubscribe = this.props.navigation.addListener('focus', (action, state) => {
+            // do something
+            this.handleGetPost('false')
+        });
     }
     componentDidMount(): void {
         this.fadeIn()
-        this.handleGetPost('false')
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+    }
+    componentWillUnmount() {
+        this._unsubscribe();
     }
     handleGetPost=async (refreshing)=>{
         this.setState({refreshing})
@@ -95,14 +103,7 @@ class Index extends Component {
         items.push(coor)
         this.setState(items)
     }
-    renderItemsLoader=({item,index})=>{
 
-        return(
-            <View style={{width:width*0.9,alignSelf:'center',borderWidth:1}}>
-                <ContentLoader MaskedElement={getMaskedElement()} />
-            </View>
-        )
-    }
     renderItems=({item,index})=>{
         let format = 'ddd MMM YY'
         const d = item.lastAccess;
@@ -119,19 +120,27 @@ class Index extends Component {
             return(
             <TouchableOpacity onPress={()=>this.props.navigation.navigate('Chat',{item:item,user:this.props.user})} key={index} bottomDivider style={{width:'100%',flexDirection:'row',alignItems:'center',paddingVertical:10,
                 borderBottomColor:'#d9d9d9',borderBottomWidth:0.3}}>
-                <Image source={{uri:item.toUser.profileURL}} style={{width:avatarSize,height:avatarSize,borderRadius:avatarSize/2,marginLeft:10}}/>
+                <FastImage onLoadEnd={() => this.setState({imgLoading: false})}
+                           source={item.toUser.profileURL && item.toUser.profileURL != '' ? {
+                               uri: item.toUser.profileURL,
+                               priority: FastImage.priority.normal,
+                           } : require('../../assets/images/avatar.png')}
+                           resizeMode={FastImage.resizeMode.contain}
+                           style={{width:avatarSize,height:avatarSize,borderRadius:avatarSize/2,marginLeft:10}}/>
+
                 <View style={{marginLeft:10,width:'80%',alignSelf:'center'}}>
                     <View style={{flexDirection:'row'}}>
                         <Text style={{width:'70%',fontSize:18,marginTop:0}}>{item.toUser.lastName} {item.toUser.firstName}</Text>
                         <Text style={{width:'30%',textAlign:'center',marginTop:10,fontSize:13}}>{moment(item.lastAccess).format(format)}</Text>
                     </View>
-                    <Text style={{color:'#878787'}}>{"How a u?"}</Text>
+                    <Text style={{color:'#878787'}}>{item.body?(item.type=='text'?item.body:(item.type=='voice'?"Voice message":"Sent Photo")):"No message yet"}</Text>
                 </View>
             </TouchableOpacity>
         )
     }
     render() {
         const {map,refreshing,loading,data} = this.state
+        console.log(data)
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#ffff' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
@@ -171,20 +180,16 @@ class Index extends Component {
 
                         {loading?
                             <View style={{justifyContent:'center',borderTopLeftRadius:20,borderTopRightRadius:20,alignItems:'center',backgroundColor:'#fff',width:'100%'}}>
-                                {[1,2,3,4,5,6,7].map((value, index) => {
-                                    return (
-                                        <View style={{width:width*0.9,alignSelf:'center',height:100,marginTop:10}}>
-                                            <ContentLoader MaskedElement={getMaskedElement()} />
-                                        </View>
-                                    )
-                                })}
 
+                                            <ActivityIndicator size={'large'} color={Colors.textColor}/>
                             </View>:
-                        <FlatList
+                            <>
+                                {data.length>0?<FlatList
                             contentContainerStyle={[{alignItems:'center',marginTop:0,width:'100%',alignSelf:'center'},data.length<6&&{height:height*0.8}]}
                             data={data}
                             refreshControl={<RefreshControl
-                                colors={["#9Bd35A", "#689F38"]}
+                                colors={["#9Bd35A", Colors.textColor]}
+                                tintColor={Colors.textColor}
                                 refreshing={refreshing}
                                 onRefresh={()=>this.handleGetPost(true)} />}
                             renderItem={this.renderItems}
@@ -192,13 +197,24 @@ class Index extends Component {
                             legacyImplementation={false}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
-                        />}
+                        />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
+                                    colors={["#9Bd35A", "#689F38"]}
+                                    refreshing={refreshing}
+                                    onRefresh={()=>this.handleGetPost(true)} />}>
+                                    <View style={{width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
+                                        <Icons name={'chat'} size={50} color={'gray'}/>
+                                        <Text style={{marginTop:20,fontSize:20}}>
+                                            No message yet
+                                        </Text>
+                                    </View>
+                                </ScrollView>}
+                        </>}
 
 
 
                     </View>
                 </View>
-                <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
             </View>

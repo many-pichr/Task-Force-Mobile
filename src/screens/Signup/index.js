@@ -23,7 +23,9 @@ import * as Keychain from "react-native-keychain";
 import {setUser} from '../../redux/actions/user';
 import Request from '../../utils/Request';
 import {RFPercentage} from 'react-native-responsive-fontsize';
-import {Waring} from '../../components/Dialog';
+import {Warning} from '../../components/Dialog';
+import {setSetting} from '../../redux/actions/setting';
+import {Colors} from '../../utils/config';
 const validate = require("validate.js");
 const {width,height} = Dimensions.get('window')
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 60 : 0
@@ -116,10 +118,20 @@ class Index extends Component {
                 Request.GetToken(values.phone,values.password).then((rs) => {
                     if(rs.status)
                     {
-                        this.props.setUser(rs.data)
                         Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
+                        Api.CheckUser().then((r) => {
+                            if(r.status){
+                                Keychain.setGenericPassword(JSON.stringify(r.data), rs.data.token)
+                                this.props.setUser(r.data)
+                                this.props.setSetting({isAgent:r.data.userType=='1'?false:true})
+                                this.props.navigation.replace('Otp',{signin:true})
+                            }else{
+                                this.props.set(false)
+                            }
+                        })
+                    }else{
+                        Alert.alert('Warning',"Login Failed")
                         this.props.set(false)
-                        this.props.navigation.navigate('Otp',{userType:rs.data.userType})
                     }
                 })
             }
@@ -130,11 +142,15 @@ class Index extends Component {
         const { params } = this.props.route;
         const {values} = this.state
 
-              await Api.GetList("/api/User/check-exist-phone?phone=0969489714").then((rs) => {
-                    alert(JSON.stringify(rs))
+              await Api.GetList("/api/User/check-exist-phone?phone="+values.phone).then((rs) => {
+
                     if(rs.status)
                     {
-
+                        if(rs.data){
+                            this.setState({confirm:true})
+                        }else{
+                            this.handleSignup()
+                        }
                     }
                 })
 
@@ -224,12 +240,12 @@ class Index extends Component {
                       {/*/>*/}
                       <Button
                           title={'Sign up'}
-                          // disabled={error!=undefined}
+                          disabled={error!=undefined}
                           loading={loading}
                           onPress={this.hancleCheckPhone}
                           titleStyle={{fontSize:RFPercentage(3)}}
                           buttonStyle={{height:RFPercentage(7),width:width*0.8,borderRadius:10,marginTop:20
-                              ,backgroundColor:'#1582F4',alignSelf:'center'}}
+                              ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                       />
                       <View style={{width:'100%',flexDirection:'row',marginTop:30,justifyContent:'center'}}>
                           <Text style={{color:'#7F838D',fontSize:RFPercentage(2)}}>Already onboard? </Text>
@@ -246,7 +262,7 @@ class Index extends Component {
           {/*</TouchableOpacity>*/}
             </ScrollView>
             <KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={0}/>
-            {confirm&&<Waring handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'Are you sure to submit?'} visible={confirm}/>}
+            {confirm&&<Warning handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'This phone number already existing'} visible={confirm}/>}
         </ImageBackground>
 
     );
@@ -268,6 +284,9 @@ const mapDispatchToProps = dispatch => {
         },
         setUser: (user) => {
             dispatch(setUser(user))
+        },
+        setSetting: (data) => {
+            dispatch(setSetting(data))
         }
     }
 }

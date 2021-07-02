@@ -4,9 +4,9 @@ import FastImage from 'react-native-fast-image'
 import Material from 'react-native-vector-icons/MaterialIcons'
 import Icon from 'react-native-vector-icons/Feather'
 import moment from 'moment'
-import { ProgressBar, Colors } from 'react-native-paper';
 import * as Progress from "react-native-progress";
 import AutoHeightImage from 'react-native-auto-height-image';
+import {Colors} from '../../../utils/config'
 const {width,height} = Dimensions.get('window')
 const ANIMATION_DURATION = 200;
 const ROW_HEIGHT = 70;
@@ -27,11 +27,11 @@ function RenderAvatar(data) {
                 </>
     )
 }
-function RenderImage(data) {
+function RenderImage(data,index,onPress) {
     const {message} = data;
     return (
         <>
-            <TouchableOpacity style={{marginBottom: 20,}}>
+            <TouchableOpacity style={{marginBottom: 20,}} onPress={()=>onPress('image',data.index,message.content)}>
                 <FastImage resizeMode={FastImage.resizeMode.cover}
                      source={{uri:message.content.uri,priority: FastImage.priority.normal}} style={{borderRadius:10,width:width*0.45,height:width*0.35}}/>
                     <View style={{width:'100%',height:'100%',position:'absolute',justifyContent:'flex-end'}}>
@@ -48,7 +48,9 @@ function RenderTextMessage(data,index) {
     const {message} = data;
 
     return(
-        <>{message.chatInfo.id==message.targetId?
+        <>
+            {message.id==1&&<View style={{height:10}}/>}
+            {message.chatInfo.id==message.targetId?
             <View style={{
                 backgroundColor: "#dedede",
                 padding:10,
@@ -83,7 +85,7 @@ function RenderTextMessage(data,index) {
 
 
             <View style={{
-                backgroundColor: "#0078fe",
+                backgroundColor: Colors.textColor,
                 padding:10,
                 marginBottom: 20,
                 marginRight: "5%",
@@ -161,7 +163,7 @@ function RenderVoiceMessage(data,index,playing,play) {
 
 
             <View style={{
-                backgroundColor: "#0078fe",
+                backgroundColor: Colors.textColor,
                 padding:10,
                 marginRight: "5%",
                 marginBottom: 20,
@@ -249,7 +251,7 @@ class Message extends Component{
 
 
                 <View style={{
-                    backgroundColor: "#0078fe",
+                    backgroundColor: Colors.textColor,
                     padding:10,
                     marginBottom: message.animated?0:20,
                     marginRight: "5%",
@@ -311,7 +313,7 @@ const styles = StyleSheet.create({
     },
     rightArrow: {
         position: "absolute",
-        backgroundColor: "#0078fe",
+        backgroundColor: Colors.textColor,
         //backgroundColor:"red",
         width: 20,
         height: 25,

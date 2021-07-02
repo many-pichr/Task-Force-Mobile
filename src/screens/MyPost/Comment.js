@@ -86,11 +86,12 @@ export default class Index extends Component {
     }
     handleGetData=async ()=>{
         const { userId,item} = this.props.route.params
-        await User.GetList("/api/JobComment").then((rs) => {
+        await User.GetList("/api/JobComment/JobPost/"+item.id).then((rs) => {
             if(rs.status){
                 this.setState({comments:rs.data,loading:false})
             }
         })
+        this.setState({loading:false})
     }
     handleNext=()=>{
             this.props.navigation.navigate('Signin')
@@ -110,7 +111,7 @@ export default class Index extends Component {
             <View style={{width:'90%'}}>
                 {item.comment != '' &&
                 <View style={{
-                    backgroundColor: item.userId==userId?'#1582F4':'rgba(0,0,0,0.18)',
+                    backgroundColor: item.userId==userId?Colors.textColor:'rgba(0,0,0,0.18)',
                     alignSelf: item.userId==userId?'flex-start':'flex-end',
                     marginLeft: 10,
                     marginTop: 10,
@@ -153,7 +154,7 @@ export default class Index extends Component {
                     backgroundColor:'#fff',marginTop:10,height:height}}>
                     <ScrollView>
                         <View style={{flexDirection:'row',alignItems:'center',width:'95%',alignSelf:'center',marginTop:10}}>
-                            <View style={{width:'90%',height:50,justifyContent:'center',borderBottomWidth:1,borderColor:'#1582F4'}}>
+                            <View style={{width:'90%',height:50,justifyContent:'center',borderBottomWidth:1,borderColor:Colors.textColor}}>
                                 <Input
                                     placeholder={'Comment ...'}
                                     value={value}
@@ -164,12 +165,12 @@ export default class Index extends Component {
                                 />
                             </View>
                         <TouchableOpacity onPress={this.handleSend} style={{marginBottom:0,width:'10%',alignItems:'flex-end'}}>
-                            <Icons name={'send'} size={30} color={'#1582F4'}/>
+                            <Icons name={'send'} size={30} color={Colors.textColor}/>
                         </TouchableOpacity>
                         </View>
 
                         {loading?<View style={{height:height*0.6,alignSelf:'center',justifyContent:'center'}}>
-                            <ActivityIndicator size={'large'} color={'#1582F4'}/>
+                            <ActivityIndicator size={'large'} color={Colors.textColor}/>
                         </View>:<FlatList
                             data={comments}
                             inverted={true}
@@ -185,7 +186,7 @@ export default class Index extends Component {
                 </View>
 
             </View>
-            <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+            <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
             </View>
 

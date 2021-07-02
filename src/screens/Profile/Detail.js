@@ -1,5 +1,19 @@
 import React, { Component } from 'react';
-import {Animated,StatusBar,TouchableOpacity, StyleSheet,Image, View, Text,Modal, Platform, ScrollView, Dimensions, FlatList} from 'react-native';
+import {
+    Animated,
+    StatusBar,
+    TouchableOpacity,
+    StyleSheet,
+    Image,
+    View,
+    Text,
+    Modal,
+    Platform,
+    ScrollView,
+    Dimensions,
+    FlatList,
+    RefreshControl,
+} from 'react-native';
 import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/Feather';
@@ -7,6 +21,13 @@ import {barHight, Colors} from '../../utils/config';
 import { TabView, SceneMap,TabBar } from 'react-native-tab-view';
 import * as Progress from 'react-native-progress';
 import {About,Education,Skill,Experience} from './Tabs'
+import {FormAbout} from './Form'
+import BottomSheet from 'reanimated-bottom-sheet';
+import {setLoading} from '../../redux/actions/loading';
+import {setUser} from '../../redux/actions/user';
+import {setSetting} from '../../redux/actions/setting';
+import {connect} from 'react-redux';
+import User from '../../api/User';
 const {width,height} = Dimensions.get('window')
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -14,41 +35,67 @@ const FirstRoute = () => (
     <View style={[styles.scene, { backgroundColor: '#fff' }]} />
 );
 
-const renderTabBar = props => (
-    <TabBar
-        {...props}
-        scrollEnabled={true}
-        // labelStyle={{color:Colors.primary}}
-        activeColor={Colors.primary}
-        inactiveColor={Colors.primaryBlur}
-        indicatorStyle={{backgroundColor:Colors.primary}}
-        style={{ backgroundColor: '#F5F7FA' }}
-    />
-);
-export default class Index extends Component {
+const renderHeader = () => (
+    <View style={styles.header}>
+        <View style={styles.panelHeader}>
+            <View style={styles.panelHandle} />
+        </View>
+    </View>
+
+)
+const skill=[
+    'UX/UI Designer','Mobile app development','Software Engineer','Graphic Design'
+]
+class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
             index:0,
             progress:0,
-            routes:[
-                { key: '0', title: 'Experience' },
-                { key: '1', title: 'About' },
-                { key: '2', title: 'Education' },
-                { key: '3', title: 'Skill' },
-            ]
+            experience:[],
+            education:[],
+            skills:[],
+            start:true,
+            refreshing:false
+
         }
         this.myRef = React.createRef();
     }
     componentDidMount(): void {
-        this.fadeIn()
-        setTimeout(()=>{
-            // this.fadeIn();
-            this.setState({progress: 0.8})
-        }, 1000);
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            // do something
+                this.handleGetPost(false)
+        });
+        this.handleGetPost(false)
+        // this.props.set(true)
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
     }
+    componentWillUnmount() {
+        this._unsubscribe();
+    }
+    handleGetPost=async (refreshing)=>{
+        const {view,userId} = this.props;
 
+        const user = view?this.props.users:this.props.user;
+        console.log(user,11222,view)
+        await User.GetList(view?"/api/Experience/ByUser/"+userId:'/api/Experience/ByUser').then((rs) => {
+            if(rs.status){
+                this.setState({experience:rs.data})
+            }
+        })
+        await User.GetList(view?"/api/Education/ByUser/"+userId:'/api/Education/ByUser').then((rs) => {
+            if(rs.status){
+                this.setState({education:rs.data})
+            }
+        })
+        await User.GetList(view?"/api/UserSkill/ByUser/"+userId:'/api/UserSkill/ByUser').then((rs) => {
+            console.log(rs.data)
+            if(rs.status){
+                this.setState({skills:rs.data})
+            }
+        })
+        // this.props.set(false)
+    }
     handleNext=()=>{
         this.props.navigation.navigate('Signin')
     }
@@ -74,26 +121,48 @@ export default class Index extends Component {
              second: SecondRoute,
          });
      }
+     handleAction=(i,add,item)=>{
+         const {view} = this.props;
+         if(!view){
+             switch(i) {
+             case 1:
+                 this.props.navigation.navigate('FormAbout');
+                 break;
+             case 2:
+                 this.props.navigation.navigate('FormExperience',{add,item});
+                 break;
+             case 3:
+                 this.props.navigation.navigate('FormEducation',{add,item});
+                 break;
+             case 4:
+                 this.props.navigation.navigate('FormSkill',{add,item});
+                 break;
+             case 2:
+                 // code block
+                 this.props.NextScreen("MyMoney");
+                 break;
+             default:
+             // code block
+         }
+         }
+
+
+     }
     render() {
-        const {progress,long,routes,index} = this.state
+        const {refreshing,skills,education,experience} = this.state
+        const {view} = this.props;
+        const user = view?this.props.users:this.props.user;
         return (
-            <><ScrollView>
-
-
-
-                    <View style={{flex:1,width:width,marginTop:10}}>
-                        <TabView
-                            navigationState={{ index, routes }}
-                            renderScene={SceneMap({
-                                '0': Experience,
-                                '1': About,
-                                '2': Education,
-                                '3': Skill,
-                            })}
-                            onIndexChange={index=>this.setState({index})}
-                            initialLayout={initialLayout}
-                            renderTabBar={renderTabBar}
-                        />
+            <><ScrollView refreshControl={<RefreshControl
+                colors={["#9Bd35A", Colors.textColor]}
+                tintColor={Colors.textColor}
+                refreshing={refreshing}
+                onRefresh={()=>this.handleGetPost(true)} />} showsVerticalScrollIndicator={false}>
+                    <View style={{width:'100%',marginTop:0}}>
+                        <About onAdd={()=>this.handleAction(1)}  about={user.about} view={view}/>
+                        <Experience data={experience} onPress={this.handleAction} view={view}/>
+                        <Education data={education} onPress={this.handleAction} view={view}/>
+                        <Skill data={skills} onPress={this.handleAction} view={view}/>
                     </View>
             </ScrollView>
                 </>
@@ -121,5 +190,45 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         elevation: 5,
         marginVertical: 10,
-    }
+    },
+    header: {
+        backgroundColor: '#f1f1f1',
+        shadowColor: '#000000',
+        paddingTop: 10,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    panelHeader: {
+        alignItems: 'center',
+    },
+    panelHandle: {
+        width: 40,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#00000040',
+        marginBottom: 10,
+    },
 });
+const mapStateToProps = state => {
+    return {
+        loading: state.loading.loading,
+        user: state.user.user,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        set: (loading) => {
+            dispatch(setLoading(loading))
+
+        },
+        setUser: (user) => {
+            dispatch(setUser(user))
+        },
+        setSetting: (data) => {
+            dispatch(setSetting(data))
+        },
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index)

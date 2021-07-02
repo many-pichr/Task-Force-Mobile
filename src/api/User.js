@@ -17,7 +17,7 @@ export default {
         const URL = `/api/User`;
         return await axios.PostGuest(URL,body)
     },
-    AddJob: async (data,image,userId,location,noExpiry) => {
+    AddJob: async (data,image,userId,location,noExpiry,region) => {
         const images=[]
         const skills=[]
         let mainImage=''
@@ -54,9 +54,17 @@ export default {
             "jobCategoryId": data.category,
             "extraCharge": parseInt(data.extra==''?0:data.extra),
             "reward": parseInt(data.reward),
-            "isShowLocation": location.location,
-            "locLAT": location.lat,
-            "locLONG": location.long,
+            "isShowLocation": location,
+            "locLAT": region.latitude,
+            "locLONG": region.longitude,
+            "jobPostArea":{
+                "id": 0,
+                "jobPostId": 0,
+                "latitude": region.latitude,
+                "longitude": region.longitude,
+                "latitudeDelta": region.latitudeDelta,
+                "longitudeDelta": region.longitudeDelta
+            },
             "createDate": data.start!=''?data.start:new Date(),
             "expireDate": data.end!=''?data.end:new Date(),
             "userId": userId,
@@ -69,8 +77,8 @@ export default {
         }
 
         const URL = `/api/JobPost`;
-        console.log(body,data)
-        return await axios.Post(URL,body)
+        const rs=await axios.Post(URL,body);
+        return rs;
     },
     AddInterested: async (data) => {
         var body =
@@ -118,16 +126,20 @@ export default {
         const URL = '/api/Authenticate/SwitchProfile';
         return await axios.Get(URL)
     },
-    CheckUser: async () => {
+    CheckUser: async (data) => {
         const token = await AsyncStorage.getItem('@notification_id')
         const URL = "/api/Authenticate?notification_id="+token;
+        console.log(URL)
         return await axios.Get(URL)
     },
     GetList: async (URL) => {
         return await axios.Get(URL)
     },
-    Put: async (URL) => {
-        return await axios.Put(URL,{})
+    Delete: async (URL) => {
+        return await axios.Delete(URL)
+    },
+    Put: async (URL,body) => {
+        return await axios.Put(URL,body)
     },
     Post: async (URL,body) => {
         return await axios.Post(URL,body)

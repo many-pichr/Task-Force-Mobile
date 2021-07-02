@@ -8,9 +8,7 @@ import {
   PermissionsAndroid,
   TouchableOpacity, Dimensions, ActivityIndicator,
 } from 'react-native';
-
-// import { useHeaderHeight } from '@react-navigation/stack'  // react-navigation v5.x
-
+import {Colors} from '../../../utils/config'
 import { AudioRecorder, AudioUtils } from 'react-native-audio'
 import FastImage from 'react-native-fast-image'
 import RNFS from 'react-native-fs'
@@ -26,6 +24,7 @@ import {setId} from '../../../redux/actions/audioid';
 import User from '../../../api/User';
 import message from './messages'
 import * as ImagePicker from 'react-native-image-picker';
+import ImageView from 'react-native-image-viewing/dist/ImageViewing';
 const { width, height } = Dimensions.get('window')
 class App extends Component {
 
@@ -71,6 +70,7 @@ class App extends Component {
     this.activeVoiceId = -1
   }
   componentDidMount() {
+      const {item,user} = this.props;
     this.handleGetPost()
     this._handleWebSocketSetup();
 
@@ -155,7 +155,9 @@ class App extends Component {
       FromUserId:item.fromUserId,
       Type:type,
       Duration:length,
-      Body:message
+      Body:message,
+        ChatId:item.id
+
     }
     this.state.ws.send(JSON.stringify(body))
   }
@@ -288,6 +290,8 @@ class App extends Component {
         }
         this.playSound(content, index)
       }
+    }else if(type=='image'){
+        this.setState({viewImage:true,imageUrl:content.uri})
     }
   }
 
@@ -403,7 +407,15 @@ class App extends Component {
     const newMsg = [...messages]
     const id=newMsg.length>0?(newMsg[newMsg.length-1].id)+1:1;
     if(type=='voice'){
-      var whoosh = await new Sound(content.uri, Sound.MAIN_BUNDLE, (error) => {
+        // this.playSound(content, 1)
+        // User.UploadVoice(Platform.OS==''?"ios":"file:"+content.uri).then((rs) => {
+        //     if(rs.status){
+        //         console.log(rs)
+        //         // this.submitChatMessage(rs.data.fileName,'voice',content.length)
+        //
+        //     }
+        // })
+      var whoosh = await new Sound(content.uri, '', (error) => {
         if (error) {
           console.log('failed to load the sound', error);
           return;
@@ -424,7 +436,7 @@ class App extends Component {
               time: TimeFormat(new Date())
             })
         this.setState({ messages: newMsg})
-          User.UploadVoice("file:"+content.uri).then((rs) => {
+          User.UploadVoice(Platform.OS==''?"ios":"file:"+content.uri).then((rs) => {
               if(rs.status){
                 this.submitChatMessage(rs.data.fileName,'voice',content.length)
 
@@ -519,7 +531,7 @@ class App extends Component {
       </TouchableOpacity>
 
   render () {
-    const { playing,voiceLoading, voicePlaying, messages, loading, inverted, voiceVolume, panelSource } = this.state
+    const {imageUrl,viewImage, playing,voiceLoading, voicePlaying, messages, loading, inverted, voiceVolume, panelSource } = this.state
     const {item,user} = this.props
     return (
         <View style={styles.container}>
@@ -534,7 +546,7 @@ class App extends Component {
               renderPanelRow={this.renderPanelRow}
               inverted={inverted}
               isIPhoneX
-              headerHeight={Platform.OS=='ios'?80:110}
+              headerHeight={Platform.OS=='ios'?90:110}
               useEmoji={false}
               // chatBackgroundImage={chatBg}
               sendMessage={this.sendMessage}
@@ -549,12 +561,12 @@ class App extends Component {
               itemContainerStyle={{paddingVertical:0}}
               // userProfile={{avatar:null}}
               allPanelAnimateDuration={300}
-              messageSelectIcon={<Material name={'keyboard-voice'} size={30} color={"#1582F4"}/>}
-              voiceIcon={<Material name={'keyboard-voice'} size={30} color={"#1582F4"}/>}
-              plusIcon={<Material name={'add-circle-outline'} size={30} color={"#1582F4"}/>}
+              messageSelectIcon={<Material name={'keyboard-voice'} size={30} color={Colors.textColor}/>}
+              voiceIcon={<Material name={'keyboard-voice'} size={30} color={Colors.textColor}/>}
+              plusIcon={<Material name={'add-circle-outline'} size={30} color={Colors.textColor}/>}
               changeHeaderLeft={this.changeHeaderLeft}
               renderTextMessage={RenderTextMessage}
-              renderImageMessage={RenderImage}
+              renderImageMessage={(data,index)=>RenderImage(data,index,this.onPress)}
               audioPath={this.state.audioPath}
               voiceCustom={false}
               useVoice={true}
@@ -578,9 +590,14 @@ class App extends Component {
               voicePlaying={voicePlaying}
               voiceVolume={voiceVolume}
           />
-
+            <ImageView
+                images={[{uri:imageUrl}]}
+                imageIndex={0}
+                visible={viewImage}
+                onRequestClose={() => this.setState({viewImage:false})}
+            />
           {loading&&<View style={{position:'absolute',justifyContent:'center',alignItems:'center',backgroundColor:'#fff',width:'100%',height:'100%'}}>
-            <ActivityIndicator size={'large'} color={"#1582F4"} style={{marginBottom:100}}/>
+            <ActivityIndicator size={'large'} color={Colors.textColor} style={{marginBottom:100}}/>
           </View>}
         </View>
     )

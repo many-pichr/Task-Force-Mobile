@@ -44,8 +44,6 @@ PODS:
   - lottie-react-native (2.5.11):
     - lottie-ios
     - React
-  - OGReactNativeWaveform (2.0.5):
-    - React
   - OneSignal (3.3.0)
   - Permission-Camera (3.0.1):
     - RNPermissions
@@ -376,6 +374,8 @@ PODS:
   - TOCropViewController (2.5.3)
   - toolbar-android (0.1.0-rc.2):
     - React
+  - TouchID (4.4.1):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -385,7 +385,6 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - OGReactNativeWaveform (from `../node_modules/react-native-audiowaveform`)
   - OneSignal (< 4.0, >= 3.0)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -440,6 +439,7 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
+  - TouchID (from `../node_modules/react-native-touch-id`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -466,8 +466,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/lottie-ios"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
-  OGReactNativeWaveform:
-    :path: "../node_modules/react-native-audiowaveform"
   Permission-Camera:
     :path: "../node_modules/react-native-permissions/ios/Camera"
   RCT-Folly:
@@ -570,6 +568,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   toolbar-android:
     :path: "../node_modules/@react-native-community/toolbar-android"
+  TouchID:
+    :path: "../node_modules/react-native-touch-id"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -584,7 +584,6 @@ SPEC CHECKSUMS:
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   lottie-ios: a50d5c0160425cd4b01b852bb9578963e6d92d31
   lottie-react-native: 216bd1295fa67b159fdbe5562a7d7b6371da6422
-  OGReactNativeWaveform: 2c5a7564f84a53a7d5943d08a36669b3fc9881db
   OneSignal: 48898fc2ee74f84a90b50dfa4b1ca62a84b5d6de
   Permission-Camera: 0d2d15352e9c54c3ea8686c8c21fb1a9edf3431b
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
@@ -640,6 +639,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   toolbar-android: 404f4450b203597e7b417f714ff417bed562a1be
+  TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
 PODFILE CHECKSUM: 660f5bc9e89871256121aced08b987bb8a3051a5

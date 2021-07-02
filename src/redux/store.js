@@ -8,6 +8,8 @@ import audioIdReducer from './reducers/audioIdReducer';
 import loadingReducer from './reducers/loadingReducer';
 import settingReducer from './reducers/settingReducer';
 import mapReducer from './reducers/mapReducer';
+import notificationReducer from './reducers/notificationReducer';
+import sfocusReducer from './reducers/sfocusReducer';
 
 const rootReducer = combineReducers({
     places: notifyReducer,
@@ -17,6 +19,8 @@ const rootReducer = combineReducers({
     loading:loadingReducer,
     setting:settingReducer,
     map:mapReducer,
+    notify:notificationReducer,
+    focus:sfocusReducer,
 });
 
 const configureStore = () => {

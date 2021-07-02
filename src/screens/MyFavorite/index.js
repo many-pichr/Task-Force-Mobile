@@ -19,6 +19,7 @@ import User from '../../api/User';
 import {setLoading} from '../../redux/actions/loading';
 import {setUser} from '../../redux/actions/user';
 import {connect} from 'react-redux';
+import {Colors} from '../../utils/config';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
@@ -27,6 +28,7 @@ class Index extends Component {
         this.state={
             data:[],
             loading:true,
+            start:true,
             refreshing:false
         }
         this.myRef = React.createRef();
@@ -34,7 +36,17 @@ class Index extends Component {
     componentDidMount(): void {
         this.fadeIn()
         this.handleGetPost(false)
+
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            if(!this.state.start){
+                this.handleGetPost(false)
+            }
+        });
+        this.setState({start:false})
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+    }
+    componentWillUnmount() {
+        this._unsubscribe();
     }
     handleGetPost=async (refreshing)=>{
         await User.GetList('/api/JobInterested/CurrentUser').then((rs) => {
@@ -87,7 +99,7 @@ class Index extends Component {
                 title={'My Favorite'}
                 renderItem={<>
                     {data.length>0?<FlatList
-                        contentContainerStyle={{marginTop:30}}
+                        contentContainerStyle={{marginTop:30,paddingBottom:data.length>3?0:300}}
                         refreshControl={<RefreshControl
                             colors={["#9Bd35A", "#689F38"]}
                             refreshing={refreshing}
@@ -100,10 +112,10 @@ class Index extends Component {
                         colors={["#9Bd35A", "#689F38"]}
                         refreshing={refreshing}
                         onRefresh={()=>this.handleGetPost(true)} />}>
-                        <View style={{height:height*0.9,justifyContent:'center',alignItems:'center'}}>
+                        <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
                             {loading?
-                                <ActivityIndicator size={'large'} color={'#0D70D9'} />:
-                                <Text style={{fontSize:20,color:'#0D70D9'}}>
+                                <ActivityIndicator size={'large'} color={Colors.textColor} />:
+                                <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>}
                         </View>

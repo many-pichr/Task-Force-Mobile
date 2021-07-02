@@ -18,10 +18,7 @@ import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {barHight, Colors} from '../../utils/config';
-import { TabView, SceneMap,TabBar } from 'react-native-tab-view';
-import * as Progress from 'react-native-progress';
-import {About,Education,Skill,Experience} from './Tabs'
+import {Colors} from '../../utils/config'
 import Detail from './Detail'
 import Setting from './Setting'
 import {setLoading} from '../../redux/actions/loading';
@@ -34,6 +31,7 @@ import {RFPercentage} from 'react-native-responsive-fontsize';
 import * as ImagePicker from 'react-native-image-picker';
 import {ImageCroper} from '../../components/ImageCroper';
 import FastImage from 'react-native-fast-image';
+import ImageView from 'react-native-image-viewing/dist/ImageViewing';
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
     constructor(props) {
@@ -42,7 +40,8 @@ class Index extends Component {
             index:1,
             imgLoading:true,
             imageUrl:'',
-            uri:''
+            uri:'',
+            viewImage:false
         }
         this.myRef = React.createRef();
     }
@@ -70,17 +69,22 @@ class Index extends Component {
         }).start();
     };
     handleProfileType=async (i)=>{
-        const setting={}
-        const data = this.props.user
-        data.userType = i.toString()
-        // this.props.setUser(data)
-        // Keychain.setGenericPassword(JSON.stringify(data), data.token)
-        setting.isAgent = data.userType=='1'?false:true
-        this.props.set(true)
-        await User.SwitchProfile()
-        // this.props.set(false)
-        this.props.setSetting(setting)
-        // this.props.navigation.navigate(data.userType=='1'?'RootBottomTab':'RootBottomTabAgent')
+
+        const setting = this.props.setting;
+        const data = this.props.user;
+        console.log(data)
+        if(i.toString()!=data.userType){
+            data.userType = i.toString()
+            // this.props.setUser(data)
+            // Keychain.setGenericPassword(JSON.stringify(data), data.token)
+            setting.isAgent = data.userType=='1'?false:true
+            this.props.set(true)
+            await User.SwitchProfile()
+            // this.props.set(false)
+            this.props.setSetting(setting)
+            this.props.navigation.navigate(data.userType=='1'?'RootBottomTab':'RootBottomTabAgent')
+        }
+
     }
     handleNextScreen=(screen)=>{
         this.props.navigation.navigate(screen)
@@ -120,8 +124,25 @@ class Index extends Component {
         this.setState({imgLoading:false})
 
     }
+    handlePicker=()=>{
+        Alert.alert(
+            'Choose Image',
+            'Please choose image source',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {text: 'Gallery', onPress: () => this.handleImagePicker('launchImageLibrary')},
+                {text: 'Camera', onPress: () => this.handleImagePicker('launchCamera')},
+            ],
+            {cancelable: true},
+        );
+    }
+
     render() {
-        const {map,uri,imgLoading,imageUrl} = this.state
+        const {viewImage,uri,imgLoading,imageUrl} = this.state
         const {user} = this.props;
         const {params } = this.props.route
         return (
@@ -137,7 +158,7 @@ class Index extends Component {
                     </TouchableOpacity>
                     <View style={{width:width*0.95,marginTop:20,alignSelf:'center',borderRadius:20,height:height,
                         backgroundColor:'#fff',paddingBottom:10}}>
-                        {!(params&&params.profile)&&<>
+
                         <View style={{position:'absolute',width:RFPercentage(12),height:RFPercentage(12),
                             borderRadius:RFPercentage(12)/2,marginTop:-(RFPercentage(12)/2),alignSelf:'center'}}>
                             <FastImage onLoadEnd={()=>this.setState({imgLoading:false})}
@@ -151,41 +172,35 @@ class Index extends Component {
                                 <ActivityIndicator size={'large'} color={'#fff'}/>
                             </View>}
                         </View>
+                        <TouchableOpacity style={{position:'absolute',right:10,top:10,flexDirection:'row',alignItems:'center'}}>
+                            <Icons name={'edit'} size={RFPercentage(2)} color={Colors.textColor}/>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2)}}>Edit Profile</Text>
+                        </TouchableOpacity>
                         <View style={{position:'absolute',width:RFPercentage(14),height:RFPercentage(12),
                             borderRadius:RFPercentage(12)/2,marginTop:-(RFPercentage(12)/2),alignSelf:'center'}}>
-                            <TouchableOpacity onPress={()=>{
-                                Alert.alert(
-                                    "Choose Image",
-                                    "Please choose image source",
-                                    [
-                                        {
-                                            text: "Cancel",
-                                            onPress: () => console.log("Cancel Pressed"),
-                                            style: "cancel"
-                                        },
-                                        { text: "Gallery", onPress: () => this.handleImagePicker('launchImageLibrary') },
-                                        { text: "Camera", onPress: () => this.handleImagePicker('launchCamera') },
-                                    ],
-                                    { cancelable: true }
-                                );
-                            }} style={{position:'absolute',width:'100%',height:'100%',alignItems:'flex-end',justifyContent:'center'}}>
-                                <View style={{backgroundColor:'#cecece',padding:5,borderRadius:20}}>
+                            <TouchableOpacity activeOpacity={1} onPress={()=>this.setState({viewImage:true})} style={{position:'absolute',width:'100%',height:'100%',alignItems:'flex-end',justifyContent:'center'}}>
+                                <TouchableOpacity onPress={this.handlePicker} style={{backgroundColor:'#cecece',padding:5,borderRadius:20}}>
                                     <Icon name={'edit'} size={15}/>
-                                </View>
+                                </TouchableOpacity>
                             </TouchableOpacity>
                         </View>
-                        </>}
-                        <View style={{marginTop:params&&params.profile?0:RFPercentage(5)}}>
+
+                        <View style={{marginTop:RFPercentage(5)}}>
                             <Text style={{width:'100%',marginTop:10,textAlign:'center',fontSize:RFPercentage(2.5)}}>
                                 {user.lastName} {user.firstName}
                             </Text>
                             <Setting NextScreen={this.handleNextScreen} userType={user.userType=='1'?" Oraganizer":" Agent"} navigation={this.props.navigation} user={user} handleProfileType={this.handleProfileType}/>
                         </View>
                         </View>
-
+                    <ImageView
+                        images={[{uri:imageUrl}]}
+                        imageIndex={0}
+                        visible={viewImage}
+                        onRequestClose={() => this.setState({viewImage:false})}
+                    />
                     <ImageCroper visible={uri!=''} uri={uri} handleClose={()=>this.setState({uri:''})} handleCrop={this.handleCrop}/>
                 </View>
-                <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
             </View>

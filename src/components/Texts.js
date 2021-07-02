@@ -8,7 +8,7 @@ const {width,height} = Dimensions.get('window')
 const TextHorizontal=(props)=>{
 
         return (
-            <View style={{flexDirection:'row',alignItems:'center',width:'90%',marginTop:20}}>
+            <View style={{flexDirection:'row',alignItems:'center',width:'90%',marginTop:10}}>
                 <View style={{width:'80%',justifyContent:'center'}}>
                     <Text style={{fontSize:RFPercentage(2.5),color:'#333333'}}>
                         {props.title}

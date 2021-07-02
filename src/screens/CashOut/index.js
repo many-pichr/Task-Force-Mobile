@@ -21,8 +21,7 @@ import {setUser} from '../../redux/actions/user';
 import {Input} from 'react-native-elements'
 import {connect} from 'react-redux';
 import {HeaderText} from '../../components/Header'
-import {RFPercentage} from 'react-native-responsive-fontsize';
-import {ItemFavorite} from '../../components/Items';
+import {Colors} from '../../utils/config'
 import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
@@ -109,7 +108,7 @@ class Index extends Component {
                         containerStyle={{marginTop:50}}
                         inputContainerStyle={{width:'100%'}}
                         value={account}
-                        labelStyle={{color:'#1582F4'}}
+                        labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({account:val})}
                         keyboardType={'numeric'}
                         placeholder='00 00 00 00'
@@ -126,7 +125,7 @@ class Index extends Component {
                         containerStyle={{marginTop:0}}
                         inputContainerStyle={{width:'100%'}}
                         value={amount}
-                        labelStyle={{color:'#1582F4'}}
+                        labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({amount:val})}
                         keyboardType={'numeric'}
                         errorMessage={parseFloat(amount)>balance?'Sorry! Your balance is not enough':''}
@@ -151,7 +150,7 @@ class Index extends Component {
                                     <Text style={{marginLeft:20,fontSize:18,width:'70%'}}>
                                         {item.title}
                                     </Text>
-                                    {check===index&&<Icon name={'done'} size={25} color={'#1582F4'}/>}
+                                    {check===index&&<Icon name={'done'} size={25} color={Colors.textColor}/>}
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -160,7 +159,7 @@ class Index extends Component {
                     />
                     <View style={{height:100,width:'100%',alignSelf:'center',}}>
                         <TouchableOpacity disabled={!disable} onPress={()=>this.setState({showPin:true})}
-                                          style={{flexDirection:'row',alignItems:'center',paddingHorizontal:20,height:70,backgroundColor:disable?'#1582F4':'rgba(21,130,244,0.74)',borderRadius:10,width:'75%'}}>
+                                          style={{flexDirection:'row',alignItems:'center',paddingHorizontal:20,height:70,backgroundColor:disable?Colors.textColor:Colors.primaryBlur,borderRadius:10,width:'75%'}}>
                         <View style={{width:'50%'}}>
                             <Text style={{color:'#fff',fontSize:15}}>Cash out amount</Text>
                             <Text style={{color:'#fff',fontSize:22}}>${amount?amount:'0'}.00</Text>
@@ -171,7 +170,7 @@ class Index extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{position:'absolute',width,height:150,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary ,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
                 {success&&<Success handleClose={()=>this.setState({switchProfile:false})} handleConfirm={this.handleBack} title={'Success'} subtitle={'The transaction is successful'} visible={success}/>}
@@ -179,7 +178,7 @@ class Index extends Component {
                 {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
             </View>
                 {loading&&<View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.18)',position:'absolute',justifyContent:'center',alignItems:'center'}}>
-            <ActivityIndicator size={'large'} color={'#1582F4'}/>
+            <ActivityIndicator size={'large'} color={Colors.textColor}/>
             </View>}
         </>
         );

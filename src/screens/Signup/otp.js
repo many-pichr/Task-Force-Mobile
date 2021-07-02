@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     Dimensions,
     StatusBar,
-    ScrollView,
+    ScrollView, ImageBackground,
 } from 'react-native';
 import assets from '../../assets'
 import { Button,Input } from 'react-native-elements';
@@ -19,6 +19,7 @@ import Api from '../../api/User';
 import {setLoading} from '../../redux/actions/loading';
 import {connect} from 'react-redux';
 import {setSetting} from '../../redux/actions/setting';
+import {Colors} from '../../utils/config';
 const validate = require("validate.js");
 const {width,height} = Dimensions.get('window')
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 60 : 0
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
         textAlignVertical:'center',
         width: 45,
         height: 45,
-        color:'#1582F4',
+        color:Colors.textColor,
         borderWidth: 0,
         borderBottomWidth: 1,
         backgroundColor:'rgb(255,255,255)',
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     },
 
     underlineStyleHighLighted: {
-        borderColor: "#1582F4",
+        borderColor: Colors.primary,
     },
 });
 
@@ -73,6 +74,10 @@ class App extends Component {
             status:'',
         }
     }
+    componentDidMount(): void {
+        this.props.set(false)
+    }
+
     handleNext=(index,value)=>{
             this.props.navigation.navigate('ChooseCategory')
     }
@@ -100,7 +105,7 @@ class App extends Component {
         console.log(error)
     return (
 
-        <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
+        <ImageBackground source={assets.background} style={{flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
             <ScrollView style={{flex:1}}>
 
@@ -128,7 +133,7 @@ class App extends Component {
                           onPress={this.handleVerify}
                           titleStyle={{fontSize:20}}
                           buttonStyle={{paddingVertical:10,width:width*0.8,borderRadius:10,marginTop:20
-                              ,backgroundColor:'#1582F4',alignSelf:'center'}}
+                              ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                       />
                       <View style={{width:'100%',flexDirection:'row',marginTop:30,justifyContent:'center'}}>
                           <Text style={{color:'#7F838D'}}>Not receive otp? </Text>
@@ -144,7 +149,7 @@ class App extends Component {
           {/*  <Text>Get Start</Text>*/}
           {/*</TouchableOpacity>*/}
             </ScrollView>
-        </View>
+        </ImageBackground>
 
     );
   }

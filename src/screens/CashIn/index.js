@@ -26,6 +26,7 @@ import {ItemFavorite} from '../../components/Items';
 import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
+import {Colors} from '../../utils/config'
 import {Success} from '../../components/Dialog';
 const {width,height} = Dimensions.get('window')
 
@@ -94,7 +95,7 @@ class Index extends Component {
     }
     handleBack=()=>{
         this.setState({success:false});
-        this.props.navigation.goBack()
+        this.props.navigation.goBack({refresh:true})
 
     }
     render() {
@@ -106,7 +107,7 @@ class Index extends Component {
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss} style={{zIndex:1}}>
-                    <HeaderText title={"Cash In"} handleBack={()=>this.props.navigation.goBack()}/>
+                    <HeaderText title={"Cash In"} handleBack={()=>this.props.navigation.goBack({refresh:false})}/>
                     <Text style={{color:'#fff',fontSize:20,alignSelf:'center',marginTop:10}}>
                         Choose Payment Method
                     </Text>
@@ -114,7 +115,7 @@ class Index extends Component {
                         containerStyle={{marginTop:50}}
                         inputContainerStyle={{width:'100%'}}
                         value={amount}
-                        labelStyle={{color:'#1582F4'}}
+                        labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({amount:val})}
                         keyboardType={'numeric'}
                         placeholder='0.00'
@@ -137,7 +138,7 @@ class Index extends Component {
                                     <Text style={{marginLeft:20,fontSize:18,width:'70%'}}>
                                         {item.title}
                                     </Text>
-                                    {check===index&&<Icon name={'done'} size={25} color={'#1582F4'}/>}
+                                    {check===index&&<Icon name={'done'} size={25} color={Colors.textColor}/>}
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -146,7 +147,7 @@ class Index extends Component {
                     />
                     <View style={{height:100,width:'100%',alignSelf:'center',}}>
                         <TouchableOpacity disabled={!disable} onPress={()=>this.setState({showPin:true})}
-                                          style={{flexDirection:'row',alignItems:'center',paddingHorizontal:20,height:70,backgroundColor:disable?'#1582F4':'rgba(21,130,244,0.74)',borderRadius:10,width:'75%'}}>
+                                          style={{flexDirection:'row',alignItems:'center',paddingHorizontal:20,height:70,backgroundColor:disable?Colors.textColor:Colors.primaryBlur,borderRadius:10,width:'75%'}}>
                         <View style={{width:'50%'}}>
                             <Text style={{color:'#fff',fontSize:15}}>Cash in amount</Text>
                             <Text style={{color:'#fff',fontSize:22}}>${amount?amount:'0'}.00</Text>
@@ -157,7 +158,7 @@ class Index extends Component {
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>
-                <View style={{position:'absolute',width,height:150,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
                 {success&&<Success handleClose={()=>this.setState({switchProfile:false})} handleConfirm={this.handleBack} title={'Success'} subtitle={'The transaction is successful'} visible={success}/>}
@@ -165,7 +166,7 @@ class Index extends Component {
                 {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
             </View>
                 {loading&&<View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.18)',position:'absolute',justifyContent:'center',alignItems:'center'}}>
-            <ActivityIndicator size={'large'} color={'#1582F4'}/>
+            <ActivityIndicator size={'large'} color={Colors.textColor}/>
             </View>}
         </>
         );

@@ -48,12 +48,12 @@ class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
-            region: new AnimatedRegion({
+            region: {
                 latitude: 11.5564,
                 longitude: 104.9282,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            }),
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            },
             loading:true,
             coordinate:null,
             title:'Add Task',
@@ -109,6 +109,15 @@ class Index extends Component {
 
         this.fadeIn()
         this.handleGetPredata()
+        Geolocation.getCurrentPosition(info => {
+            const region ={
+                latitude: info.coords.latitude,
+                longitude: info.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0521,
+            }
+            this.setState({region})
+        });
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude,coordinate:info.coords}));
     }
     handleGetViewData=async ()=>{
@@ -129,20 +138,23 @@ class Index extends Component {
     }
     handleConfirm=async ()=>{
         this.setState({loading:true,confirm:false})
+        const {params} = this.props.route;
         await User.AddJob(
             this.state.values,
             this.state.imagesUrl,
-            this.props.user.id,
-            {location:this.state.isLocation,
-                long:this.state.long,lat:this.state.lat},this.state.noExpiry
+            this.props.user.id,this.state.isLocation,this.state.noExpiry,this.state.region
         ).then((rs) => {
             this.setState({confirm:false})
-            this.props.navigation.navigate("My Post",{refresh:true})
+            if(params&&params.add){
+                this.props.navigation.goBack()
+            }else{
+                this.handleReset();
+                this.props.navigation.navigate("MyPost",{refresh:true});
+            }
         })
         this.setState({loading:false})
     }
     setLocation=(event,coordinate)=>{
-        console.log(event)
         this.setState({coordinate:coordinate})
         // this.setState({coordinate:coordinate,lat:coordinate.latitude,long:coordinate.longitude})
     }
@@ -313,24 +325,81 @@ class Index extends Component {
         }
 
     }
+    handleReset=()=>{
+        const newState={
+            region: {
+                latitude: 11.5564,
+                longitude: 104.9282,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            },
+            loading:false,
+            coordinate:null,
+            title:'Add Task',
+            warning:false,
+            view:false,
+            long:104.9282,
+            confirm:false,
+            noExpiry:false,
+            pinLocation:false,
+            lat:11.5564,
+            tab:0,
+            isLocation:false,
+            values:{
+                title:'',
+                category:0,
+                description:'',
+                level:0,
+                deadline:'',
+                priority:0,
+                extra:'',
+                reward:'',
+                location:'',
+                start:'',
+                end:'',
+                address:'',
+                skill:[],
+                noExpiry:false
+
+            },
+            focus:false,
+            error:[],
+            choosedate:false,
+            images:['','','','',''],
+            imagesUrl:['','','','',''],
+            loadings:[false,false,false,false,false],
+            category:[],
+            level:[],
+            deadline:[],
+            priority:[],
+            skill:[],
+            selectSkill:false
+        }
+        this.setState(newState)
+    }
     handleWarning=async ()=>{
         this.setState({warning:false})
         this.props.navigation.navigate("CashIn",{post:true})
     }
+    onRegionChangeComplete=(region)=>{
+        console.log(region)
+        // this.setState({coordinate:coordinate,lat:coordinate.latitude,long:coordinate.longitude})
+        this.setState({region})
+    }
     render() {
-        const {user} = this.props;
-        const {error,focus,warning,loading,pinLocation,noExpiry,loadings,view,title,confirm,selectSkill,choosedate,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
+        const {params} = this.props.route;
+        const {error,region,focus,warning,loading,pinLocation,noExpiry,loadings,view,title,confirm,selectSkill,choosedate,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
         const data={error,focus,values}
         return (
         <>
-        <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
+        <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#FFF' }}>
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
             <View style={{zIndex:1}}>
                 <View style={{width:'100%',alignSelf:'center',marginTop:barHight,flexDirection:'row',alignItems:'flex-end'}}>
                     <View style={{width:'10%',justifyContent:'flex-end'}}>
-                        <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
+                        {params&&params.add&& <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
                             <Icons name={'chevron-left'} color={'#fff'} size={35}/>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </View>
                     <View style={{width:'70%',alignSelf:'center',alignItems:'center'}}>
                         <Text style={{color:'#fff',fontSize:25}}>{title}</Text>
@@ -338,14 +407,14 @@ class Index extends Component {
                     <View style={{width:'15%',justifyContent:'flex-end'}}/>
                 </View>
                 <View style={{flex:1,width:width*0.9,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
-                    backgroundColor:'#fff',marginTop:10,height:height}}>
+                    backgroundColor:'#f7f9fc',marginTop:10,height:height}}>
                     {title=="View Post"&&
                     <View style={{width:'90%',alignSelf:'center',height:60,flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:'#1582F4',justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:'#1582F4'}}>Post Detail</Text>
+                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{color:Colors.textColor}}>Post Detail</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:'#1582F4',justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:'#1582F4'}}>Agents</Text>
+                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{color:Colors.textColor}}>Agents</Text>
                         </TouchableOpacity>
                     </View>}
                     {tab == 0 ?
@@ -357,12 +426,12 @@ class Index extends Component {
                                 paddingBottom: 200,
                             }}>
                                 <View style={{flexDirection: 'row', marginTop: 5}}>
-                                    <Text style={{color: '#1582F4', width: '50%', textAlign: 'left'}}>Photos</Text>
-                                    <Text style={{color: '#1582F4', width: '50%', textAlign: 'right'}}>0/5</Text>
+                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'left'}}>Photos</Text>
+                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'right'}}>0/5</Text>
                                 </View>
-                                <View style={{flexDirection: 'row'}}>
+                                <View style={{flexDirection: 'row',borderRadius:10,}}>
                                     <FlatList
-                                        contentContainerStyle={{marginTop: 10, flexDirection: 'row'}}
+                                        style={{marginTop: 10, flexDirection: 'row',borderRadius:10,}}
                                         data={[0,1,2,3,4]}
                                         renderItem={({item, index}) =>(
                                             images[index]!=''?
@@ -373,11 +442,17 @@ class Index extends Component {
                                                     height: ((width * 0.9) * 0.9) / 3,
                                                     backgroundColor: 'rgba(21,130,244,0.18)',
                                                     justifyContent: 'center',
+                                                    borderRadius:10,
                                                     alignItems: 'center'
                                                 }}/>
-                                                    {loadings[index]&&<View style={{alignItems:'center',justifyContent:'center',width:'100%',height:'100%',position:'absolute',backgroundColor:'rgba(0,0,0,0.22)'}}>
+                                                  <View style={{marginLeft: index == 0 ? 0 : 10,
+                                                      width: ((width * 0.9) * 0.9) / 3,
+                                                      height: ((width * 0.9) * 0.9) / 3,
+                                                      justifyContent: 'center',
+                                                      borderRadius:10,
+                                                      alignItems: 'center',position:'absolute',backgroundColor:'rgba(0,0,0,0.22)'}}>
                                                         <ActivityIndicator color={'#fff'}/>
-                                                    </View>}
+                                                    </View>
                                                 </TouchableOpacity>:
                                                     <TouchableOpacity onPress={()=>this.handlePicker(index)} style={{
                                                 marginLeft: index == 0 ? 0 : 10,
@@ -385,10 +460,11 @@ class Index extends Component {
                                                 height: ((width * 0.9) * 0.9) / 3,
                                                 backgroundColor: 'rgba(21,130,244,0.18)',
                                                 justifyContent: 'center',
+                                                        borderRadius:10,
                                                 alignItems: 'center'
                                             }}>
-                                                <Icons name={'add-photo-alternate'} size={30} color={'#1582F4'}/>
-                                                <Text style={{fontSize: 13, color: '#1582F4'}}>Add Photo</Text>
+                                                <Icons name={'add-photo-alternate'} size={30} color={Colors.textColor}/>
+                                                <Text style={{fontSize: 13, color: Colors.textColor}}>Add Photo</Text>
                                             </TouchableOpacity>)
                                         }
                                         horizontal
@@ -406,7 +482,7 @@ class Index extends Component {
                                 <CustomPicker handleInput={this.handleInput} items={level} label={'Task Level'} name={'level'} title={'Medium'} value={data}/>
                                 <CustomPicker noError required date disabled={noExpiry} onPress={()=>this.setState({choosedate:true})} label={'Deadline'} title={(values.start&&values.end)?(FormatDate(values.start)+' - '+FormatDate(values.end)):"Choose Date"} name={'deadline'} value={data}/>
                                 <View style={{flexDirection:'row',marginTop:5}}>
-                                    <Text style={{fontSize: 18, color: Colors.primary,width:'85%'}}>No Expiry</Text>
+                                    <Text style={{fontSize: 18, color: Colors.textColor,width:'85%'}}>No Expiry</Text>
                                     <Switch
                                         trackColor={{ false: "#767577", true: "#1884ff" }}
                                         // thumbColor={isLocation ? "#f5dd4b" : "#f4f3f4"}
@@ -417,7 +493,7 @@ class Index extends Component {
                                 </View>
                                 <CustomPicker required handleInput={this.handleInput} items={priority} label={'Priority'} name={'priority'} title={'Urgent'} value={data}/>
                                 <TouchableOpacity style={{width:'100%'}} onPress={()=>this.setState({selectSkill:true})} >
-                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.primary,marginTop:10,}}>Skill</Text>
+                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:10,}}>Skill</Text>
                                     <View style={{width:'100%',flexDirection:'row',borderBottomWidth:1,borderBottomColor:Colors.primary}}>
                                         <Text style={{width:'50%',fontSize:RFPercentage(2)}}>Select Skill</Text>
                                         <View style={{width:'47%',alignItems:'flex-end'}}>
@@ -445,7 +521,7 @@ class Index extends Component {
 
                                 <View style={{width: '100%', marginTop: 10}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: RFPercentage(2.5), color: Colors.primary,width:'85%'}}>Location</Text>
+                                        <Text style={{fontSize: RFPercentage(2.5), color: Colors.textColor,width:'85%'}}>Location</Text>
                                         <Switch
                                             trackColor={{ false: "#767577", true: "#81b0ff" }}
                                             // thumbColor={isLocation ? "#f5dd4b" : "#f4f3f4"}
@@ -466,17 +542,14 @@ class Index extends Component {
                                         <MapView
                                             showsUserLocation={true}
                                             provider={PROVIDER_GOOGLE}
-                                            onPress={info => this.setLocation(info.nativeEvent.coordinate)}
                                             mapType={Platform.OS == "android" ? "standard" : "standard"}
-                                            region={{
-                                                latitude: lat,
-                                                longitude: long,
-                                                latitudeDelta: 0.1,
-                                                longitudeDelta: 0.1
-                                            }}
+                                            region={region}
                                             style={{width: '100%', height: '100%', borderRadius: 0}}
                                         >
-                                            {coordinate != null && <Marker description={''} coordinate={coordinate}/>}
+                                            <MapView.Marker.Animated
+                                                ref={marker => { this.marker = marker }}
+                                                coordinate={{longitude: region.longitude,latitude: region.latitude}}
+                                            />
                                         </MapView>
                                         <TouchableOpacity  onPress={()=>this.setState({pinLocation:true})} style={{width:'100%',height:'100%',position:'absolute'}}>
 
@@ -487,7 +560,7 @@ class Index extends Component {
                                         onPress={this.submitButton}
                                         style={{
                                             alignSelf: 'center',
-                                            backgroundColor:'#1477ff',
+                                            backgroundColor:Colors.textColor,
                                             width:RFPercentage(40),
                                             height:RFPercentage(8),
                                             marginTop:RFPercentage(7.5),
@@ -516,7 +589,7 @@ class Index extends Component {
                 </View>
 
             </View>
-            <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+            <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
             </View>
 
@@ -579,36 +652,31 @@ class Index extends Component {
                         <MapView
                             showsUserLocation={true}
                             provider={PROVIDER_GOOGLE}
+                            onRegionChangeComplete={this.onRegionChangeComplete}
                             onPress={info => this.setLocation(info.nativeEvent,info.nativeEvent.coordinate)}
                             mapType={Platform.OS == "android" ? "standard" : "standard"}
-                            region={{
-                                latitude: lat,
-                                longitude: long,
-                                latitudeDelta: 0.1,
-                                longitudeDelta: 0.1
-                            }}
-                            style={{width: '100%', height: height+(height*0.1), borderRadius: 0}}
+                            initialRegion={region}
+                            style={{width: '100%', height: height+(height*0.1), borderRadius: 0,justifyContent:'center',alignItems:'center'}}
                         >
-                            {coordinate != null &&
-                            <MapView.Marker.Animated
-                                ref={marker => { this.marker = marker }}
-                                coordinate={coordinate}
-                            />
-                            // <Marker description={''} coordinate={coordinate}/>
-                            }
+
+                            {/*<MapView.Marker.Animated*/}
+                            {/*    ref={marker => { this.marker = marker }}*/}
+                            {/*    coordinate={{longitude: region.longitude,latitude: region.latitude}}*/}
+                            {/*/>*/}
+                            <Icon name={'place'} size={40} style={{marginBottom:30}} color={'rgb(240,0,47)'}/>
                         </MapView>
 
                 </View>
-                <TouchableOpacity onPress={()=>this.setState({pinLocation:false})} style={{position:'absolute',right:20,top:20,width:RFPercentage(8),height:RFPercentage(8),alignItems:'center',justifyContent:'center'}}>
-                    <Icons name={'close'} size={RFPercentage(6)} color={'red'}/>
+                <TouchableOpacity onPress={()=>this.setState({pinLocation:false})} style={{backgroundColor:'rgba(0,0,0,0.19)',paddingHorizontal:10,position:'absolute',left:20,top:40,width:RFPercentage(8),borderRadius:20,alignItems:'center',justifyContent:'center'}}>
+                    <Icons name={'keyboard-backspace'} size={RFPercentage(6)} color={Colors.textColor}/>
                 </TouchableOpacity>
             </Modal>}
             {confirm&&<Confirm handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'Are you sure to submit?'} visible={confirm}/>}
             {warning&&<MoneyWarning handleClose={()=>this.setState({warning:false})} handleConfirm={this.handleWarning} title={'Warning!'} subtitle={'Your balance is not enough'} visible={warning}/>}
         </View>
             {loading&&<View style={{width,height:height*1.2,position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
-        <ActivityIndicator size={'large'} color={'#1582F4'}/>
-        </View>}
+            <ActivityIndicator size={'large'} color={Colors.textColor}/>
+            </View>}
         </>
     );
   }

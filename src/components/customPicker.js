@@ -43,30 +43,33 @@ const App = (props) => {
         return (<>
                 {props.input?
                     <View style={{width:'100%'}}>
-                        <Text style={{fontSize:RFPercentage(2.5),color:Colors.primary,marginTop:5,}}>{props.nolabel?"":props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
+                        <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:5,}}>{props.nolabel?"":props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
                         <TextInput
                         placeholder={props.title}
+                        placeholderTextColor={Colors.primaryBlur}
                         multiline={props.textarea}
                         value={values[props.name]}
                         numberOfLines={4}
+                        onFocus={()=>props.onFocus&&props.onFocus(true)}
+                        onBlur={()=>props.onFocus&&props.onFocus(false)}
                         keyboardType={props.number?'numeric':'default'}
                         onChangeText={value=>props.handleInput(props.name,value)}
-                        labelStyle={[{color:'#1582F4'},{fontWeight:'normal'}]}
+                        labelStyle={[{color:Colors.textColor},{fontWeight:'normal'}]}
                         style={[{height:props.textarea?100:40,borderBottomWidth:1,borderBottomColor:Colors.primary,width:'100%'}]}
 
                     />
                     </View>:<>
                         {props.view?
                             <View style={{width:'100%',borderBottomWidth:1,borderBottomColor:Colors.primary}}>
-                                <Text style={{fontSize:RFPercentage(2.5),color:Colors.primary,marginTop:5,}}>{props.nolabel?"":props.label}</Text>
+                                <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:5,}}>{props.nolabel?"":props.label}</Text>
                                 <Text style={{marginTop:10,marginBottom:3,marginLeft:5,fontSize:RFPercentage(2)}}>{values[props.name]}</Text>
                             </View>:<>
                                 {props.date?<>
                                     <TouchableOpacity disabled={props.disabled} onPress={()=>props.subDate?toggleSlider(true):props.onPress()} style={{width:'100%',height:60,marginTop:5,borderBottomWidth:1,borderBottomColor:Colors.primary}}>
-                                        <Text style={{fontSize:RFPercentage(2.5),color:Colors.primary}}>{props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
+                                        <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor}}>{props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
                                         <View style={{flexDirection:'row',alignItems:'center'}}>
                                             <Text style={{marginTop:10,marginBottom:3,marginLeft:5,fontSize:RFPercentage(2),width:'88%'}}>{values[props.name]?moment(values[props.name]).format('DD/MM/YYYY'):props.title}</Text>
-                                            <MaterialIcons name={'today'} size={30} color={"#125bb5"}/>
+                                            <MaterialIcons name={'today'} size={30} color={Colors.textColor}/>
                                         </View>
 
                                     </TouchableOpacity>
@@ -89,7 +92,7 @@ const App = (props) => {
 
                                     >
                         <View style={{width:'100%',height:60,marginTop:5,borderBottomWidth:1,borderBottomColor:Colors.primary}}>
-                            <Text style={{fontSize:RFPercentage(2.5),color:Colors.primary}}>{props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
+                            <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor}}>{props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
                             <View style={{flexDirection:'row',alignItems:'center'}}>
                             <Text style={{marginTop:10,marginBottom:3,marginLeft:5,fontSize:RFPercentage(2),width:'88%'}}>{getLabel(props.items,values[props.name])}</Text>
                                 <MaterialIcons name={'arrow-drop-down'} size={25}/>
@@ -102,7 +105,7 @@ const App = (props) => {
                         </>}</>}
                         </>}
             {!props.noError&&<Text style={{width:'100%',fontSize:RFPercentage(1.8),color:'#ff514d'}}>
-                {focus&&error&&error[props.name]&&error[props.name][0]}
+                {focus&&error&&(focus[props.name]||focus==true)&&error[props.name]&&error[props.name][0]}
             </Text>}
             <ActionSheet ref={dateSlider} gestureEnabled={true}>
                 <View style={{width,height:250,backgroundColor:'#fff'}}>

@@ -12,7 +12,7 @@ import {
     ScrollView,
     Dimensions,
     FlatList,
-    RefreshControl,
+    RefreshControl, KeyboardAvoidingView, Keyboard,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -26,6 +26,7 @@ import {ItemFavorite} from '../../components/Items';
 import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
+import {Colors} from '../../utils/config';
 const {width,height} = Dimensions.get('window')
 
 const list=[
@@ -85,7 +86,7 @@ class Index extends Component {
     handleVerify=async ()=>{
         const {map,amount,check,showPin} = this.state;
         this.setState({showPin:false})
-        this.props.set(true)
+        // this.props.set(true)
         await User.Post("/api/User/top-up", {
             "amount": amount,
             "bank": "testing",
@@ -106,7 +107,7 @@ class Index extends Component {
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
-                <View style={{zIndex:1}}>
+                <TouchableOpacity activeOpacity={1} style={{zIndex:1}} onPress={Keyboard.dismiss}>
                     <HeaderText title={"Change Pin"} handleBack={()=>this.props.navigation.goBack()}/>
                     <Text style={{color:'#fff',fontSize:20,alignSelf:'center',marginTop:10}}>
 
@@ -115,10 +116,11 @@ class Index extends Component {
                         containerStyle={{marginTop:50}}
                         inputContainerStyle={{width:'100%'}}
                         value={current}
-                        labelStyle={{color:'#1582F4'}}
-                        onChangeText={val=>this.setState({current:val})}
+                        labelStyle={{color:Colors.textColor}}
+                        onChangeText={val=>this.setState({current:current.length==4&&current.length<val.length?current:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
+                        secureTextEntry={true}
                         label={"Enter Current Pin"}
                         leftIcon={
                             <Icon
@@ -129,11 +131,12 @@ class Index extends Component {
                         }
                     />
                     <Input
-                        containerStyle={{marginTop:50}}
+                        containerStyle={{marginTop:10}}
                         inputContainerStyle={{width:'100%'}}
                         value={newpin}
-                        labelStyle={{color:'#1582F4'}}
-                        onChangeText={val=>this.setState({newpin:val})}
+                        disabled={current.length!=4}
+                        labelStyle={{color:Colors.textColor}}
+                        onChangeText={val=>this.setState({newpin:newpin.length==4&&newpin.length<val.length?newpin:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
                         label={"Enter New Pin"}
@@ -146,13 +149,15 @@ class Index extends Component {
                         }
                     />
                     <Input
-                        containerStyle={{marginTop:20}}
+                        containerStyle={{marginTop:10}}
                         inputContainerStyle={{width:'100%'}}
                         value={confirm}
-                        labelStyle={{color:'#1582F4'}}
-                        onChangeText={val=>this.setState({confirm:val})}
+                        disabled={!(current.length==4&&newpin.length==4)}
+                        labelStyle={{color:Colors.textColor}}
+                        onChangeText={val=>this.setState({confirm:confirm.length==4&&confirm.length<val.length?confirm:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
+                        errorMessage={confirm.length==4&&newpin!=confirm?"Pin not match!":""}
                         label={"Confirm Pin"}
                         leftIcon={
                             <Icon
@@ -164,14 +169,14 @@ class Index extends Component {
                     />
                     <View style={{height:100,width:width,alignSelf:'center',alignItems:'center'}}>
                         <TouchableOpacity
-                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:70,backgroundColor:'#1582F4',borderRadius:10}}>
+                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:RFPercentage(8),backgroundColor:Colors.textColor,borderRadius:10}}>
 
                             <Text style={{color:'#fff',fontSize:25}}>Submit</Text>
 
                         </TouchableOpacity>
                     </View>
-                </View>
-                <View style={{position:'absolute',width,height:150,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+                </TouchableOpacity>
+                <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
                 {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}

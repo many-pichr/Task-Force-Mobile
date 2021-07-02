@@ -11,61 +11,114 @@ import {
     RefreshControl,
     Dimensions,
     FlatList,
-    Alert, ScrollView, ActivityIndicator,
+    Alert, ScrollView, ActivityIndicator, TouchableOpacity,
 } from 'react-native';
 import {MyPostList} from '../../components/ListScreen';
 import {ItemProgress,ItemComplete, ItemPost} from '../../components/Items';
 import {setLoading} from '../../redux/actions/loading';
+import {setFocus} from '../../redux/actions/screenfocus';
 import {connect} from 'react-redux';
 import User from '../../api/User';
 import {Confirm} from '../../components/Dialog';
+import {Colors} from '../../utils/config';
+import {setNotify} from '../../redux/actions/notification';
+import {SliderPicker} from 'react-native-slider-picker';
+import {Button} from 'react-native-elements';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
+            confirm:false,
             active:0,
             loading:true,
             refreshing:false,
+            currentValue:0,
             data:[],
             inprogress:[],
+            value:0,
+            proModal:true,
             cancel:false,
-            completed:[],
+            completed:[]
         }
         this.myRef = React.createRef();
-    }
-    componentDidMount(): void {
-        this.fadeIn()
-        this.props.navigation.addListener('focus', () => {
+        this._unsubscribe = this.props.navigation.addListener('focus', (action, state) => {
             // do something
+            this.props.setFocus({
+                "MyPost": true,
+                "isProgress": false,
+                "isComplete": false,
+            })
             const params = this.props.route.params;
             if(params&&params.refresh){
                 this.handleGetPost(false)
             }
         });
+        this._unsubscribeBlur = this.props.navigation.addListener('blur', (action, state) => {
+            this.props.setFocus({
+                "MyPost": false,
+                "isProgress": false,
+                "isComplete": false,
+            })
+        });
+    }
+    componentDidMount(): void {
+        this.fadeIn()
         this.handleGetPost(false)
         // this.props.set(true)
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
     }
-    handleGetPost=async (refreshing)=>{
-        await User.GetList('/api/JobPost/CurrentUser?_end=10&_start=0&_order=ASC&_sort=id').then((rs) => {
-            if(rs.status){
-                const items=[]
-                const completed=[]
-                for(var i=0;i<rs.data.length;i++){
-                    if(rs.data[i].status=='selected'||rs.data[i].status=='completed'){
-                        if(rs.data[i].completedStatus<100&&rs.data[i].status=='selected'){
-                            items.push(rs.data[i])
-                        }else if(rs.data[i].status=='completed'){
-                            completed.push(rs.data[i])
+    componentWillUnmount() {
+        this._unsubscribe();
+        this._unsubscribeBlur();
+    }
+    handleGetPost=async (refresh)=>{
+            await User.GetList('/api/JobPost/CurrentUser?_end=10&_start=0&_order=ASC&_sort=id').then((rs) => {
+                if(rs.status){
+                    const items=[]
+                    const completed=[]
+                    for(var i=0;i<rs.data.length;i++){
+                        if(rs.data[i].status=='selected'||rs.data[i].status=='completed'){
+                            if(rs.data[i].completedStatus<100&&rs.data[i].status=='selected'){
+                                items.push(rs.data[i])
+                            }else{
+                                completed.push(rs.data[i])
+                            }
                         }
                     }
+                    this.setState({completed,data:rs.data,inprogress:items,refreshing:false,loading:false})
                 }
-                this.setState({completed,data:rs.data,inprogress:items,refreshing:false,loading:false})
-            }
+            })
+        this.handleSetNotify()
+    }
+    handleSetNotify=(status)=>{
+        const {notify,focus} = this.props;
+        notify.isMyPost=false;
+        focus.MyPost=true;
+        if(status==1){
+            notify.isProgress=false;
+            focus.isProgress=true;
+            focus.isComplete=false
+        }else if(status==2){
+            notify.isComplete=false;
+            focus.isProgress=false;
+            focus.isComplete=true;
+
+        }else{
+            focus.isProgress=false;
+            focus.isComplete=false;
+        }
+        this.props.setNotify(notify)
+        console.log('focus===>',focus)
+        this.props.setFocus({
+            "MyPost": focus.MyPost,
+            "isProgress": focus.isProgress,
+            "isComplete": focus.isComplete,
         })
-        // this.props.set(false)
+
+        User.Put("/api/ManuNotification/"+notify.id,notify)
+        this.props.navigation.navigate("MyPost",{refresh:true});
     }
     handleNext=()=>{
             this.props.navigation.navigate('Signin')
@@ -114,9 +167,9 @@ class Index extends Component {
     handleAction=(index,item)=>{
         const {user} = this.props
         if(index==1){
-           this.props.navigation.navigate('ViewPost',{title:'View Post',view:true,id:item.id})
+           this.props.navigation.navigate('ViewPost',{title:'View Post',view:true,id:item.id,post:true})
        }else if(index==2){
-           this.props.navigation.navigate('AddPost',{title:'Edit Post',view:true,id:item.id})
+           this.props.navigation.navigate('AddPost',{title:'Edit Post',view:true,id:item.id,add:true})
        }else if(index==4){
            this.props.navigation.navigate('Comment',{title:'Edit Post',item:item,userId:user.id})
        }else if(index==7){
@@ -130,21 +183,25 @@ class Index extends Component {
     }
     handleSwitch=(status)=>{
         this.setState({active:status})
+        this.handleSetNotify(status)
     }
     render() {
         const {cancel,loading,inprogress,data,refreshing,active,completed} = this.state
+        console.log('com===>',completed)
         return (<>
             <MyPostList
                 title={'My Post'}
+                notify={this.props.notify}
                 titles={['All Post','In Progress','Complete']}
                 active={active}
                 add
                 onSwitch={this.handleSwitch}
                 renderItem={active==0?<>
                     {data.length>0?<FlatList
-                        contentContainerStyle={{marginTop:10}}
+                        contentContainerStyle={{marginTop:0,paddingBottom:data.length>3?0:300}}
                         refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={data}
@@ -152,31 +209,38 @@ class Index extends Component {
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView refreshControl={<RefreshControl
-                        colors={["#9Bd35A", "#689F38"]}
+                        colors={["#9Bd35A", Colors.textColor]}
+                        tintColor={Colors.textColor}
                         refreshing={refreshing}
                         onRefresh={()=>this.handleGetPost(true)} />}>
-                        <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
+                        <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
                             {loading?
-                                <ActivityIndicator size={'large'} color={'#0D70D9'} />:
-                                <Text style={{fontSize:20,color:'#0D70D9'}}>
+                                <ActivityIndicator size={'large'} color={Colors.textColor} />:
+                                <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>}
                         </View>
                     </ScrollView>}</>:active==1?<>
                     {inprogress.length>0?<FlatList
-                        contentContainerStyle={{marginTop:10}}
+                        contentContainerStyle={{marginTop:0,paddingBottom:inprogress.length>3?0:300}}
+                        refreshControl={<RefreshControl
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
+                            refreshing={refreshing}
+                            onRefresh={()=>this.handleGetPost(true)} />}
                         data={inprogress}
                         renderItem={({item,index}) =><ItemProgress onPress={()=>this.handleAction(1,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}>
-                            <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
+                            <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
                                 {loading?
                                     <ActivityIndicator />:
-                                    <Text style={{fontSize:20,color:'#0D70D9'}}>
+                                    <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>}
                             </View>
@@ -184,24 +248,30 @@ class Index extends Component {
                     </>:
                     <>
                         {completed.length>0?<FlatList
-                            contentContainerStyle={{marginTop:10}}
+                            contentContainerStyle={{marginTop:0,paddingBottom:completed.length>3?0:300}}
+                            refreshControl={<RefreshControl
+                                colors={["#9Bd35A", Colors.textColor]}
+                                tintColor={Colors.textColor}
+                                refreshing={refreshing}
+                                onRefresh={()=>this.handleGetPost(true)} />}
                             data={completed}
                             renderItem={({item,index}) =><ItemComplete isPost={true} onPress={()=>this.handleAction(5,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
-                        />:<ScrollView refreshControl={<RefreshControl
-                            colors={["#9Bd35A", "#689F38"]}
+                        />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
+                            colors={["#9Bd35A", Colors.textColor]}
+                            tintColor={Colors.textColor}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}>
-                            <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
-                                <Text style={{fontSize:20,color:'#0D70D9'}}>
+                            <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
+                                <Text style={{fontSize:20,color:Colors.textColor}}>
                                     No Data
                                 </Text>
                             </View>
                         </ScrollView>}
                     </>
                     }
-                onAdd={()=>this.props.navigation.navigate('AddPost',{title:'Add Post',view:false})}
+                onAdd={()=>this.props.navigation.navigate('AddPost',{title:'Add Post',view:false,add:true})}
 
             />
         {cancel&&<Confirm handleClose={()=>this.setState({cancel:false})} handleConfirm={this.handleCancel} title={'Warning'} subtitle={'Are you sure to cancel?'} visible={cancel}/>}
@@ -233,7 +303,10 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
+        setting: state.setting.setting,
         user: state.user.user,
+        notify: state.notify.notify,
+        focus: state.focus.focus,
     }
 }
 
@@ -242,6 +315,12 @@ const mapDispatchToProps = dispatch => {
         set: (loading) => {
             dispatch(setLoading(loading))
 
+        },
+        setNotify: (notify) => {
+            dispatch(setNotify(notify))
+        },
+        setFocus: (focus) => {
+            dispatch(setFocus(focus))
         }
     }
 }

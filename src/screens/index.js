@@ -24,5 +24,12 @@ import CashIn from './CashIn'
 import CashOut from './CashOut'
 import PinCode from './PinCode'
 import ChangePin from './PinCode/ChangePin'
+import MapPicker from './MyPost/map'
+import FormAbout from './Profile/FormAbout'
+import FormExperience from './Profile/FormExperience'
+import FormEducation from './Profile/FormEducation'
+import FormSkill from './Profile/FormSkill'
+import AddStack from './MyPost/AddStack'
+import Notification from './Notification'
 
-export {ChangePin,CashOut,PinCode,MyJob,TermCondition,CashIn,MyMoney,ViewPost,Otp,StartScreen,Settings,Review,Comment,ChooseProfile,Category,Signin,Signup,ChooseCategory,Home,MyFavorite,JobList,MyPost,AddPost,Message,Chat,Profile}
+export {Notification,AddStack,FormSkill,FormAbout,FormEducation,FormExperience,ChangePin,CashOut,PinCode,MyJob,TermCondition,CashIn,MyMoney,ViewPost,Otp,StartScreen,Settings,Review,Comment,ChooseProfile,Category,Signin,Signup,ChooseCategory,Home,MyFavorite,JobList,MyPost,AddPost,Message,Chat,Profile}

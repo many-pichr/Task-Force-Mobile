@@ -12,16 +12,20 @@ import {
 import { Input,Header } from 'react-native-elements';
 import assets from '../assets/index'
 import Icons from 'react-native-vector-icons/Feather';
+import { Avatar, Badge, Icon, withBadge } from 'react-native-elements'
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import {Colors} from '../utils/config';
+import {setNotify} from '../redux/actions/notification';
+import {connect} from 'react-redux';
 const {width,height} = Dimensions.get('window')
 
-const HeaderOrganizer=(props)=>{
+const Headers=(props)=>{
 
         return (<View>
                 <View style={{width:'90%',height:50,alignItems:'center',flexDirection:'row',alignSelf:'center'}}>
                         <View style={{width:"10%"}}>
                             <TouchableOpacity onPress={props.switchView}>
-                                <Icons name={!props.map?'map':'list'} size={25} color={'#7F838D'}/>
+                                <Icons name={!props.map?'map':'list'} size={25} color={Colors.textColor}/>
                             </TouchableOpacity>
                         </View>
                     <View style={{alignItems:'center',width:'80%'}}>
@@ -41,9 +45,14 @@ const HeaderOrganizer=(props)=>{
                     {/*    </TouchableOpacity>*/}
 
                     </View>
-                        <View style={{width:"10%",alignItems:'center'}}>
-                            <Icons name={'bell'} size={25} color={'#7F838D'}/>
-                        </View>
+                        <TouchableOpacity onPress={props.notiScreen} style={{width:"10%",alignItems:'center'}}>
+                            <Icons name={'bell'} size={25} color={Colors.textColor}/>
+                            {props.notify.count>0&&<Badge
+                                status="error"
+                                value={props.notify.count}
+                                containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                                />}
+                        </TouchableOpacity>
                     </View>
             </View>
 
@@ -61,4 +70,18 @@ const HeaderText=(props)=>{
 
     );
 }
+const mapStateToProps = state => {
+    return {
+        notify: state.notify.notify,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setNotify: (notify) => {
+            dispatch(setNotify(notify))
+        }
+    }
+}
+const HeaderOrganizer =  connect(mapStateToProps, mapDispatchToProps)(Headers)
 export {HeaderOrganizer,HeaderText}

@@ -38,7 +38,7 @@ export default class Index extends Component {
                 back
                 renderItem={<>
                     <FlatList
-                        contentContainerStyle={{marginTop:30}}
+                        contentContainerStyle={{marginTop:0}}
                         data={[1,2,3,4,5,6,7,8,9]}
                         renderItem={({item,index}) =><CustomItem index={index} bottom={index==8?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}

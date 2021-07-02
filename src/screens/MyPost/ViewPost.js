@@ -8,7 +8,7 @@ import {
     View,
     Text,
     Modal,
-    Switch,
+    Linking,
     Platform,
     ScrollView,
     Dimensions,
@@ -33,21 +33,24 @@ import {connect} from 'react-redux';
 import {Confirm} from '../../components/Dialog';
 import FastImage from 'react-native-fast-image';
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import ImageView from 'react-native-image-viewing/dist/ImageViewing';
 const {width,height} = Dimensions.get('window')
 const FormatDate = (date) => {
     return moment(date).format('DD/MM/YYYY')
 };
 class Index extends Component {
     constructor(props) {
+        const { post } =props.route.params
         super(props);
         this.state={
             coordinate:null,
             long:104.9282,
             confirm:false,
             lat:11.5564,
-            tab:0,
+            tab:post?1:0,
             loading:true,
             isLocation:false,
+            viewImage:false,
             values:{
                 id:0,
                 title:'',
@@ -62,8 +65,8 @@ class Index extends Component {
                 skill:[],
 
             },
-            images:['','','','',''],
-            imagesUrl:['','','','',''],
+            images:[],
+            imagesUrl:[],
             loadings:[false,false,false,false,false],
             category:[],
             level:[],
@@ -96,7 +99,7 @@ class Index extends Component {
         this.setState({confirm:true})
     }
     handleConfirm=async ()=>{
-        this.props.set(true)
+        // this.props.set(true)
         await User.AddJob(
             this.state.values,
             this.state.imagesUrl,
@@ -122,6 +125,7 @@ class Index extends Component {
                 if(rs.status){
                     const {data}=rs
                     const newState={... this.state}
+                    console.log(data)
                     newState.values.id=data.id;
                     newState.values.title=data.title;
                     newState.values.category=data.jobCategory.name;
@@ -133,14 +137,19 @@ class Index extends Component {
                     newState.values.address=data.address.toString();
                     newState.values.deadline=data.isNoneExpired?"No Expiry":FormatDate(data.createDate)+" - "+FormatDate(data.expiryDate);
                     newState.isLocation=data.isShowLocation;
-
-                    const images=newState.images
+                    newState.long=data.locLONG;
+                    newState.lat=data.locLAT;
+                    newState.region=data.jobPostArea;
+                    const images=[]
+                    const imagesUrl=[]
                     for(var j=0;j<data.jobPostPhotos.length;j++){
-                        images[j]=(data.jobPostPhotos[j].url)
+                        images.push(data.jobPostPhotos[j].url)
+                        imagesUrl.push({uri:data.jobPostPhotos[j].url})
                     }
                     newState.images=images;
-                    newState.imagesUrl=images;
+                    newState.imagesUrl=imagesUrl;
                     newState.values.skill=data.jobPostSkills;
+                    console.log(newState)
                     this.setState(newState)
                 }
             })
@@ -155,11 +164,11 @@ class Index extends Component {
         this.setState({loading:false})
     }
     handleSelect=async (item)=>{
-        this.props.set(true)
+        this.setState({loading:true})
         await User.Put('/api/JobCandidate/Progress/'+item.id+'/selected',{})
         // await User.Put('/api/JobPost/Progress/'+item.jobPostId+'/selected',{})
         await this.handleGetPredata()
-        this.props.set(false)
+        this.setState({loading:false})
     }
     handleInput=(f,v)=>{
         const newState={... this.state}
@@ -188,8 +197,12 @@ class Index extends Component {
         this.props.set(false)
 
     }
+    openMap=(long,lat)=>{
+        const url=Platform.OS=='ios'?'maps://app?saddr=100+101&daddr='+lat+'+'+long:'google.navigation:q='+lat+'+'+long
+        Linking.openURL(url)
+    }
     render() {
-        const {loading,selected,candidate,confirm,apply,selectSkill,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
+        const {loading,selected,candidate,confirm,apply,selectSkill,region,viewImage,imagesUrl,tab,isLocation,images,category,level,priority,skill,values} = this.state
         const { title,view,home,job } = this.props.route.params;
         const {user} = this.props
         const data={values,error:[],focus:false}
@@ -199,29 +212,30 @@ class Index extends Component {
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
             <View style={{zIndex:1}}>
                 <View style={{width:'100%',alignSelf:'center',marginTop:barHight,flexDirection:'row',alignItems:'flex-end'}}>
-                    <View style={{width:'10%',justifyContent:'flex-end'}}>
+                    <View style={{width:'10%',justifyContent:'flex-end',alignItems:'center'}}>
                         <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
                             <Icons name={'chevron-left'} color={'#fff'} size={35}/>
                         </TouchableOpacity>
                     </View>
-                    <View style={{width:'70%',alignSelf:'center',alignItems:'center'}}>
+                    <View style={{width:'80%',alignSelf:'center',alignItems:'center'}}>
                         <Text style={{color:'#fff',fontSize:25}}>{title}</Text>
                     </View>
-
-                    <TouchableOpacity disabled={!(this.props.user.userType=='2'&&home)}
-                        onPress={()=>this.setState({apply:true})} style={{width:'15%',alignSelf:'center',alignItems:'center'}}>
-                        {this.props.user.userType=='2'&&home&&<Text style={{color:'#fff',fontSize:20}}>Apply</Text>}
-                    </TouchableOpacity>
+                    <View style={{width:'10%',justifyContent:'flex-start'}}>
+                    </View>
+                    {/*<TouchableOpacity disabled={!(this.props.user.userType=='2'&&home)}*/}
+                    {/*    onPress={()=>this.setState({apply:true})} style={{width:'15%',alignSelf:'center',alignItems:'center'}}>*/}
+                    {/*    {this.props.user.userType=='2'&&home&&<Text style={{color:'#fff',fontSize:20}}>Apply</Text>}*/}
+                    {/*</TouchableOpacity>*/}
                 </View>
                 <View style={{width:width*0.9,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
                     backgroundColor:'#fff',marginTop:10,height:height}}>
                     {title=="View Post" &&!home&&!job&&
                     <View style={{width:'90%',alignSelf:'center',height:60,flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:'#1582F4',justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:'#1582F4'}}>Post Detail</Text>
+                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{color:Colors.textColor}}>Agents</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:'#1582F4',justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:'#1582F4'}}>Agents</Text>
+                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{color:Colors.textColor}}>Post Detail</Text>
                         </TouchableOpacity>
                     </View>}
                     {tab == 0 ?
@@ -232,18 +246,19 @@ class Index extends Component {
                                 alignItems: 'center',
                                 paddingBottom: 200,
                             }}>
-                                {images[0]!=''&& <>
-                                <View style={{flexDirection: 'row', marginTop: 5}}>
-                                    <Text style={{color: '#1582F4', width: '50%', textAlign: 'left'}}>Photos</Text>
-                                    <Text style={{color: '#1582F4', width: '50%', textAlign: 'right'}}></Text>
+                                {images.length>0&&images[0]!=''&& <>
+                                <View style={{flexDirection: 'row', marginVertical: 5}}>
+                                    <Text style={{color: Colors.textColor, width: '50%',fontSize:RFPercentage(2.5), textAlign: 'left'}}>Photos</Text>
+                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'right'}}>{images.length} / 5</Text>
                                 </View>
                                 <View style={{flexDirection: 'row'}}>
-                                                <TouchableOpacity>
+                                                <TouchableOpacity onPress={()=>this.setState({viewImage:true})}>
                                                     <FastImage onLoadEnd={()=>this.setState({imgLoading:false})}
                                                                source={{uri:images[0]}}
                                                                resizeMode={FastImage.resizeMode.cover}
                                                                style={{width: ((width * 0.9) * 0.9) ,
                                                                    height: ((width * 0.9) * 0.9) / 2,
+                                                                   borderRadius:10,
                                                                    backgroundColor: 'rgba(21,130,244,0.18)',
                                                                    justifyContent: 'center',
                                                                    alignItems: 'center'}}/>
@@ -259,7 +274,7 @@ class Index extends Component {
                                 <CustomPicker handleInput={this.handleInput} view title={'dsfdfdf'} label={'Deadline'} name={'deadline'} value={data}/>
                                 <CustomPicker handleInput={this.handleInput} view label={'Priority'} name={'priority'} title={'Urgent'} value={data}/>
                                 <View style={{width:'100%'}}>
-                                    <Text style={{fontSize:16,color:Colors.primary,marginTop:10,}}>Skill</Text>
+                                    <Text style={{fontSize:16,color:Colors.textColor,marginTop:10,}}>Skill</Text>
                                 </View>
                                 <FlatList
                                     contentContainerStyle={{marginTop:0}}
@@ -285,7 +300,7 @@ class Index extends Component {
                                     {/*        value={isLocation}*/}
                                     {/*    />*/}
                                     {/*</View>*/}
-                                    {isLocation &&
+                                    {isLocation && region &&
                                     <View style={{
                                         width: '100%',
                                         height: 150,
@@ -299,16 +314,15 @@ class Index extends Component {
                                             provider={PROVIDER_GOOGLE}
                                             onPress={info => this.setLocation(info.nativeEvent.coordinate)}
                                             mapType={Platform.OS == "android" ? "standard" : "standard"}
-                                            region={{
-                                                latitude: lat,
-                                                longitude: long,
-                                                latitudeDelta: 0.8,
-                                                longitudeDelta: 0.8
-                                            }}
-                                            style={{width: '100%', height: '100%', borderRadius: 0}}
+                                            region={region}
+                                            style={{width: '100%', height: '100%', borderRadius: 0,justifyContent:'flex-end',alignItems:'flex-end'}}
                                         >
-                                            {coordinate != null && <Marker description={''} coordinate={coordinate}/>}
+                                            <Marker description={''} coordinate={{latitude: region.latitude,
+                                                longitude: region.longitude}}/>
                                         </MapView>
+                                        <TouchableOpacity onPress={() => this.openMap(region.longitude,region.latitude)} style={{alignItems:'center',justifyContent:'center',position:'absolute',width:50,height:50,backgroundColor:'rgba(24,132,255,0.86)',borderRadius:25,right:5,bottom:5}}>
+                                            <Icon name={'directions'} size={30} color={'#fff'} style={{}}/>
+                                        </TouchableOpacity>
                                     </View>
                                     }
                                     {!view && <Button
@@ -320,7 +334,7 @@ class Index extends Component {
                                             paddingVertical: 13,
                                             width: width * 0.6,
                                             borderRadius: 10,
-                                            backgroundColor: '#1582F4'
+                                            backgroundColor: Colors.textColor
                                         }}
                                     />
                                     }
@@ -332,7 +346,7 @@ class Index extends Component {
                             <FlatList
                                 contentContainerStyle={{marginTop:0}}
                                 data={candidate}
-                                renderItem={({item,index}) =><ItemCandidate selected={selected} viewUser={()=>this.props.navigation.navigate('ViewUser',{userId:item.userId})}
+                                renderItem={({item,index}) =><ItemCandidate selected={selected} viewUser={()=>this.props.navigation.navigate('ViewUser',{userId:item.userId,view:true})}
                                                                             handleSelect={()=>this.handleSelect(item)} status={item.status} date={item.createdDate} item={item} index={index} bottom={index==8?250:0}/>}
                                 keyExtractor={(item, index) => index.toString()}
                                 showsVerticalScrollIndicator={false}
@@ -345,8 +359,8 @@ class Index extends Component {
                                 // refreshing={false}
                                 // onRefresh={()=>this.handleGetPredata(true)} />}
                             >
-                                <View style={{width:width,height:height*0.8,justifyContent:'center',alignItems:'center'}}>
-                                    <Text style={{fontSize:20,color:'#0D70D9'}}>
+                                <View style={{width:'100%',height:height*0.7,justifyContent:'center',alignItems:'center'}}>
+                                    <Text style={{fontSize:20,color:Colors.textColor}}>
                                         No Agent
                                     </Text>
                                 </View>
@@ -356,7 +370,7 @@ class Index extends Component {
                 </View>
 
             </View>
-            <View style={{position:'absolute',width,height:180,backgroundColor:'#1582F4',borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
+            <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
             </View>
 
@@ -394,8 +408,15 @@ class Index extends Component {
             {apply&&<Confirm handleClose={()=>this.setState({apply:false})} handleConfirm={this.handleSubmitApply} title={'Confirm'} subtitle={'Are you sure to submit?'} visible={apply}/>}
         </View>
         {loading&&<View style={{width,height:height*1.2,position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
-            <ActivityIndicator size={'large'} color={'#1582F4'}/>
+            <ActivityIndicator size={'large'} color={Colors.textColor}/>
         </View>}
+            <ImageView
+                images={imagesUrl}
+                imageIndex={0}
+                visible={viewImage}
+                backgroundColor={'#000'}
+                onRequestClose={() => this.setState({viewImage:false})}
+            />
         </>
     );
   }

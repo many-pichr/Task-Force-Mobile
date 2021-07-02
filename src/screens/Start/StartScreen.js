@@ -9,9 +9,10 @@ import {
     Permission,
     Dimensions,
     StatusBar,
-    ImageBackground,
+    ImageBackground, TouchableOpacity, Modal,
 } from 'react-native';
 import assets from '../../assets'
+import FastImage from 'react-native-fast-image'
 import RNBootSplash from "react-native-bootsplash";
 import { Button } from 'react-native-elements';
 import * as Keychain from "react-native-keychain";
@@ -24,15 +25,21 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import Api from '../../api/User';
 import {checkMultiple,requestMultiple, PERMISSIONS} from 'react-native-permissions';
 import OneSignal from '../../../App';
+import {Colors} from '../../utils/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SliderPicker} from 'react-native-slider-picker';
+import Lang from '../Lang'
 const {width,height} = Dimensions.get('window')
 const styles = StyleSheet.create({
     title:{
         textAlign:'justify',marginVertical:10,fontWeight:'bold',fontSize:RFPercentage(3),color:'#20354E'
     },
+    textLan:{fontSize:RFPercentage(1.8),fontFamily:"OdorMeanChey",fontWeight:'bold'},
+    img:{width:50,height:50,borderRadius:25,borderWidth:1,borderColor:'#117485'},
     subTitle:{textAlign:'center',color:'#959595',fontSize:RFPercentage(2)},
     bubble:{width:8,height:6,borderRadius:4,backgroundColor:'#b9b9b9'},
     bubbleContainer:{width:'33.33%',alignItems:'center'},
-    exBubble:{width:16,backgroundColor: '#1582F4'}
+    exBubble:{width:16,backgroundColor: Colors.textColor}
 });
 const titles=['Get Started','Next', "Let's go"]
 const texts=[
@@ -72,6 +79,7 @@ class StartScreen extends Component {
         super(props);
         this.state={
             index:0,
+            proModal:false,
             fadeAnimation: new Animated.Value(0),
             fadeAnimation1: new Animated.Value(0),
         }
@@ -85,47 +93,57 @@ class StartScreen extends Component {
 
         });
         RNBootSplash.hide({ duration: 500,fade:true })
+        // this.handleCheckSetting()
         this.handleGetAuth()
         requestCameraPermission()
+        // AsyncStorage.removeItem('setting')
+    }
+    handleCheckSetting=async ()=>{
+        try {
+            const value = await AsyncStorage.getItem('setting');
+            if (value !== null) {
+                const {setting} = this.props;
+                const values = JSON.parse(value)
+                setting.lang=values.lang;
+                this.props.setSetting(setting)
+                this.setState({proModal:values.lang===""})
+            }else{
+                this.setState({proModal:true})
+            }
+        } catch (error) {
+            // Error retrieving data
+        }
+    }
+    switchLang=async (lan)=>{
+                const {setting} = this.props;
+                setting.lang=lan;
+                this.props.setSetting(setting)
+                AsyncStorage.setItem('setting',JSON.stringify(setting))
+                // AsyncStorage.removeItem('setting')
+                this.setState({proModal:false})
     }
     handleGetAuth=async ()=>{
-        console.log('==========>Start')
         const credentials = await Keychain.getGenericPassword();
-
-        // try {
-        //
-        //     await Keychain.setGenericPassword(
-        //         'sdfdfd',
-        //         'dfdfdf',
-        //         {
-        //             accessControl: null,
-        //             securityLevel: null,
-        //             storage: undefined
-        //         }
-        //     );
-        //
-        // } catch (err) {
-        //     alert(err)
-        // }
-
-
         if (credentials) {
             // TODO: Validate user, and password (can be token) against server
             const auth = credentials.password
             await Api.CheckUser(auth).then((rs) => {
                 if(rs.status){
+                    this.handleCheckSetting()
+                    const {setting} = this.props;
                     Keychain.setGenericPassword(JSON.stringify(rs.data), auth)
                     this.props.setUser(rs.data)
-                    this.props.setSetting({isAgent:rs.data.userType=='1'?false:true})
+                    setting.isAgent=rs.data.userType=='1'?false:true;
+                    console.log('testings====>',setting,rs.data.userType)
+                    this.props.setSetting(setting)
                     this.props.navigation.replace('RootBottomTab')
-                    console.log('==========>end',rs.data)
                 }else{
-                    this.props.set(false)
+                    // this.props.set(false)
                 }
             })
         }else{
             this.props.navigation.navigate('Start',{profileType:'1'})
-            this.props.set(false)
+            // this.props.set(false)
         }
     }
     handleNext=(index,value)=>{
@@ -157,7 +175,8 @@ class StartScreen extends Component {
         }).start();
     };
     render() {
-        const {index} = this.state
+        const {proModal} = this.state
+        console.log(123,this.props.setting)
         return (
             <>
                 <Swiper loop={false} ref='swiper'>
@@ -170,8 +189,8 @@ class StartScreen extends Component {
                                 <Image source={images[0].source} style={{width:images[0].width*0.7,height:images[0].height*0.7}}/>
                             </View>
                             <View style={{width:'80%',alignSelf:'center',alignItems:'center',marginTop:20}}>
-                                <Text style={styles.title}>{texts[0].title}</Text>
-                                <Text style={styles.subTitle}>{texts[0].subtitle+index}</Text>
+                                <Text style={styles.title}>{texts[0].title}  {this.props.setting.lang}</Text>
+                                <Text style={styles.subTitle}>{texts[0].subtitle}</Text>
                             </View>
                         </View>
                         <View style={{width:width,height:height*0.3,alignItems:'center'}}>
@@ -183,7 +202,7 @@ class StartScreen extends Component {
                                 title={titles[0]}
                                 onPress={()=>this.handleNext(0,3)}
                                 titleStyle={{fontSize:RFPercentage(3)}}
-                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:'#1582F4'}}
+                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:Colors.textColor}}
                             />
                         </View>
 
@@ -211,7 +230,7 @@ class StartScreen extends Component {
                                 title={titles[1]}
                                 onPress={()=>this.handleNext(1,3)}
                                 titleStyle={{fontSize:RFPercentage(3)}}
-                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:'#1582F4'}}
+                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:Colors.textColor}}
                             />
                         </View>
                     </ImageBackground>
@@ -236,11 +255,36 @@ class StartScreen extends Component {
                                 title={titles[2]}
                                 onPress={()=>this.handleNext(2,3)}
                                 titleStyle={{fontSize:RFPercentage(3)}}
-                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:'#1582F4'}}
+                                buttonStyle={{height:RFPercentage(8),width:width*0.6,borderRadius:10,backgroundColor:Colors.textColor}}
                             />
                         </View>
                     </ImageBackground>
                 </Swiper>
+
+                {this.props.setting.lang==""&&proModal&&
+                <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
+                    <TouchableOpacity activeOpacity={1} onPress={()=>this.setState({proModal:true})} style={{width,height:height,backgroundColor:'rgba(0,0,0,0.25)',alignItems:'center',justifyContent:'center'}}>
+                        <View style={{borderRadius:20,justifyContent:'center',backgroundColor:'rgb(255,255,255)',width:'80%',alignSelf:'center',height:200}}>
+                            <Text style={{alignSelf:'center',fontSize:RFPercentage(2.5),marginBottom:20,color:'red'}}>
+                                Choose Language
+                            </Text>
+                            <View style={{flexDirection:'row',alignSelf:'center',width:'70%'}}>
+                                <TouchableOpacity style={{width:'50%',alignItems:'center'}} onPress={()=>this.switchLang('kh')}>
+                                <FastImage source={assets.kh} style={styles.img} resizeMode={FastImage.resizeMode.cover}/>
+                                    <Text style={styles.textLan}>
+                                        ភាសារខ្មែរ
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{width:'50%',alignItems:'center'}} onPress={()=>this.switchLang('en')}>
+                                    <FastImage source={assets.en} style={styles.img} resizeMode={FastImage.resizeMode.cover}/>
+                                    <Text style={styles.textLan}>
+                                        English
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>}
             </>
         );
     }

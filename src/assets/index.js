@@ -6,4 +6,6 @@ export default {
     loading:require('./images/loading.png'),
     background:require('./images/background.png'),
     taskforce:require('./images/taskforce.png'),
+    kh:require('./images/kh.png'),
+    en:require('./images/en.jpg'),
 }

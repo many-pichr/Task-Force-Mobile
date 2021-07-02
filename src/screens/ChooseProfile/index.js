@@ -3,6 +3,7 @@ import {Animated, StyleSheet, View, Text, Image, TouchableOpacity, Dimensions, S
 import assets from '../../assets'
 import { Button } from 'react-native-elements';
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import {Colors} from '../../utils/config';
 const {width,height} = Dimensions.get('window')
 
 const data=[
@@ -45,7 +46,7 @@ export default class Index extends Component {
     return (
         <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#f9f9f9' }}>
             <StatusBar  barStyle = "light-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
-            <View style={{width:width,height:height*0.3,alignItems:'center',justifyContent:'center',backgroundColor:'#158aff'}}>
+            <View style={{width:width,height:height*0.3,alignItems:'center',justifyContent:'center',backgroundColor:Colors.primary}}>
             <View style={{width:'90%',alignSelf:'center'}}>
                 <Text style={{fontSize:RFPercentage(3),color:'#fff'}}>Welcome to Task Force</Text>
                 <Text style={{fontSize:RFPercentage(2),color:'#fff',marginTop:10}}>Introduce  yourself. To make sure that we will find
