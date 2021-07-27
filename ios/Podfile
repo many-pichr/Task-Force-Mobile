@@ -12,7 +12,7 @@ target 'taskforce' do
     pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
     pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
     pod 'react-native-google-maps', path: '../node_modules/react-native-maps'
-
+    pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
     pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
     pod 'react-native-image-crop-tools', :path => '../node_modules/react-native-image-crop-tools'
 

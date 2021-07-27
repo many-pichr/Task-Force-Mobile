@@ -1,5 +1,5 @@
 import React, { Component} from "react";
-import {ImageBackground, View, Text,Alert, Animated, Modal, Dimensions, StatusBar} from 'react-native';
+import {ImageBackground, View, Text, Alert, Animated, Modal, Dimensions, StatusBar, Image} from 'react-native';
 import RootStackNavigator from './Navigation'
 import RootStackNavigatorAgent from './NavigationAgent'
 import {setLoading} from './src/redux/actions/loading';
@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {Colors} from './src/utils/config';
 import User from './src/api/User';
 import {setNotify} from './src/redux/actions/notification';
+import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const storeData = async (value) => {
     try {
@@ -126,7 +127,6 @@ class App extends Component{
     }
     render(){
          const {loading,setting,focus} = this.props;
-         console.log(focus)
   return (
       <View style={{flex:1,width,height}}>
           <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent={true}/>
@@ -145,9 +145,13 @@ class App extends Component{
               position:'absolute',
               backgroundColor: 'rgb(255,255,255)',
               alignItems: 'center',
-              justifyContent: 'center'
           }}>
-              <ActivityIndicator size={50} animating={true} color={Colors.textColor}/>
+              <Image source={assets.logo1} style={{width:RFPercentage(60),height:RFPercentage(15),marginTop:height/8}}/>
+              <Image source={assets.logo_txt} style={{width:RFPercentage(50),height:RFPercentage(7),marginTop:0}}/>
+
+              <View style={{width:'100%',height:'100%',position:'absolute',justifyContent:'center'}}>
+                  <ActivityIndicator size={50} animating={true} color={Colors.textColor}/>
+              </View>
           </ImageBackground>
       }
           </View>);

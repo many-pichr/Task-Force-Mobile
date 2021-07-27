@@ -18,6 +18,7 @@ import {HeaderOrganizer} from '../../components/HeaderOrganizer'
 import {Headers} from '../../components/Header'
 import Icon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {TextHorizontal} from '../../components/Texts'
 import {CustomItem} from '../../components/Items'
 import LottieView from 'lottie-react-native';
@@ -38,9 +39,8 @@ import User from '../../api/User';
 import BlinkView from 'react-native-blink-view'
 import { TouchableOpacity } from 'react-native';
 import {SlideShow} from '../../components/SlideShow';
+import Lang from '../../Language';
 const {width,height} = Dimensions.get('window')
-
-
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -50,6 +50,7 @@ class Index extends Component {
             start:true,
             loading:true,
             show:true,
+            appleMap:false,
             fadeAnimation: new Animated.Value(0),
             region: {
                 latitude: 11.5564,
@@ -88,6 +89,7 @@ class Index extends Component {
         setTimeout(()=>{
             // this.fadeIn();
             this.setState({loading: false})
+
         }, 2000);
         setTimeout(()=>{
             // this.fadeIn();
@@ -254,13 +256,13 @@ class Index extends Component {
         this.setState(newState)
     }
     render() {
-        const {filters,isFilter,values,loading,map,type,region,focus,refreshing,filter,posts,categories,show,level} = this.state;
+        const {appleMap,filters,isFilter,values,loading,map,type,region,focus,refreshing,filter,posts,categories,show,level} = this.state;
         const {user,notify} = this.props;
         const filterData={categories,level};
         const renderItem = ({ item, index }: any) => (
             <Item key={`intro ${index}`} index={index} source={item.photoURL} title={item.label} />
         );
-        console.log(categories)
+        const {lang} = this.props.setting;
         return (
             <>
                 <View style={{flex:1,alignItems: 'center',backgroundColor:'#F5F7FA' }}>
@@ -278,7 +280,7 @@ class Index extends Component {
 
                                     <MapView
                                         showsUserLocation={true}
-                                        provider={PROVIDER_GOOGLE}
+                                        provider={!appleMap&&PROVIDER_GOOGLE}
                                         onRegionChangeComplete={this.onRegionChangeComplete}
                                         mapType={type}
                                         region={region}
@@ -300,7 +302,7 @@ class Index extends Component {
                             colors={["#9Bd35A", "#689F38"]}
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
-                            renderItem={({item,index}) =>index<5&&<CustomItem onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
+                            renderItem={({item,index}) =>index<5&&<CustomItem lang={lang} onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
                             />
@@ -319,38 +321,40 @@ class Index extends Component {
                                             onRefresh={()=>this.handleGetPost(true)} />}>
                                 <SlideShow/>
                                 <View style={{alignItems:'center',paddingBottom:100}}>
-                                    <TextHorizontal title={"Recommend for you"} onPress={()=>this.props.navigation.navigate('JobList')}/>
+                                    <TextHorizontal title={Lang[lang].recommend} onPress={()=>this.props.navigation.navigate('JobList')}/>
                                     <View style={{width:'90%',alignSelf:'center',marginTop:0}}>
                                         <FlatList
+                                            scrollEnabled={false}
                                             data={posts}
                                             refreshControl={<RefreshControl
                                                 colors={["#9Bd35A", "#689F38"]}
                                                 refreshing={refreshing}
                                                 onRefresh={()=>this.handleGetPost(true)} />}
-                                            renderItem={({item,index}) =>index<5&&<CustomItem onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
+                                            renderItem={({item,index}) =>index<5&&<CustomItem lang={lang} onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
                                             keyExtractor={(item, index) => index.toString()}
                                             showsVerticalScrollIndicator={false}
                                         />
                                     </View>
-                                    <TextHorizontal title={"Top Categories"} onPress={()=>this.props.navigation.navigate('Category')}/>
-                                    <FlatList
-                                        data={categories}
-                                        extraData={categories}
-                                        renderItem={renderItem}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        horizontal={true}
-                                        showsHorizontalScrollIndicator={false}
-                                        showsVerticalScrollIndicator={false}
-                                    />
-                                    <TextHorizontal title={"Latest Post"} onPress={()=>this.props.navigation.navigate('JobList')}/>
+                                    {/*<TextHorizontal title={Lang[lang].tcategory} onPress={()=>this.props.navigation.navigate('Category')}/>*/}
+                                    {/*<FlatList*/}
+                                    {/*    data={categories}*/}
+                                    {/*    extraData={categories}*/}
+                                    {/*    renderItem={renderItem}*/}
+                                    {/*    keyExtractor={(item, index) => index.toString()}*/}
+                                    {/*    horizontal={true}*/}
+                                    {/*    showsHorizontalScrollIndicator={false}*/}
+                                    {/*    showsVerticalScrollIndicator={false}*/}
+                                    {/*/>*/}
+                                    <TextHorizontal title={Lang[lang].lpost} onPress={()=>this.props.navigation.navigate('JobList')}/>
                                     <View style={{width:'90%',alignSelf:'center',marginTop:10}}>
                                         <FlatList
                                             data={posts}
+                                            scrollEnabled={false}
                                             refreshControl={<RefreshControl
                                                 colors={["#9Bd35A", "#689F38"]}
                                                 refreshing={refreshing}
                                                 onRefresh={()=>this.handleGetPost(true)} />}
-                                            renderItem={({item}) =><CustomItem onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
+                                            renderItem={({item}) =><CustomItem lang={lang} onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
                                             keyExtractor={(item, index) => index.toString()}
                                             showsVerticalScrollIndicator={false}
                                         />
@@ -406,8 +410,19 @@ class Index extends Component {
                                 color="white"
                             />
                         }
-                        buttonStyle={{width:40,height:40,borderRadius:30,backgroundColor:'rgba(24,132,255,0.91)'}}
+                        buttonStyle={{width:40,height:40,borderRadius:30,backgroundColor:'rgba(24,132,255,0.91)',marginBottom:10}}
                     />
+                    {/*{Platform.OS=="ios"&&<Button*/}
+                    {/*    onPress={()=>this.setState({appleMap:!this.state.appleMap})}*/}
+                    {/*    icon={*/}
+                    {/*        <FontAwesome*/}
+                    {/*            name={appleMap?"google":"apple"}*/}
+                    {/*            size={25}*/}
+                    {/*            color="white"*/}
+                    {/*        />*/}
+                    {/*    }*/}
+                    {/*    buttonStyle={{width:40,height:40,borderRadius:30,backgroundColor:'rgba(24,132,255,0.91)'}}*/}
+                    {/*/>}*/}
                 </View>}
             </>
         );
@@ -419,6 +434,7 @@ const mapStateToProps = state => {
         loading: state.loading.loading,
         user: state.user.user,
         notify: state.notify.notify,
+        setting: state.setting.setting,
     }
 }
 

@@ -14,9 +14,10 @@ import Icons from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { enableScreens } from "react-native-screens";
-import {Colors} from './src/utils/config';
+import {Colors, Fonts} from './src/utils/config';
 import {setNotify} from './src/redux/actions/notification';
 import {connect} from 'react-redux';
+import Lang from './src/Language';
 enableScreens();
 
 console.disableYellowBox = true;
@@ -24,8 +25,8 @@ console.disableYellowBox = true;
 const RootStack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();
 
-const BottomMenu = ({notify}) => {
-
+const BottomMenu = ({notify,setting}) => {
+    const {lang} = setting;
   return (
     <BottomTab.Navigator
       initialRouteName="Discover"
@@ -37,6 +38,7 @@ const BottomMenu = ({notify}) => {
         name="Home"
         component={Home}
         options={{
+            title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].home}</Text>,
           tabBarIcon: ({ focused }) => (
             <Icon
               name="home-outline"
@@ -51,6 +53,7 @@ const BottomMenu = ({notify}) => {
             title={'My Task'}
             component={MyJob}
             options={{
+                title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].mjob}</Text>,
                 tabBarBadge: notify.isMyTask?'':false,
                 tabBarIcon: ({ focused }) => (
                     <MaterialIcons
@@ -65,6 +68,7 @@ const BottomMenu = ({notify}) => {
             name="Favorite"
             component={MyFavorite}
             options={{
+                title:<Text style={{fontFamily:Fonts.primary,fontSize:10}}>{Lang[lang].favorite}</Text>,
                 tabBarIcon: ({ focused }) => (
                     <Icon
                         name="heart-outline"
@@ -77,6 +81,7 @@ const BottomMenu = ({notify}) => {
       <BottomTab.Screen
         name="Message"
         options={{
+            title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].message}</Text>,
           tabBarIcon: ({ focused }) => (
             <Icon
               name="message-outline"
@@ -90,6 +95,7 @@ const BottomMenu = ({notify}) => {
         <BottomTab.Screen
             name="Profile"
             options={{
+                title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].profile}</Text>,
                 tabBarIcon: ({ focused }) => (
                     <Icons
                         name="user"
@@ -107,6 +113,7 @@ const BottomMenu = ({notify}) => {
 const mapStateToProps = state => {
     return {
         notify: state.notify.notify,
+        setting: state.setting.setting,
     }
 }
 
@@ -145,6 +152,7 @@ const RootStackNavigator = ()=> {
             <RootStack.Screen name="MyMoney" component={MyMoney}/>
             <RootStack.Screen name="CashIn" component={CashIn}/>
             <RootStack.Screen name="CashOut" component={CashOut}/>
+            <RootStack.Screen name="ViewUser" component={Profile}/>
             <RootStack.Screen name="TermCondition" component={TermCondition}/>
             <RootStack.Screen name="PinCode" component={PinCode}/>
             <RootStack.Screen name="ChangePin" component={ChangePin}/>

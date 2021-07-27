@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Animated, StyleSheet, View, Text, Image,TouchableOpacity,Dimensions } from 'react-native';
 import { Input,Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import {Colors} from '../../utils/config'
+import {Colors, Fonts} from '../../utils/config';
 import Icon from 'react-native-vector-icons/Feather';
 import moment from 'moment'
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import Lang from '../../Language';
 const {width,height} = Dimensions.get('window')
 const list=[
     {title:'C.N Vidyavihar',subTitle:'Singapore Training Course'},
@@ -19,8 +20,8 @@ const About=(props)=>{
     return (
         <View style={{alignSelf:'center',width:'100%',backgroundColor:'#fff',paddingVertical:10}}>
             <View style={{flexDirection:'row',alignItems:'center',width:'90%',alignSelf:'center'}}>
-                <Text style={{fontSize:20,width:'80%'}}>
-                   About
+                <Text style={{fontSize:RFPercentage(2.5),width:'80%',fontFamily:Fonts.primary}}>
+                    {Lang[props.lang].about}
                 </Text>
                 {!props.view&&<TouchableOpacity style={{width:'20%',alignItems:'flex-end'}} onPress={props.onAdd}>
                     <Icons name={'edit'} color={Colors.textColor} size={25}/>
@@ -38,8 +39,8 @@ const Education=(props)=>{
         <View style={{alignSelf:'center',width:'100%',backgroundColor:'#fff',paddingVertical:10,marginTop:10}}>
             <View style={{width:'95%',alignSelf:'center'}}>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Text style={{fontSize:20,width:'80%'}}>
-                        Education
+                    <Text style={{fontSize:RFPercentage(2.5),width:'80%',fontFamily:Fonts.primary}}>
+                        {Lang[props.lang].edu}
                     </Text>
                     {!props.view&&<TouchableOpacity style={{width:'20%',alignItems:'flex-end'}} onPress={()=>props.onPress(3,true)}>
                         <Icon name={'plus'} color={Colors.textColor} size={30}/>
@@ -86,9 +87,9 @@ const [more,setMore] = useState(false);
         <View style={{alignSelf:'center',width:'100%',backgroundColor:'#fff',paddingVertical:10,marginTop:10}}>
             <View style={{width:'95%',alignSelf:'center'}}>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                <Text style={{fontSize:20,width:'80%'}}>
-                    Experience
-                </Text>
+                    <Text style={{fontSize:RFPercentage(2.5),width:'80%',fontFamily:Fonts.primary}}>
+                        {Lang[props.lang].exp}
+                    </Text>
                     {!props.view&&<TouchableOpacity style={{width:'20%',alignItems:'flex-end'}} onPress={()=>props.onPress(2,true)}>
                         <Icon name={'plus'} color={Colors.textColor} size={30}/>
                     </TouchableOpacity>}
@@ -138,8 +139,8 @@ const Skill=(props)=>{
         <View style={{alignSelf:'center',width:'100%',backgroundColor:'#fff',marginTop:10,paddingVertical:10}}>
             <View style={{width:'95%',alignSelf:'center'}}>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
-                    <Text style={{fontSize:20,width:'80%'}}>
-                        Skill
+                    <Text style={{fontSize:RFPercentage(2.5),width:'80%',fontFamily:Fonts.primary}}>
+                        {Lang[props.lang].skill}
                     </Text>
                     {!props.view&&<TouchableOpacity style={{width:'20%',alignItems:'flex-end'}} onPress={()=>props.onPress(4,true,props.data)}>
                         <Icons name={'edit'} color={Colors.textColor} size={30}/>
@@ -164,8 +165,8 @@ const Skill=(props)=>{
                 }
             </View>
             {props.data.length>3&&<TouchableOpacity style={{marginTop:20,alignSelf:'center'}} onPress={()=>setMore(!more)}>
-                <Text style={{color:Colors.textColor}}>
-                    {more?'Show Less':"Show More"}
+                <Text style={{color:Colors.textColor,fontFamily:Fonts.primary}}>
+                    {more?Lang[props.lang].showless:Lang[props.lang].showmore}
                 </Text>
             </TouchableOpacity>}
         </View>

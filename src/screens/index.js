@@ -31,5 +31,6 @@ import FormEducation from './Profile/FormEducation'
 import FormSkill from './Profile/FormSkill'
 import AddStack from './MyPost/AddStack'
 import Notification from './Notification'
+import EditProfile from './Profile/EditProfile'
 
-export {Notification,AddStack,FormSkill,FormAbout,FormEducation,FormExperience,ChangePin,CashOut,PinCode,MyJob,TermCondition,CashIn,MyMoney,ViewPost,Otp,StartScreen,Settings,Review,Comment,ChooseProfile,Category,Signin,Signup,ChooseCategory,Home,MyFavorite,JobList,MyPost,AddPost,Message,Chat,Profile}
+export {Notification,EditProfile,FormSkill,FormAbout,FormEducation,FormExperience,ChangePin,CashOut,PinCode,MyJob,TermCondition,CashIn,MyMoney,ViewPost,Otp,StartScreen,Settings,Review,Comment,ChooseProfile,Category,Signin,Signup,ChooseCategory,Home,MyFavorite,JobList,MyPost,AddPost,Message,Chat,Profile}

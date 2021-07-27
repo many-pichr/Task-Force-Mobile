@@ -20,10 +20,11 @@ import {setFocus} from '../../redux/actions/screenfocus';
 import {connect} from 'react-redux';
 import User from '../../api/User';
 import {Confirm} from '../../components/Dialog';
-import {Colors} from '../../utils/config';
+import {Colors, Fonts} from '../../utils/config';
 import {setNotify} from '../../redux/actions/notification';
 import {SliderPicker} from 'react-native-slider-picker';
 import {Button} from 'react-native-elements';
+import Lang from '../../Language';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
@@ -90,6 +91,7 @@ class Index extends Component {
                     this.setState({completed,data:rs.data,inprogress:items,refreshing:false,loading:false})
                 }
             })
+        this.setState({refreshing:false,loading:false})
         this.handleSetNotify()
     }
     handleSetNotify=(status)=>{
@@ -187,12 +189,12 @@ class Index extends Component {
     }
     render() {
         const {cancel,loading,inprogress,data,refreshing,active,completed} = this.state
-        console.log('com===>',completed)
+        const {lang} = this.props.setting;
         return (<>
             <MyPostList
-                title={'My Post'}
+                title={Lang[lang].mtask}
                 notify={this.props.notify}
-                titles={['All Post','In Progress','Complete']}
+                titles={[Lang[lang].allpost,Lang[lang].inprogress,Lang[lang].complete]}
                 active={active}
                 add
                 onSwitch={this.handleSwitch}
@@ -205,10 +207,10 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={data}
-                        renderItem={({item,index}) =><ItemPost isPost={true} status={item.status} onPress={()=>this.handleAction(1,item)} handleAction={this.handleAction} item={item} index={index} bottom={(index+1)==data.length?250:0}/>}
+                        renderItem={({item,index}) =><ItemPost lang={lang} isPost={true} status={item.status} onPress={()=>this.handleAction(1,item)} handleAction={this.handleAction} item={item} index={index} bottom={(index+1)==data.length?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
-                    />:<ScrollView refreshControl={<RefreshControl
+                    />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
                         colors={["#9Bd35A", Colors.textColor]}
                         tintColor={Colors.textColor}
                         refreshing={refreshing}
@@ -216,8 +218,8 @@ class Index extends Component {
                         <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
                             {loading?
                                 <ActivityIndicator size={'large'} color={Colors.textColor} />:
-                                <Text style={{fontSize:20,color:Colors.textColor}}>
-                                    No Data
+                                <Text style={{fontSize:20,color:Colors.textColor,fontFamily:Fonts.primary }}>
+                                    {Lang[lang].nodata}
                                 </Text>}
                         </View>
                     </ScrollView>}</>:active==1?<>
@@ -240,8 +242,8 @@ class Index extends Component {
                             <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
                                 {loading?
                                     <ActivityIndicator />:
-                                    <Text style={{fontSize:20,color:Colors.textColor}}>
-                                    No Data
+                                    <Text style={{fontSize:20,color:Colors.textColor,fontFamily:Fonts.primary}}>
+                                        {Lang[lang].nodata}
                                 </Text>}
                             </View>
                         </ScrollView>}
@@ -255,7 +257,7 @@ class Index extends Component {
                                 refreshing={refreshing}
                                 onRefresh={()=>this.handleGetPost(true)} />}
                             data={completed}
-                            renderItem={({item,index}) =><ItemComplete isPost={true} onPress={()=>this.handleAction(5,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
+                            renderItem={({item,index}) =><ItemComplete lang={lang} isPost={true} onPress={()=>this.handleAction(5,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
                         />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -264,8 +266,8 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}>
                             <View style={{height:height*0.7,justifyContent:'center',alignItems:'center'}}>
-                                <Text style={{fontSize:20,color:Colors.textColor}}>
-                                    No Data
+                                <Text style={{fontSize:20,color:Colors.textColor,fontFamily:Fonts.primary}}>
+                                    {Lang[lang].nodata}
                                 </Text>
                             </View>
                         </ScrollView>}

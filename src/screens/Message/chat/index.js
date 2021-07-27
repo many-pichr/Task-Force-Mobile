@@ -87,7 +87,7 @@ export default class Index extends Component {
                             </Text>
                         </View>
                         <View style={{width:'15%',justifyContent:'center',alignItems:'center'}}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate('ViewUser',{userId:item.toUser.id,view:true})}>
                                 <FastImage onLoadEnd={()=>this.setState({imgLoading:false})}
                                            source={item.toUser.profileURL&&item.toUser.profileURL!=''?{uri:item.toUser.profileURL,priority: FastImage.priority.normal,}:require('../../../assets/images/avatar.png')}
                                            resizeMode={FastImage.resizeMode.contain}

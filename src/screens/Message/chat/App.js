@@ -498,6 +498,7 @@ class App extends Component {
         {
           mediaType: 'photo',
           includeBase64: false,
+            quality:0.4,
           maxWidth: 500,
           maxHeight: 700,
         },

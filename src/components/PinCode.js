@@ -1,18 +1,9 @@
 import React,{Component} from 'react';
 import {
-    Animated,
-    StatusBar,
     TouchableOpacity,
-    StyleSheet,
-    Image,
     View,
-    Text,
     Modal,
-    Platform,
-    ScrollView,
     Dimensions,
-    FlatList,
-    Alert,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import PINCode from '@haskkor/react-native-pincode'
@@ -28,7 +19,11 @@ class Pin extends Component {
         return (
             <Modal visible={true} animationType={'fade'} statusBarTranslucent={true}>
                 <View style={{position: 'absolute', width, height:'100%', backgroundColor: Colors.textColor}}>
-                    <PINCode touchIDDisabled={props.touchId?false:true} status={'enter'} stylePinCodeColorTitle={'#fff'} storedPin={props.user.pinCode}
+                    <PINCode touchIDDisabled={props.touchId?false:true} status={'enter'}
+                             titleEnter={'Enter your PIN'}
+                             subtitleEnter={props.title?props.title:""}
+                             stylePinCodeColorTitle={'#fff'}
+                             storedPin={props.user.pinCode}
                              onClickButtonLockedPage={props.handleClose}
                              stylePinCodeButtonCircle={{width: 80, height: 80, borderRadius: 40}}
                              stylePinCodeColumnButtons={{width: 80, height: 80}}

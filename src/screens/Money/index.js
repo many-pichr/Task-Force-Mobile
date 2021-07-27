@@ -27,6 +27,7 @@ import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {About, Education, Experience, Skill} from '../Profile/Tabs';
 import {Colors} from '../../utils/config';
 import PinCode from '../../components/PinCode';
+import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -126,13 +127,17 @@ class Index extends Component {
                     tintColor={Colors.textColor}
                     refreshing={refreshing}
                     onRefresh={()=>this.handleGetTransaction(true)} />}
-                data={data}
-                renderItem={({item,index}) =>{
+                    data={data}
+                    renderItem={({item,index}) =>{
                     const ref = item.ref?JSON.parse(item.ref):{account:'123 456 780'};
+                    var string = item.description;
+                    var length = 10000;
+                    var trimmedString = string.length > length ?
+                        string.substring(0, length - 3) + "..." : string;
                     return(
 
                     <>
-                    <View style={{width:'100%',height:100,borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?100:0}}>
+                    <View style={{width:'100%',borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?100:0}}>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
                             <View style={{width:'10%'}}>
                                 <Icons name={item.type=='Cash Out'?'arrow-up':'arrow-down'} color={'green'} size={20}/>
@@ -157,23 +162,23 @@ class Index extends Component {
                             <View style={{width:'10%'}}>
                                 <Icons name={'user'} color={Colors.textColor} size={20}/>
                             </View>
-                            <View style={{width:'60%'}}>
+                            <View style={{width:'100%'}}>
                                 <Text style={{fontSize:13}}>
                                     {item.description}
                                 </Text>
                             </View>
                         </View>
-                        <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
+                        <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center',paddingBottom:10}}>
                             <View style={{width:'10%'}}>
 
                             </View>
                             <View style={{width:'40%'}}>
                                 <Text style={{fontSize:13,color:Colors.textColor}}>
-                                    #{ref.account}
+                                    {ref.account&&""+ref.account}
                                 </Text>
                             </View>
                             <View style={{width:'50%',alignItems:'flex-end'}}>
-                                <Text style={{fontSize:13}}>
+                                <Text style={{fontSize:RFPercentage(1.5)}}>
                                     {moment(item.date).format('DD/MM/YYYY HH:mm')}
                                 </Text>
                             </View>
@@ -203,6 +208,7 @@ class Index extends Component {
     render() {
         const {showPin,loading,index,routes,refreshing,data,cashout} = this.state;
         const {user,setting} = this.props;
+        const { face } = this.props.route.params
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
@@ -250,7 +256,7 @@ class Index extends Component {
                         />
                     </View>
 
-                    {showPin&&<PinCode touchId={setting.touchId} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}
+                    {showPin&&<PinCode touchId={face} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}
 
 
                 </View>

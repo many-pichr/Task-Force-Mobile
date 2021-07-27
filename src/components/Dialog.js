@@ -4,7 +4,7 @@ import { ConfirmDialog } from 'react-native-simple-dialogs';
 import Icon  from 'react-native-vector-icons/MaterialIcons'
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
-import {Colors} from '../utils/config';
+import {Colors, Fonts} from '../utils/config';
 const {width,height} = Dimensions.get('window')
 
 const Confirm=(props)=>{
@@ -14,7 +14,7 @@ const Confirm=(props)=>{
                 <TouchableOpacity activeOpacity={0.5} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
                     <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:20}}>
                             <Icon name={'warning'} color={'#ffae00'} size={RFPercentage(12)} style={{alignSelf:'center',marginTop:10}}/>
-                        <View style={{width:'100%',height:'35%',alignItems:'center'}}>
+                        <View style={{width:'100%',height:'42%',alignItems:'center'}}>
                             <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3.5)}}>
                                 {props.title}
                             </Text>
@@ -22,13 +22,13 @@ const Confirm=(props)=>{
                                 {props.subtitle}
                             </Text>
                         </View>
-                        <View style={{width:'90%',height:'18%',flexDirection:'row',alignSelf:'center'}}>
-                            <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%',borderRadius:100,backgroundColor:'red'}}>
-                                <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>NO</Text>
+                        <View style={{width:'100%',height:'20%',flexDirection:'row',alignSelf:'center',borderTopWidth:0.3}}>
+                            <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%'}}>
+                                <Text style={{fontSize:RFPercentage(2.5),color:'#ff003e'}}>NO</Text>
                             </TouchableOpacity>
                             <View style={{width:'5%'}}/>
-                            <TouchableOpacity onPress={props.handleConfirm} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%',borderRadius:100,backgroundColor:'#1477ff'}}>
-                                <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>YES</Text>
+                            <TouchableOpacity onPress={props.handleConfirm} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%',borderLeftWidth:0.3}}>
+                                <Text style={{fontSize:RFPercentage(2.5),color:'#0096ff'}}>YES</Text>
                             </TouchableOpacity>
                         </View>
                         {/*<View style={{alignItems:'center',justifyContent:'center',marginTop:-RFPercentage(7.5),position:'absolute',alignSelf:'center',backgroundColor:'#ffae00',width:RFPercentage(15),height:RFPercentage(15),borderRadius:RFPercentage(7.5)}}>*/}
@@ -122,25 +122,26 @@ const Warning=(props)=>{
     return (
         <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
             <TouchableOpacity activeOpacity={0.5} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
-
-                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:10}}>
-                    <View style={{width:'100%',height:'75%',alignItems:'center'}}>
-                        <Text style={{marginTop:RFPercentage(10),fontSize:RFPercentage(3.5)}}>
+                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:20}}>
+                    <Icon name={'warning'} color={'#ffae00'} size={RFPercentage(12)} style={{alignSelf:'center',marginTop:10}}/>
+                    <View style={{width:'100%',height:'42%',alignItems:'center'}}>
+                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3.5),fontFamily:Fonts.primary}}>
                             {props.title}
                         </Text>
-                        <Text style={{marginTop:RFPercentage(4),fontSize:RFPercentage(2.5)}}>
+                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(2.5),fontFamily:Fonts.primary}}>
                             {props.subtitle}
                         </Text>
                     </View>
-                    <View style={{width:'90%',height:'18%',flexDirection:'row',alignSelf:'center',justifyContent:'center'}}>
-                        <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'80%',height:'100%',borderRadius:10,backgroundColor:'#1477ff'}}>
-                            <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>Close</Text>
+                    <View style={{width:'100%',height:'20%',flexDirection:'row',alignSelf:'center',borderTopWidth:0.3,borderColor:'red'}}>
+                        <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'100%',height:'100%'}}>
+                            <Text style={{fontSize:RFPercentage(2.5),color:'#ff003e',fontFamily:Fonts.primary}}>{props.btn}</Text>
                         </TouchableOpacity>
                     </View>
                     {/*<View style={{alignItems:'center',justifyContent:'center',marginTop:-RFPercentage(7.5),position:'absolute',alignSelf:'center',backgroundColor:'#ffae00',width:RFPercentage(15),height:RFPercentage(15),borderRadius:RFPercentage(7.5)}}>*/}
                     {/*    <Icon name={'warning'} color={'#fff'} size={RFPercentage(8)}/>*/}
                     {/*</View>*/}
                 </TouchableOpacity>
+
             </TouchableOpacity>
         </Modal>
 

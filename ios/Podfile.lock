@@ -45,7 +45,9 @@ PODS:
     - lottie-ios
     - React
   - OneSignal (3.3.0)
-  - Permission-Camera (3.0.1):
+  - Permission-Camera (3.0.5):
+    - RNPermissions
+  - Permission-FaceID (3.0.5):
     - RNPermissions
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -350,7 +352,7 @@ PODS:
     - React-Core
   - RNKeychain (6.2.0):
     - React
-  - RNPermissions (3.0.1):
+  - RNPermissions (3.0.5):
     - React-Core
   - RNReanimated (1.13.3):
     - React-Core
@@ -387,6 +389,7 @@ DEPENDENCIES:
   - lottie-react-native (from `../node_modules/lottie-react-native`)
   - OneSignal (< 4.0, >= 3.0)
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
+  - Permission-FaceID (from `../node_modules/react-native-permissions/ios/FaceID`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -468,6 +471,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/lottie-react-native"
   Permission-Camera:
     :path: "../node_modules/react-native-permissions/ios/Camera"
+  Permission-FaceID:
+    :path: "../node_modules/react-native-permissions/ios/FaceID"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -585,7 +590,8 @@ SPEC CHECKSUMS:
   lottie-ios: a50d5c0160425cd4b01b852bb9578963e6d92d31
   lottie-react-native: 216bd1295fa67b159fdbe5562a7d7b6371da6422
   OneSignal: 48898fc2ee74f84a90b50dfa4b1ca62a84b5d6de
-  Permission-Camera: 0d2d15352e9c54c3ea8686c8c21fb1a9edf3431b
+  Permission-Camera: 24c37a846ff69e0eb7fd4264346550850d5b707a
+  Permission-FaceID: 686384632cc38c62752acfec5a8f5aa958d53849
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 2f8cb5b7533219bf4218a045f92768129cf7050a
   RCTTypeSafety: 512728b73549e72ad7330b92f3d42936f2a4de5b
@@ -629,7 +635,7 @@ SPEC CHECKSUMS:
   RNFS: 93d5b5535eb39d98e6b19009faa8fe717f7ea45d
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
-  RNPermissions: eb94f9fdc0a8ecd02fcce0676d56ffb1395d41e1
+  RNPermissions: 3e5bb8afd93c787681bbacbf54d586a6272ecc92
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
@@ -642,6 +648,6 @@ SPEC CHECKSUMS:
   TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: 660f5bc9e89871256121aced08b987bb8a3051a5
+PODFILE CHECKSUM: bfca0ec66ffe18bb0a5eb5c1efe8c17183eba2b1
 
 COCOAPODS: 1.10.1

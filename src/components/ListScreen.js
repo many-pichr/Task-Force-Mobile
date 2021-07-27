@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Input,Header,Button } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/Feather';
-import {barHight, Colors} from '../utils/config';
+import {barHight, Colors, Fonts} from '../utils/config';
 import {CustomItem} from './Items';
 import { Avatar, Badge, Icon, withBadge } from 'react-native-elements'
 import {RFPercentage} from 'react-native-responsive-fontsize';
@@ -31,7 +31,7 @@ const ListScreen=(props)=>{
                         </TouchableOpacity>
                         </View>}
                         <View style={{width:props.back?'80%':'90%',alignSelf:'center'}}>
-                            <Text style={{color:'#fff',fontSize:25}}>{props.title}</Text>
+                            <Text style={{color:'#fff',fontSize:25,fontFamily:Fonts.primary}}>{props.title}</Text>
                         </View>
                     </View>
 
@@ -54,7 +54,7 @@ const MyPostList=(props)=>{
             <View style={{zIndex:1}}>
                 <View style={[styles.borderCorner,{width:'100%',alignSelf:'center',marginTop:barHight,flexDirection:'row',alignItems:'flex-end'}]}>
                     <View style={{width:'80%',alignSelf:'center'}}>
-                        <Text style={{color:'#fff',fontSize:25}}>{props.title}</Text>
+                        <Text style={{color:'#fff',fontSize:25,fontFamily:Fonts.primary}}>{props.title}</Text>
                     </View>
                     <View style={{width:'10%',alignItems:'flex-end'}}>
                         {props.add&&<TouchableOpacity onPress={props.onAdd} >
@@ -67,16 +67,16 @@ const MyPostList=(props)=>{
                     <View style={{flexDirection:'row'}}>
                         <TouchableOpacity onPress={()=>props.onSwitch(0)} activeOpacity={0.9}
                             style={[styles.borderCorner,{backgroundColor:props.active==0?'#F5F7FA':'#fff',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2)}}>{props.titles[0]}</Text>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[0]}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  onPress={()=>props.onSwitch(1)} activeOpacity={0.9}
                             style={[styles.borderCorner,{backgroundColor:props.active==1?'#F5F7FA':'#fcfcfc',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2)}}>{props.titles[1]}</Text>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[1]}</Text>
                             {props.notify&&props.notify.isProgress&&<Badge value=" " status="error" containerStyle={{position:'absolute',top:-5,right:0}} />}
                         </TouchableOpacity>
                         <TouchableOpacity  onPress={()=>props.onSwitch(2)} activeOpacity={0.9}
                                            style={[styles.borderCorner,{backgroundColor:props.active==2?'#F5F7FA':'#fff',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2)}}>{props.titles[2]}</Text>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[2]}</Text>
                             {props.notify&&props.notify.isComplete&&<Badge value=" " status="error" containerStyle={{position:'absolute',top:-5,right:0}} />}
                         </TouchableOpacity>
                     </View>

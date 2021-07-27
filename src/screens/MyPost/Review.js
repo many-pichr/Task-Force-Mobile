@@ -37,13 +37,14 @@ export default class Index extends Component {
             mainLoading:false,
             scroll:false,
             id:item.id,
-            value:item.completedStatus/10,
+            value:9,
             proModal:false,
             currentValue:0,
             confirm:false,
             values:{
                 comment:'',
-                rate:''
+                rate:'',
+                reason:'',
             }
         }
         this.myRef = React.createRef();
@@ -72,12 +73,36 @@ export default class Index extends Component {
             this.props.navigation.goBack()
     }
     handleSubmit=async ()=>{
-        const {id,value} = this.state;
+        const { item ,userId} = this.props.route.params
+        const {id,value,values} = this.state;
+        const reason=values.reason.length>0?"Reason: "+values.reason+" /n":""
+        const ms=reason+(item.unSatified+1)+"X Organizer Unsatified, Progress to "+value+"0%";
         this.setState({confirm:false,proModal:false,mainLoading:true})
         const url="/api/JobPost/Progress/"+id+"/"+value+0
-        await User.GetList(url)
+        await User.GetList(url);
+        await this.handleSend(ms);
         this.props.navigation.goBack()
         this.setState({mainLoading:false})
+    }
+    handleSend=async (value)=>{
+        const {item} = this.props.route.params;
+        const body={
+            "id": 0,
+            "jobPostId": item.id,
+            "userId": item.user.id,
+            "comment": value,
+            "date": new Date(),
+            "status": "string",
+            "createdDate": new Date(),
+            "createdBy": "string",
+            "modifyDate": "2021-03-19T08:16:36.834Z",
+            "modifyBy": "string",
+            "active": true,
+            "isDelete": true
+        }
+        if(value!="") {
+            await User.Post("/api/JobComment", body)
+        }
     }
     handleChangeStatus=async ()=>{
         const { item } = this.props.route.params
@@ -173,7 +198,11 @@ export default class Index extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>this.setState({proModal:true})} style={{width:250,height:60,alignSelf:'center',marginTop:20,borderRadius:10,
                             backgroundColor:"#ff3445",alignItems:'center',justifyContent:'center'}}>
-                            {loading?<ActivityIndicator color={'#ffff'}/>:<Text style={{color:'#fff',fontSize:18}}>Return Task</Text>}
+                            {loading?<ActivityIndicator color={'#ffff'}/>:<View style={{flexDirection:'row',alignItems:'center'}}>
+                                <Icons name={'sentiment-dissatisfied'} color={'#fff'} size={RFPercentage(4)}/>
+                                {item.unSatified>0&&<Text style={{color:'#fff',fontSize:RFPercentage(3),marginRight:5}}>{item.unSatified}X</Text>}
+                                <Text style={{color:'#fff',fontSize:RFPercentage(3)}}> Unsatisfied</Text>
+                            </View>}
                         </TouchableOpacity>
                     </View>
                     </View>
@@ -188,8 +217,8 @@ export default class Index extends Component {
 
         </View>
             {proModal&&<Modal statusBarTranslucent={true} visible={true} animationType={'fade'} transparent={true}>
-                <TouchableOpacity onPress={()=>this.setState({proModal:false})} style={{width,height:height,backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
-                    <TouchableOpacity activeOpacity={1} style={{width:'95%',height:'40%',borderRadius:10,backgroundColor:'#fff',justifyContent:'center'}}>
+                <TouchableOpacity activeOpacity={1} onPress={()=>this.setState({proModal:false})} style={{width,height:height,backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
+                    <TouchableOpacity onPress={Keyboard.dismiss} activeOpacity={1} style={{width:'95%',borderRadius:10,backgroundColor:'#fff',justifyContent:'center'}}>
                         <View style={{height:50}}>
                             <SliderPicker
                                 // minLabel={'min'}
@@ -229,6 +258,9 @@ export default class Index extends Component {
                             alignSelf:'center',borderRadius:50,justifyContent:'center',alignItems:'center'}}>
                             <Text style={{fontSize:25,color:Colors.textColor}}>{value>0&&value}0%</Text>
                         </View>
+                        <View  style={{width:'90%',alignSelf:'center'}}>
+                        <CustomPicker onFocus={this.handleKeyShow} col={2} handleInput={this.handleInput} input label={'Reason'} title={'Type here  ....'} name={'reason'} textarea value={data}/>
+                        </View>
                         {confirm?
                             <>
                                 <Text style={{alignSelf:'center',marginTop:20,fontSize:18}}>
@@ -265,9 +297,9 @@ export default class Index extends Component {
                             </>:
                             <Button
                                 disabled={!((value/10)>currentValue)}
-                                title={"Update Progress"}
+                                title={"Re-Update Progress"}
                                 onPress={this.handleSubmit}
-                                titleStyle={{fontSize: 20}}
+                                titleStyle={{fontSize: RFPercentage(2)}}
                                 containerStyle={{alignSelf: 'center', marginVertical: 20}}
                                 buttonStyle={{
                                     paddingVertical: 13,

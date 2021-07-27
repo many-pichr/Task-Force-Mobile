@@ -21,7 +21,7 @@ import Feather from 'react-native-vector-icons/Feather'
 import Icon  from 'react-native-vector-icons/MaterialIcons'
 import {CustomItem, ItemCandidate, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import {barHight, Colors} from '../../utils/config';
+import {barHight, Colors, Fonts} from '../../utils/config';
 import CustomPicker from '../../components/customPicker';
 import MapView, {Marker, PROVIDER_GOOGLE,AnimatedRegion,Animated as Animateds} from 'react-native-maps';
 import User from '../../api/User'
@@ -39,6 +39,8 @@ import {Confirm,MoneyWarning} from '../../components/Dialog';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import moment from 'moment';
 import schama from './validator';
+import Lang from '../../Language';
+import {checkForPermissions} from '../../components/Permission';
 const validate = require("validate.js");
 const FormatDate = (date) => {
     return moment(date).format('DD/MM/YYYY')
@@ -54,6 +56,7 @@ class Index extends Component {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             },
+            camera:false,
             loading:true,
             coordinate:null,
             title:'Add Task',
@@ -106,7 +109,7 @@ class Index extends Component {
             if(title) this.setState({title})
             if(view) this.setState({view})
         }
-
+        this.handleCheckPermission()
         this.fadeIn()
         this.handleGetPredata()
         Geolocation.getCurrentPosition(info => {
@@ -120,8 +123,10 @@ class Index extends Component {
         });
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude,coordinate:info.coords}));
     }
-    handleGetViewData=async ()=>{
-
+    handleCheckPermission=async ()=>{
+        checkForPermissions(true,'camera').then((status) => {
+            this.setState({camera:status})
+        })
     }
     handleNext=()=>{
             this.props.navigation.navigate('Signin')
@@ -177,33 +182,41 @@ class Index extends Component {
             { cancelable: true }
         );
     }
-    handleImagePicker=(index,camera)=>{
-        ImagePicker[camera?'launchCamera':'launchImageLibrary'](
-            {
-                mediaType: 'photo',
-                includeBase64: false,
-                // maxHeight: 200,
-                // maxWidth: 200,
-            },
-            (response) => {
-                if(!response.didCancel){
-                    const newState={... this.state}
-                    newState.images[index]=response.uri
-                    newState.loadings[index]=true;
-                    this.setState(newState)
-                    User.UploadImage(response.uri).then((rs) => {
-                        if(rs.status){
-                            const newState={... this.state}
-                            newState.loadings[index]=false;
-                            newState.imagesUrl[index]=rs.data.fileName
-                            this.setState(newState)
-                        }
-                    })
-                }
+    handleImagePicker=(index,cameraType)=>{
+        const {camera} = this.state;
+        if(cameraType&&!camera) {
+            this.handleCheckPermission()
+        }else{
+            ImagePicker[cameraType ? 'launchCamera' : 'launchImageLibrary'](
+                {
+                    mediaType: 'photo',
+                    includeBase64: false,
+                    quality: 0.4,
+                    // maxHeight: 200,
+                    // maxWidth: 200,
+                },
+                (response) => {
+                    if (!response.didCancel) {
+                        const newState = {...this.state}
+                        newState.images[index] = response.uri
+                        newState.loadings[index] = true;
+                        this.setState(newState)
+                        User.UploadImage(response.uri).then((rs) => {
+                            console.log(rs)
+                            if (rs.status) {
+                                const newState = {...this.state}
+                                newState.loadings[index] = false;
+                                newState.imagesUrl[index] = rs.data.fileName
+                                this.setState(newState);
+                                console.log(this.state.loadings)
+                            }
+                        })
+                    }
 
 
-            },
-        )
+                },
+            )
+        }
     }
     changeKeyName=(data)=>{
         const items=[]
@@ -390,6 +403,7 @@ class Index extends Component {
         const {params} = this.props.route;
         const {error,region,focus,warning,loading,pinLocation,noExpiry,loadings,view,title,confirm,selectSkill,choosedate,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
         const data={error,focus,values}
+        const {lang} = this.props.setting;
         return (
         <>
         <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#FFF' }}>
@@ -402,7 +416,7 @@ class Index extends Component {
                         </TouchableOpacity>}
                     </View>
                     <View style={{width:'70%',alignSelf:'center',alignItems:'center'}}>
-                        <Text style={{color:'#fff',fontSize:25}}>{title}</Text>
+                        <Text style={{color:'#fff',fontSize:RFPercentage(2.8),fontFamily:Fonts.primary}}>{Lang[lang].addTask}</Text>
                     </View>
                     <View style={{width:'15%',justifyContent:'flex-end'}}/>
                 </View>
@@ -426,7 +440,7 @@ class Index extends Component {
                                 paddingBottom: 200,
                             }}>
                                 <View style={{flexDirection: 'row', marginTop: 5}}>
-                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'left'}}>Photos</Text>
+                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'left',fontFamily:Fonts.primary}}>{Lang[lang].photo}</Text>
                                     <Text style={{color: Colors.textColor, width: '50%', textAlign: 'right'}}>0/5</Text>
                                 </View>
                                 <View style={{flexDirection: 'row',borderRadius:10,}}>
@@ -445,14 +459,14 @@ class Index extends Component {
                                                     borderRadius:10,
                                                     alignItems: 'center'
                                                 }}/>
-                                                  <View style={{marginLeft: index == 0 ? 0 : 10,
+                                                    {loadings[index]&&<View style={{marginLeft: index == 0 ? 0 : 10,
                                                       width: ((width * 0.9) * 0.9) / 3,
                                                       height: ((width * 0.9) * 0.9) / 3,
                                                       justifyContent: 'center',
                                                       borderRadius:10,
                                                       alignItems: 'center',position:'absolute',backgroundColor:'rgba(0,0,0,0.22)'}}>
                                                         <ActivityIndicator color={'#fff'}/>
-                                                    </View>
+                                                    </View>}
                                                 </TouchableOpacity>:
                                                     <TouchableOpacity onPress={()=>this.handlePicker(index)} style={{
                                                 marginLeft: index == 0 ? 0 : 10,
@@ -464,7 +478,7 @@ class Index extends Component {
                                                 alignItems: 'center'
                                             }}>
                                                 <Icons name={'add-photo-alternate'} size={30} color={Colors.textColor}/>
-                                                <Text style={{fontSize: 13, color: Colors.textColor}}>Add Photo</Text>
+                                                <Text style={{fontSize: 13, color: Colors.textColor}}>{Lang[lang].cphoto}</Text>
                                             </TouchableOpacity>)
                                         }
                                         horizontal
@@ -476,13 +490,13 @@ class Index extends Component {
                                     />
 
                                 </View>
-                                <CustomPicker required handleInput={this.handleInput} input label={'Subject'} title={'Subject'} name={'title'} value={data}/>
-                                <CustomPicker required handleInput={this.handleInput} items={category} label={'Category'} name={'category'} title={'Mobile App UX/UI'} value={data}/>
-                                <CustomPicker required handleInput={this.handleInput} input label={'Description'} title={'Description'} name={'description'} textarea value={data}/>
-                                <CustomPicker handleInput={this.handleInput} items={level} label={'Task Level'} name={'level'} title={'Medium'} value={data}/>
-                                <CustomPicker noError required date disabled={noExpiry} onPress={()=>this.setState({choosedate:true})} label={'Deadline'} title={(values.start&&values.end)?(FormatDate(values.start)+' - '+FormatDate(values.end)):"Choose Date"} name={'deadline'} value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].subject} title={Lang[lang].category} name={'title'} value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} items={category} lang={lang} label={Lang[lang].category} name={'category'} title={'Mobile App UX/UI'} value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].description} title={Lang[lang].description} name={'description'} textarea value={data}/>
+                                <CustomPicker handleInput={this.handleInput} items={level} lang={lang} label={Lang[lang].level} name={'level'} title={'Medium'} value={data}/>
+                                <CustomPicker noError required date disabled={noExpiry} onPress={()=>this.setState({choosedate:true})} label={Lang[lang].deadline} title={(values.start&&values.end)?(FormatDate(values.start)+' - '+FormatDate(values.end)):Lang[lang].pls+Lang[lang].select} name={'deadline'} value={data}/>
                                 <View style={{flexDirection:'row',marginTop:5}}>
-                                    <Text style={{fontSize: 18, color: Colors.textColor,width:'85%'}}>No Expiry</Text>
+                                    <Text style={{fontSize: RFPercentage(2.2), color: Colors.textColor,width:'85%',fontFamily:Fonts.primary}}>{Lang[lang].expiry}</Text>
                                     <Switch
                                         trackColor={{ false: "#767577", true: "#1884ff" }}
                                         // thumbColor={isLocation ? "#f5dd4b" : "#f4f3f4"}
@@ -491,11 +505,11 @@ class Index extends Component {
                                         value={noExpiry}
                                     />
                                 </View>
-                                <CustomPicker required handleInput={this.handleInput} items={priority} label={'Priority'} name={'priority'} title={'Urgent'} value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} lang={lang} items={priority} label={Lang[lang].priority} name={'priority'} title={'Urgent'} value={data}/>
                                 <TouchableOpacity style={{width:'100%'}} onPress={()=>this.setState({selectSkill:true})} >
-                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:10,}}>Skill</Text>
+                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:10,fontFamily:Fonts.primary}}>{Lang[lang].skill}</Text>
                                     <View style={{width:'100%',flexDirection:'row',borderBottomWidth:1,borderBottomColor:Colors.primary}}>
-                                        <Text style={{width:'50%',fontSize:RFPercentage(2)}}>Select Skill</Text>
+                                        <Text style={{width:'50%',fontSize:RFPercentage(2)}}>{Lang[lang].select}{Lang[lang].skill}</Text>
                                         <View style={{width:'47%',alignItems:'flex-end'}}>
                                         <Icon name={'arrow-drop-down'} size={25}/>
                                         </View>
@@ -515,13 +529,13 @@ class Index extends Component {
                                     keyExtractor={(item, index) => index.toString()}
                                     showsVerticalScrollIndicator={false}
                                 />
-                                <CustomPicker required number handleInput={this.handleInput} input label={'Reward ($)'} title={''} name={'reward'} value={data}/>
-                                <CustomPicker number handleInput={this.handleInput} input label={'Extra Tip ($)'} title={''} name={'extra'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} input label={'Address'} title={'Address'} name={'address'} input value={data}/>
+                                <CustomPicker required number handleInput={this.handleInput} input label={Lang[lang].reward} title={'0.00'} name={'reward'} value={data}/>
+                                <CustomPicker number handleInput={this.handleInput} input label={Lang[lang].extra} title={'0.00'} name={'extra'} value={data}/>
+                                <CustomPicker handleInput={this.handleInput} input label={Lang[lang].address} title={'Address'} name={'address'} input value={data}/>
 
                                 <View style={{width: '100%', marginTop: 10}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: RFPercentage(2.5), color: Colors.textColor,width:'85%'}}>Location</Text>
+                                        <Text style={{fontSize: RFPercentage(2.5), color: Colors.textColor,width:'85%',fontFamily:Fonts.primary}}>{Lang[lang].location}</Text>
                                         <Switch
                                             trackColor={{ false: "#767577", true: "#81b0ff" }}
                                             // thumbColor={isLocation ? "#f5dd4b" : "#f4f3f4"}
@@ -569,7 +583,7 @@ class Index extends Component {
                                             alignItems:'center'
                                         }}
                                     >
-                                        <Text style={{color:'#fff',fontSize:RFPercentage(2)}}>Submit</Text>
+                                        <Text style={{color:'#fff',fontSize:RFPercentage(2.5),fontFamily:Fonts.primary}}>{Lang[lang].submit}</Text>
                                     </TouchableOpacity>
                                     }
                                 </View>
@@ -625,20 +639,20 @@ class Index extends Component {
             </Modal>}
             {choosedate&&<Modal statusBarTranslucent={true} visible={choosedate} animationType={'fade'} transparent={true}>
                 <View style={{width,height:height,backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
-                    <View style={{width:RFPercentage(45),paddingBottom:10,backgroundColor:'#fff',borderRadius:20}}>
+                    <View style={{width:'70%',paddingBottom:10,backgroundColor:'#fff',borderRadius:20}}>
                         <View style={{width:'100%',paddingVertical:10,borderBottomWidth:0.3,flexDirection:'row',alignItems:'center'}}>
                             <TouchableOpacity onPress={()=>this.setState({choosedate:false})} style={{width:'15%',alignItems:'center'}}>
                                 <Icon name={'close'} size={30} color={'red'}/>
                             </TouchableOpacity>
-                            <Text style={{fontSize:20,width:'70%',textAlign:'center'}}>Choose Deadline</Text>
+                            <Text style={{fontSize:RFPercentage(2.5),width:'70%',textAlign:'center',fontFamily:Fonts.primary}}>{Lang[lang].cdateline}</Text>
                             <TouchableOpacity onPress={()=>this.setState({choosedate:false})} style={{width:'15%',alignItems:'center'}}>
                                 <Icon name={'done'} size={30} color={'green'}/>
                             </TouchableOpacity>
                         </View>
                         <View style={{width:'90%',alignSelf:'center'}}>
-                        <CustomPicker subDate date handleInput={this.handleInput} label={'Start Date'} title={'Choose Date'} name={'start'} value={data}/>
+                        <CustomPicker subDate choosedate date handleInput={this.handleInput} label={Lang[lang].startdate} title={Lang[lang].pls+Lang[lang].select} name={'start'} value={data}/>
                         <View style={{}}/>
-                        <CustomPicker subDate date handleInput={this.handleInput} label={'End Date'} title={'Choose Date'} name={'end'} value={data}/>
+                        <CustomPicker subDate choosedate date handleInput={this.handleInput} label={Lang[lang].enddate} title={Lang[lang].pls+Lang[lang].select} name={'end'} value={data}/>
                         </View>
 
 
@@ -705,6 +719,7 @@ const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
         user: state.user.user,
+        setting: state.setting.setting,
     }
 }
 

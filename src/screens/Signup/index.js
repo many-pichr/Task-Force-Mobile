@@ -123,7 +123,9 @@ class Index extends Component {
                             if(r.status){
                                 Keychain.setGenericPassword(JSON.stringify(r.data), rs.data.token)
                                 this.props.setUser(r.data)
-                                this.props.setSetting({isAgent:r.data.userType=='1'?false:true})
+                                const {setting}=this.props;
+                                setting.isAgent=r.data.userType=='1'?false:true;
+                                this.props.setSetting(setting)
                                 this.props.navigation.replace('Otp',{signin:true})
                             }else{
                                 this.props.set(false)
@@ -273,6 +275,7 @@ const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
         user: state.user.user,
+        setting: state.setting.setting,
     }
 }
 

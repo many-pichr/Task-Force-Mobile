@@ -18,7 +18,7 @@ import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Colors} from '../../utils/config'
+import {Colors, Fonts} from '../../utils/config';
 import Detail from './Detail'
 import Setting from './Setting'
 import {setLoading} from '../../redux/actions/loading';
@@ -32,12 +32,15 @@ import * as ImagePicker from 'react-native-image-picker';
 import {ImageCroper} from '../../components/ImageCroper';
 import FastImage from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing/dist/ImageViewing';
+import Lang from '../../Language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
             index:1,
+            lang:props.setting.lang,
             imgLoading:true,
             imageUrl:'',
             uri:'',
@@ -72,7 +75,6 @@ class Index extends Component {
 
         const setting = this.props.setting;
         const data = this.props.user;
-        console.log(data)
         if(i.toString()!=data.userType){
             data.userType = i.toString()
             // this.props.setUser(data)
@@ -86,14 +88,15 @@ class Index extends Component {
         }
 
     }
-    handleNextScreen=(screen)=>{
-        this.props.navigation.navigate(screen)
+    handleNextScreen=(screen,props:any)=>{
+        this.props.navigation.navigate(screen,props)
     }
     handleImagePicker=(type)=>{
         ImagePicker[type](
             {
                 mediaType: 'photo',
                 includeBase64: false,
+                quality:0.4,
                 maxHeight: 700,
                 maxWidth: 700,
             },
@@ -140,21 +143,30 @@ class Index extends Component {
             {cancelable: true},
         );
     }
+    handleLang=(lan)=>{
+        const {setting} = this.props;
+        const {params}=this.props.route;
+        setting.lang=lan;
+        this.setState({lang:lan})
+        this.props.setSetting(setting);
+        AsyncStorage.setItem('setting',JSON.stringify(setting))
 
+    }
     render() {
-        const {viewImage,uri,imgLoading,imageUrl} = this.state
-        const {user} = this.props;
-        const {params } = this.props.route
+        const {viewImage,uri,imgLoading,imageUrl,lang} = this.state
+        const {user,setting} = this.props;
+        const {params } = this.props.route;
+        const {isAgent} = setting;
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <View style={{zIndex:1}}>
                     <TouchableOpacity onPress={()=>this.props.navigation.goBack()}
-                        style={{width:'95%',height:80,alignItems:'flex-end',flexDirection:'row'}}>
-                        {params&&params.profile&& <>
+                        style={{width:'95%',marginTop:RFPercentage(5),alignItems:'center',flexDirection:'row'}}>
+                        {params&&params.profile? <>
                         <Icons name={'chevron-left'} size={30} color={'#fff'}/>
-                        <Text style={{fontSize:25,color:'#fff'}}>Setting</Text>
-                                </>}
+                        <Text style={{fontSize:RFPercentage(3),color:'#fff',fontFamily:Fonts.primary}}>{Lang[lang].setting}</Text>
+                                </>:<View style={{height:RFPercentage(5)}}/>}
                     </TouchableOpacity>
                     <View style={{width:width*0.95,marginTop:20,alignSelf:'center',borderRadius:20,height:height,
                         backgroundColor:'#fff',paddingBottom:10}}>
@@ -172,9 +184,9 @@ class Index extends Component {
                                 <ActivityIndicator size={'large'} color={'#fff'}/>
                             </View>}
                         </View>
-                        <TouchableOpacity style={{position:'absolute',right:10,top:10,flexDirection:'row',alignItems:'center'}}>
+                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('EditProfile',{user})} style={{position:'absolute',right:10,top:10,flexDirection:'row',alignItems:'center'}}>
                             <Icons name={'edit'} size={RFPercentage(2)} color={Colors.textColor}/>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2)}}>Edit Profile</Text>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(1.8),fontFamily:Fonts.primary}}>{Lang[lang].eprofile}</Text>
                         </TouchableOpacity>
                         <View style={{position:'absolute',width:RFPercentage(14),height:RFPercentage(12),
                             borderRadius:RFPercentage(12)/2,marginTop:-(RFPercentage(12)/2),alignSelf:'center'}}>
@@ -189,7 +201,7 @@ class Index extends Component {
                             <Text style={{width:'100%',marginTop:10,textAlign:'center',fontSize:RFPercentage(2.5)}}>
                                 {user.lastName} {user.firstName}
                             </Text>
-                            <Setting NextScreen={this.handleNextScreen} userType={user.userType=='1'?" Oraganizer":" Agent"} navigation={this.props.navigation} user={user} handleProfileType={this.handleProfileType}/>
+                            <Setting isAgent={isAgent} lang={lang} handleLang={this.handleLang} NextScreen={this.handleNextScreen} userType={user.userType=='1'?" Oraganizer":" Agent"} navigation={this.props.navigation} user={user} handleProfileType={this.handleProfileType}/>
                         </View>
                         </View>
                     <ImageView

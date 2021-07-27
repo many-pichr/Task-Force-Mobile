@@ -19,7 +19,8 @@ import User from '../../api/User';
 import {setLoading} from '../../redux/actions/loading';
 import {setUser} from '../../redux/actions/user';
 import {connect} from 'react-redux';
-import {Colors} from '../../utils/config';
+import {Colors, Fonts} from '../../utils/config';
+import Lang from '../../Language';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
@@ -94,9 +95,10 @@ class Index extends Component {
     }
     render() {
         const {loading,long,refreshing,data} = this.state
+        const {lang} = this.props.setting;
     return (
             <ListScreen
-                title={'My Favorite'}
+                title={Lang[lang].mfavorite}
                 renderItem={<>
                     {data.length>0?<FlatList
                         contentContainerStyle={{marginTop:30,paddingBottom:data.length>3?0:300}}
@@ -115,8 +117,8 @@ class Index extends Component {
                         <View style={{height:height*0.8,justifyContent:'center',alignItems:'center'}}>
                             {loading?
                                 <ActivityIndicator size={'large'} color={Colors.textColor} />:
-                                <Text style={{fontSize:20,color:Colors.textColor}}>
-                                    No Data
+                                <Text style={{fontSize:20,color:Colors.textColor,fontFamily:Fonts.primary}}>
+                                    {Lang[lang].nodata}
                                 </Text>}
                         </View>
                     </ScrollView>
@@ -150,6 +152,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
+        setting: state.setting.setting,
         user: state.user.user,
     }
 }

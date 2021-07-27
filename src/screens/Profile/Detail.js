@@ -150,8 +150,9 @@ class Index extends Component {
      }
     render() {
         const {refreshing,skills,education,experience} = this.state
-        const {view} = this.props;
+        const {view,setting} = this.props;
         const user = view?this.props.users:this.props.user;
+        const {lang}  = setting;
         return (
             <><ScrollView refreshControl={<RefreshControl
                 colors={["#9Bd35A", Colors.textColor]}
@@ -159,10 +160,10 @@ class Index extends Component {
                 refreshing={refreshing}
                 onRefresh={()=>this.handleGetPost(true)} />} showsVerticalScrollIndicator={false}>
                     <View style={{width:'100%',marginTop:0}}>
-                        <About onAdd={()=>this.handleAction(1)}  about={user.about} view={view}/>
-                        <Experience data={experience} onPress={this.handleAction} view={view}/>
-                        <Education data={education} onPress={this.handleAction} view={view}/>
-                        <Skill data={skills} onPress={this.handleAction} view={view}/>
+                        <About lang={lang} onAdd={()=>this.handleAction(1)}  about={user.about} view={view}/>
+                        <Experience lang={lang} data={experience} onPress={this.handleAction} view={view}/>
+                        <Education lang={lang} data={education} onPress={this.handleAction} view={view}/>
+                        <Skill lang={lang} data={skills} onPress={this.handleAction} view={view}/>
                     </View>
             </ScrollView>
                 </>
@@ -211,6 +212,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state => {
     return {
+        setting: state.setting.setting,
         loading: state.loading.loading,
         user: state.user.user,
     }

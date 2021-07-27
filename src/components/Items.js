@@ -19,8 +19,9 @@ import * as Progress from "react-native-progress";
 import User from '../api/User'
 import {Confirm} from './Dialog';
 import { Avatar, Badge, withBadge } from 'react-native-elements'
-import {Colors} from '../utils/config'
+import {Colors, Fonts} from '../utils/config';
 import {RFPercentage} from 'react-native-responsive-fontsize';
+import Lang from '../Language';
 const {width,height} = Dimensions.get('window')
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -36,7 +37,7 @@ const CustomItem=(props)=>{
         setCheck(status)
         setLoading(false)
     }
-
+    const {lang} = props;
     return (
             <TouchableOpacity onPress={props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom}]}>
 
@@ -65,7 +66,7 @@ const CustomItem=(props)=>{
                         <View style={{width:'40%',flexDirection:'row'}}>
                             {props.item.jobPriorityId==2? <View/>:
                             <View style={{marginLeft:5,width:RFPercentage(8),height:25,backgroundColor:'rgba(255,75,111,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
-                                <Text style={{color:'#ff4b6f',fontSize:RFPercentage(1.8)}}>Urgent</Text>
+                                <Text style={{color:'#ff4b6f',fontSize:RFPercentage(1.5),fontFamily:Fonts.primary}}>{Lang[lang].priority}</Text>
                             </View>}
 
                         </View>
@@ -212,19 +213,19 @@ const ItemCandidate=(props)=>{
         );
 }
 const ItemPost=(props)=>{
+    const {lang} = props;
     return (
         <TouchableOpacity onPress={props.onPress} style={[styles.cardItem,{marginBottom:props.bottom}]}>
                 <View style={{width:'95%',alignSelf:'center',height:90,justifyContent:'center'}}>
                     <View style={{width:'100%'}}>
-                        <Text style={{fontSize:16,color:'#333333'}}>
+                        <Text style={{fontFamily:Fonts.primary,fontSize:16,color:'#333333'}}>
                             {props.item.title}
                         </Text>
                         <Text style={{fontSize:15,color:Colors.textColor,marginVertical:0}}>
                             {props.item.jobCategory.name}
                         </Text>
                         <Text style={{fontSize:13,color:'#333333'}}>
-                            {/*{props.item.address}*/}
-                            Cambodia, Phnnom Penh
+                            {props.item.address?props.item.address:"N/A"}
                         </Text>
                     </View>
                 </View>
@@ -243,8 +244,8 @@ const ItemPost=(props)=>{
                         {/*    <Text style={{color:Colors.textColor}}>{props.item.jobCandidates.length}</Text>*/}
                         {/*    </>}*/}
                         {/*</View>*/}
-                        <View style={{width:'40%',padding:5,backgroundColor:props.item.status=='cancel'?'rgba(244,128,0,0.31)':'rgba(63,244,23,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{fontSize:12,color:props.item.status=='cancel'?'#d66e00':'#13ad1a'}}>{capitalizeFirstLetter(props.item.status=='selected'?"Accepted":props.item.status)}</Text>
+                        <View style={{width:'40%',padding:5,backgroundColor:props.item.status=='cancel'||props.item.status=='Pending'?'rgba(244,128,0,0.31)':'rgba(63,244,23,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{fontFamily:Fonts.primary,fontSize:RFPercentage(1.5),color:props.item.status=='cancel'||props.item.status=='Pending'?'#d66e00':'#13ad1a'}}>{props.item.status=='selected'?Lang[lang].accepted:Lang[lang][props.item.status.toLowerCase()]}</Text>
                         </View>
                         {/*<View style={{marginLeft:5,width:60,height:25,backgroundColor:'rgba(255,75,111,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>*/}
                         {/*    <Text style={{color:'#ff4b6f'}}>CSS</Text>*/}
@@ -285,11 +286,11 @@ const renderStar=(rate)=>{
     for(var i=0;i<rates;i++){
         items.push(i)
     }
-    console.log('123456789===>',items)
+
     return (<>
         {items.map((l, i) => (<Icons name={'star'} color={'#ce8c00'} size={RFPercentage(2)}/>))}
     </>)}
-        const ItemProgress=(props)=>{
+    const ItemProgress=(props)=>{
     const [check, setCheck] = useState(false);
     return (
         <TouchableOpacity onPress={props.onPress} style={[styles.cardItem,{marginBottom:props.bottom,height:130}]}>
@@ -301,9 +302,15 @@ const renderStar=(rate)=>{
                         <Text style={{fontSize:16,color:Colors.textColor,height:20,marginVertical:3}}>
                             {props.item.jobCategory.name}
                         </Text>
-                        <Text style={{color:'#333333',height:20}}>
+                        <View style={{width:'100%',flexDirection:'row',alignItems:'center'}}>
+                        <Text style={{color:'#333333',width:'70%'}}>
                             Agent: {props.item.agent.lastName} {props.item.agent.firstName}
                         </Text>
+                            {props.item.unSatified>0&&<View style={{width:'30%',flexDirection:'row',alignItems:'center',justifyContent:'flex-end'}}>
+                            <Icons name={'sentiment-dissatisfied'} color={Colors.textColor} size={RFPercentage(2.5)}/>
+                            <Text style={{color:Colors.textColor}}>X{props.item.unSatified}</Text>
+                            </View>}
+                        </View>
                     </View>
                 </View>
             <View style={{flexDirection:'row',width:'100%',height:30,marginTop:-10}}>
@@ -337,6 +344,9 @@ const renderStar=(rate)=>{
 const ItemComplete=(props)=>{
     const [check, setCheck] = useState(false);
     const isCompleted=props.item.isCompleted&&props.item.isPaid;
+    const {lang} = props;
+    console.log('123456789===>',props.item)
+
     return (
         <TouchableOpacity disabled={props.item.status==='completed'} onPress={props.isPost&&props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom,}]}>
             <View style={{width:'95%',alignSelf:'center',justifyContent:'center'}}>
@@ -351,13 +361,17 @@ const ItemComplete=(props)=>{
                         {props.item.jobCategory.name}
                     </Text>
                     <View style={{flexDirection:'row'}}>
-                    <Text style={{color:'#333333',width:'70%'}}>
+                    <Text style={{color:'#333333',width:'50%'}}>
                         Agent: {props.item.agent.lastName} {props.item.agent.firstName}
                     </Text>
-                        <View style={{width:'30%',alignItems:'flex-end'}}>
-                        <View style={{paddingVertical:5,paddingHorizontal:10,backgroundColor:isCompleted?'rgba(31,198,140,0.2)':'rgba(255,174,0,0.26)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:isCompleted?'#1FC68C':'#ce8c00',fontSize:RFPercentage(1.5)}}>{isCompleted?"Completed":"Pending"}</Text>
+                        <View style={{width:'50%',flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                        <View style={{paddingVertical:3,paddingHorizontal:10,backgroundColor:isCompleted?'rgba(31,198,140,0.2)':'rgba(255,174,0,0.26)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
+                            <Text style={{fontFamily:Fonts.primary,color:isCompleted?'#1FC68C':'#ce8c00',fontSize:RFPercentage(1.5)}}>{isCompleted?Lang[lang].completed:Lang[lang].pending}</Text>
                         </View>
+                            {props.item.unSatified>0&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-end',marginLeft:5}}>
+                                <Icons name={'sentiment-dissatisfied'} color={Colors.textColor} size={RFPercentage(2.5)}/>
+                                <Text style={{color:Colors.textColor}}>X{props.item.unSatified}</Text>
+                            </View>}
                         </View>
                     </View>
                 </View>

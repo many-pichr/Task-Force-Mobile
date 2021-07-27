@@ -6,20 +6,22 @@ import { createStackNavigator } from "@react-navigation/stack";
 import {
     StartScreen, ChooseProfile, Signin, Message, Chat, Profile, Category,
     Signup, ChooseCategory, JobList, Home, AddPost, Comment, Review, Settings,
-    MyFavorite, MyPost, Otp, ViewPost, CashOut, CashIn, MyMoney, TermCondition,PinCode,FormAbout,Notification
+    MyFavorite, MyPost, Otp, ViewPost, CashOut, CashIn, MyMoney, TermCondition, PinCode, FormAbout, Notification,
+    EditProfile, ChangePin,
 } from './src/screens/index';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { enableScreens } from "react-native-screens";
-import {Colors} from './src/utils/config';
+import {Colors, Fonts} from './src/utils/config';
 import {setLoading} from './src/redux/actions/loading';
 import {setNotify} from './src/redux/actions/notification';
 import {Marker} from "react-native-maps";
 import {SvgXml} from 'react-native-svg';
 import {map_blue, map_red} from './src/screens/Home/svg';
 import {connect} from 'react-redux';
+import Lang from './src/Language';
 enableScreens();
 
 console.disableYellowBox = true;
@@ -27,13 +29,13 @@ console.disableYellowBox = true;
 const RootStack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();
 
-const BottomMenu = ({notify}) => {
-
+const BottomMenu = ({notify,setting}) => {
+    const {lang} = setting;
     return (
         <BottomTab.Navigator
             initialRouteName="Home"
-
             activeColor={Colors.primary}
+
             barStyle={{ backgroundColor: "#fff",height:60,justifyContent:'center' }}
             sceneAnimationEnabled={Platform.OS === "ios"} // TODO: Since it has buggy with android elevation
         >
@@ -41,6 +43,7 @@ const BottomMenu = ({notify}) => {
                 name={"Home"}
                 component={Home}
                 options={{
+                    title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].home}</Text>,
                     tabBarIcon: ({ focused }) => (
                         <Icon
                             name="home-outline"
@@ -54,6 +57,7 @@ const BottomMenu = ({notify}) => {
                 name="MyPost"
                 component={MyPost}
                 options={{
+                    title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].mtask}</Text>,
                     tabBarBadge: notify.isMyPost?'':false,
                     tabBarIcon: ({ focused }) => (
                         <MaterialIcons
@@ -82,6 +86,7 @@ const BottomMenu = ({notify}) => {
             <BottomTab.Screen
                 name="Message"
                 options={{
+                    title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].message}</Text>,
                     tabBarIcon: ({ focused }) => (
                         <Icon
                             name="message-outline"
@@ -93,8 +98,9 @@ const BottomMenu = ({notify}) => {
                 component={Message}
             />
             <BottomTab.Screen
-                name="Profile"
+                name="Setting"
                 options={{
+                    title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].profile}</Text>,
                     tabBarIcon: ({ focused }) => (
                         <Icons
                             name="user"
@@ -112,6 +118,7 @@ const BottomMenu = ({notify}) => {
 const mapStateToProps = state => {
     return {
         notify: state.notify.notify,
+        setting: state.setting.setting,
     }
 }
 
@@ -154,8 +161,10 @@ const RootStackNavigator = ()=> {
                     <RootStack.Screen name="ViewUser" component={Profile}/>
                     <RootStack.Screen name="TermCondition" component={TermCondition}/>
                     <RootStack.Screen name="PinCode" component={PinCode}/>
+                    <RootStack.Screen name="ChangePin" component={ChangePin}/>
                     <RootStack.Screen name="FormAbout" component={FormAbout}/>
                     <RootStack.Screen name="Notification" component={Notification}/>
+                    <RootStack.Screen name="EditProfile" component={EditProfile}/>
                 </RootStack.Navigator>
             </NavigationContainer>
         </SafeAreaProvider>

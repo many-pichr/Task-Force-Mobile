@@ -21,7 +21,7 @@ import * as Keychain from "react-native-keychain";
 import {BottomSheet,ListItem} from 'react-native-elements'
 import Api from '../../api/User';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Colors} from '../../utils/config'
+import {Colors, Fonts} from '../../utils/config';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import OptionsMenu from 'react-native-option-menu';
 import {RFPercentage} from 'react-native-responsive-fontsize';
@@ -29,6 +29,8 @@ import {setLoading} from '../../redux/actions/loading';
 import {setNotify} from '../../redux/actions/notification';
 import {connect} from 'react-redux';
 import {setSetting} from '../../redux/actions/setting';
+import Lang from '../../Language';
+import {checkForPermissions} from '../../components/Permission';
 const {width,height} = Dimensions.get('window')
 const profileType = [
     { title: 'Task ForceOrganizer' },
@@ -36,34 +38,34 @@ const profileType = [
 ];
 const list = [
     {
-        title: 'Profile Type',
+        title: 'profileType',
         right:'Organizer',
         choose:true,
         icon: 'user',
         subtitle: 'Vice President'
     },
     {
-        title: 'Notification',
+        title: 'notification',
         right:'',
         icon: 'bell',
         switch:true,
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'My Money',
+        title: 'wallet',
         right:'',
         icon: 'dollar-sign',
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Language',
+        title: 'language',
         right:'English',
         choose:true,
         icon: 'globe',
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Face & Fingerprint',
+        title: 'face',
         right:'',
         switch:true,
         icons:true,
@@ -71,25 +73,25 @@ const list = [
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Change Pin',
+        title: 'cpin',
         right:'',
         icon: 'lock',
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Contact Us',
+        title: 'contact',
         right:'',
         icon: 'phone',
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Term & Condition',
+        title: 'tc',
         right:'',
         icon: 'file-text',
         subtitle: 'Vice Chairman'
     },
     {
-        title: 'Logout',
+        title: 'logout',
         red:true,
         right:'',
         icon: 'log-out',
@@ -114,6 +116,7 @@ class Index extends Component {
     }
     componentDidMount(): void {
         this.fadeIn()
+        if(Platform.OS=='ios') this.handleCheckPermission();
         setTimeout(()=>{
             // this.fadeIn();
             this.setState({loading: false})
@@ -140,7 +143,7 @@ class Index extends Component {
                 break;
             case 2:
                 // code block
-                this.props.NextScreen("MyMoney");
+                this.props.NextScreen("MyMoney",{face:this.state.switches[4]});
                 break;
             default:
             // code block
@@ -151,7 +154,9 @@ class Index extends Component {
         await Keychain.resetGenericPassword();
         this.props.navigation.replace('Signin')
     }
-
+    handleLang=(lan)=>{
+        this.props.handleLang(lan)
+    }
     fadeIn = async () => {
         await this.setState({fadeAnimation:new Animated.Value(0)})
         Animated.timing(this.state.fadeAnimation, {
@@ -163,24 +168,47 @@ class Index extends Component {
         this.setState({isVisible:false})
         this.props.handleProfileType(i)
     }
-    handleSwitch=(index)=>{
+    handleSwitch=async (index)=>{
         const newState={... this.state}
-        newState.switches[index]=!newState.switches[index]
+        const value=newState.switches[index]
+        newState.switches[index]=index==4?value?!value:false:!value
         this.setState(newState)
-        if(index==4){
+        if(index==4) {
+            if (!value) {
+                if(Platform.OS=='ios'){
+                await checkForPermissions(true, 'faceID').then((status) => {
+                    newState.switches[index] = status;
+                    this.setState(newState)
+                })
+            } else {
+                    newState.switches[index] = !value;
+                    this.setState(newState)
+            }
+        }
             const {setting} = this.props;
             setting.touchId=newState.switches[index];
             this.props.setSetting(setting)
             AsyncStorage.setItem('setting', JSON.stringify(setting))
+
         }
+    }
+    handleCheckPermission=async ()=>{
+        await checkForPermissions(false,'faceID').then((status) => {
+            const ns = {... this.state}
+            ns.switches[4]=status;
+            this.setState(ns)
+        })
     }
     render() {
         const {map,switches,isVisible,logout} = this.state
-        list[0].right=this.props.userType
+        list[0].right=this.props.userType;
+        const {lang,isAgent} = this.props;
         return (
-            <>
-                        <View style={{width:'100%',borderRadius:20,backgroundColor:'#fff',marginTop:10,paddingBottom:100,alignItems:'center',justifyContent:'center'}}>
 
+            <>
+                <ScrollView showsVerticalScrollIndicator={false}>
+
+                <View style={{width:'100%',borderRadius:20,backgroundColor:'#fff',marginTop:10,paddingBottom:0,alignItems:'center',justifyContent:'center'}}>
                             {
                                 this.state.data.map((l, i) => (
                                     i==0?
@@ -189,18 +217,20 @@ class Index extends Component {
                                                 <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
                                             <View style={{width:'50%'}}>
-                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
+                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor,fontFamily:Fonts.primary}}>
+                                                    {Lang[lang][l.title]}
+                                                </Text>
                                             </View>
                                             <OptionsMenu
                                                 customButton={<>
-                                                    <View style={{width:'100%',alignItems:'flex-end',flexDirection:'row'}}>
-                                                        <Text style={RFPercentage(1.8)}>{l.right}</Text>
+                                                    <View style={{width:'100%',alignItems:'center',flexDirection:'row'}}>
+                                                        <Text style={{fontSize:RFPercentage(1.8),fontFamily:Fonts.primary}}>{isAgent?Lang[lang].agent:Lang[lang].torg}</Text>
                                                         {l.choose&&<Icon name={'chevron-down'} size={RFPercentage(2)}/>}
                                                     </View>
                                                 </>}
                                                 buttonStyle={{width:'20%'}}
                                                 destructiveIndex={2}
-                                                options={["Task Force Organizer","Task Force Agent","Close"]}
+                                                options={[Lang[lang].torg,Lang[lang].tagent,Lang[lang].close]}
                                                 actions={[()=>this.handleProfileType(1),
                                                     ()=>this.handleProfileType(2)]}/>
                                         </View> :i==3?<View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
@@ -208,20 +238,20 @@ class Index extends Component {
                                                 <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
                                             <View style={{width:'50%'}}>
-                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
+                                                <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor,fontFamily:Fonts.primary}}>{Lang[lang][l.title]}</Text>
                                             </View>
                                             <OptionsMenu
                                                 customButton={<>
-                                                    <View style={{width:'70%',justifyContent:'center',alignItems:'flex-end',flexDirection:'row'}}>
-                                                        <Text style={RFPercentage(1.8)}>{l.right}</Text>
+                                                    <View style={{width:'70%',justifyContent:'center',alignItems:'center',flexDirection:'row'}}>
+                                                        <Text style={{fontSize:RFPercentage(1.8),fontFamily:Fonts.primary}}>{lang=='kh'?"ភាសាខ្មែរ":"English"}</Text>
                                                         {l.choose&&<Icon name={'chevron-down'} size={RFPercentage(2)}/>}
                                                     </View>
                                                 </>}
                                                 buttonStyle={{width:'20%'}}
                                                 destructiveIndex={2}
-                                                options={["ភាសាខ្មែរ","English","Close"]}
-                                                actions={[()=>alert(true),
-                                                    ()=>alert(false)]}/>
+                                                options={["ភាសាខ្មែរ","English",Lang[lang].close]}
+                                                actions={[()=>this.handleLang('kh'),
+                                                    ()=>this.handleLang('en')]}/>
                                         </View>:
                                     <TouchableOpacity onPress={()=>this.handleSelect(i)} style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
                                         <View style={{width:'20%',alignItems:'center'}}>
@@ -230,7 +260,7 @@ class Index extends Component {
                                                 <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>}
                                         </View>
                                         <View style={{width:'50%'}}>
-                                            <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor}}>{l.title}</Text>
+                                            <Text style={{fontSize:RFPercentage(2),color:l.red?'red':Colors.textColor,fontFamily:Fonts.primary}}>{Lang[lang][l.title]}</Text>
                                         </View>
                                         <View style={{width:'25%',justifyContent:'flex-end',alignItems:'flex-end',flexDirection:'row'}}>
                                             {l.switch?
@@ -249,9 +279,11 @@ class Index extends Component {
                                     </TouchableOpacity>
                                 ))
                             }
-
+                            <View style={{height:1000/RFPercentage(0.5)}}/>
                         </View>
-                <BottomSheet
+            </ScrollView>
+
+        <BottomSheet
                     isVisible={isVisible}
                     modalProps={{statusBarTranslucent:true}}
                     containerStyle={{ backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)' }}

@@ -93,7 +93,9 @@ class App extends Component {
         this.props.set(true)
         await setTimeout(()=>{
             this.props.set(false)
-            this.props.setSetting({isAgent:params.userType=='1'?false:true})
+            const {setting}=this.props;
+            setting.isAgent=params.userType=='1'?false:true;
+            this.props.setSetting(setting)
             this.props.navigation.navigate('RootBottomTab')
         }, 1000);
     }
@@ -157,6 +159,7 @@ class App extends Component {
 const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
+        setting: state.setting.setting,
     }
 }
 

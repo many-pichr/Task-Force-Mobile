@@ -14,7 +14,7 @@ import assets from '../../assets'
 import { Button,Input } from 'react-native-elements';
 // import auth from '@react-native-firebase/auth';
 // import { LoginManager, AccessToken } from 'react-native-fbsdk';
-import {Colors} from '../../utils/config'
+import {Colors, Fonts} from '../../utils/config';
 import Icons from 'react-native-vector-icons/FontAwesome';
 const {width,height} = Dimensions.get('window')
 // import { GoogleSignin } from '@react-native-community/google-signin';
@@ -29,6 +29,8 @@ import {RFPercentage} from 'react-native-responsive-fontsize';
 import {setSetting} from '../../redux/actions/setting';
 import {ActivityIndicator} from 'react-native-paper';
 import Api from '../../api/User';
+import Lang from '../../Language';
+import {Warning} from '../../components/Dialog';
 const validate = require("validate.js");
 // GoogleSignin.configure({
 //     webClientId: '618872630642-3c60odplefupqgp2lie32qsl790d76q4.apps.googleusercontent.com',
@@ -48,6 +50,7 @@ class SignIn extends Component {
         super(props);
         this.state={
             index:0,
+            derror:false,
             fadeAnimation: new Animated.Value(0),
             fadeAnimation1: new Animated.Value(0),
             focus:{
@@ -137,15 +140,17 @@ class SignIn extends Component {
                Api.CheckUser().then((r) => {
                    if(r.status){
                        Keychain.setGenericPassword(JSON.stringify(r.data), rs.data.token)
+                       const {setting}=this.props;
+                       setting.isAgent=r.data.userType=='1'?false:true;
                        this.props.setUser(r.data)
-                       this.props.setSetting({isAgent:r.data.userType=='1'?false:true})
+                       this.props.setSetting(setting)
                        this.props.navigation.replace('RootBottomTab',{signin:true})
                    }else{
                        this.props.set(false)
                    }
                })
            }else{
-               Alert.alert('Warning',"Login Failed")
+               this.setState({derror:true})
                this.props.set(false)
            }
         })
@@ -153,8 +158,9 @@ class SignIn extends Component {
 
     }
     render() {
-        const {focus,error,values} = this.state
+        const {focus,error,values,derror} = this.state
         const { params } = this.props.route;
+        const {lang} = this.props.setting;
         return (
             <ImageBackground source={assets.background} style={{flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
@@ -167,14 +173,17 @@ class SignIn extends Component {
                   ]}
               >
                   <View style={{width:width*0.8,height:height*0.4,alignSelf:'center',justifyContent:'center',alignItems:'center'}}>
-                      <Image source={assets.logo1} style={{width:RFPercentage(50),height:RFPercentage(20)}}/>
-                      <Text style={{fontSize:RFPercentage(4),color:'#202326'}}>Welcome</Text>
-                      <Text style={{fontSize:RFPercentage(2),color:'#7F838D',marginVertical:10}}>Please sign in to identify your account</Text>
+                      <Image source={assets.logo1} style={{width:RFPercentage(50),height:RFPercentage(15)}}/>
+                      <Image source={assets.logo_txt} style={{width:RFPercentage(40),height:RFPercentage(5),marginTop:0}}/>
+                      {/*<Text style={{fontSize:RFPercentage(4),color:'#202326',fontFamily:Fonts.primary}}>{Lang[lang].welcome}</Text>*/}
+                      <Text style={{fontSize:RFPercentage(2),color:'#7F838D',marginVertical:20,fontFamily:Fonts.primary}}>
+                          {Lang[lang].plsSign}
+                      </Text>
                   </View>
                   <View style={{width:width*0.85,alignSelf:'center',marginVertical:0}}>
                       <CustomInput
-                          label={'Phone Number'}
-                          placeholder='Phone Number'
+                          label={Lang[lang].phone}
+                          placeholder={Lang[lang].phone}
                           onChangeText={this.handleInput}
                           keyboardType={'email-address'}
                           error={error}
@@ -183,12 +192,14 @@ class SignIn extends Component {
                           value={values.phone}
                       />
                       <CustomInput
-                          label={'Password'}
-                          placeholder='Password'
+                          label={Lang[lang].pwd}
+                          placeholder={Lang[lang].pwd}
                           onChangeText={this.handleInput}
                           name={'password'}
                           keyboardType={'default'}
                           secure
+                          hide={Lang[lang].hide}
+                          show={Lang[lang].show}
                           error={error}
                           focus={focus}
                           value={values.cpassword}
@@ -202,16 +213,16 @@ class SignIn extends Component {
                           </View>
                           <View style={{width:'50%',alignItems:'flex-end'}}>
                               <TouchableOpacity>
-                              <Text style={{color:Colors.textColor}}>Forgot Password?</Text>
+                              <Text style={{color:Colors.textColor,fontFamily:Fonts.primary}}>{Lang[lang].fpwd}</Text>
                               </TouchableOpacity>
                           </View>
                       </View>
                       <Button
-                          title={'Sign In'}
+                          title={Lang[lang].signIn}
                           disabled={error!=undefined}
                           onPress={this.handleLogin}
-                          titleStyle={{fontSize:RFPercentage(3)}}
-                          buttonStyle={{width:width*0.8,borderRadius:5,marginTop:20,height:RFPercentage(7)
+                          titleStyle={{fontSize:RFPercentage(3),fontFamily:Fonts.primary}}
+                          buttonStyle={{width:width*0.8,borderRadius:5,marginTop:20,paddingVertical:RFPercentage(0.5)
                               ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                       />
                   </View>
@@ -257,9 +268,9 @@ class SignIn extends Component {
                         </View>
 
                         <View style={{width:'100%',flexDirection:'row',marginTop:30,justifyContent:'center'}}>
-                            <Text style={{color:'#7F838D'}}>Don't have an account? </Text>
+                            <Text style={{color:'#7F838D'}}>{Lang[lang].noAcc}</Text>
                             <TouchableOpacity onPress={()=>this.props.navigation.navigate('Signup',{profileType:params&&params.profileType?params.profileType:'1'})}>
-                                <Text style={{color:'#1582F4'}}>Sign up now</Text>
+                                <Text style={{color:'#1582F4'}}> {Lang[lang].signNow}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -269,6 +280,7 @@ class SignIn extends Component {
           {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate('RootBottomTab')}>*/}
           {/*  <Text>Get Start</Text>*/}
           {/*</TouchableOpacity>*/}
+                {derror&&<Warning handleClose={()=>this.setState({derror:false})} btn={Lang[lang].close} handleConfirm={this.handleConfirm} title={Lang[lang].warning} subtitle={Lang[lang].logFail} visible={derror}/>}
             </ImageBackground>
     );
   }
@@ -277,6 +289,7 @@ const mapStateToProps = state => {
     return {
         loading: state.loading.loading,
         user: state.user.user,
+        setting: state.setting.setting,
     }
 }
 

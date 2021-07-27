@@ -9,10 +9,10 @@ import {
     Text,
     Modal,
     Platform,
-    ScrollView,
+    Linking,
     Dimensions,
     FlatList,
-    RefreshControl, ActivityIndicator, Keyboard,
+    AppState, ActivityIndicator, Keyboard,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -26,14 +26,14 @@ import {ItemFavorite} from '../../components/Items';
 import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
-import {Colors} from '../../utils/config'
+import {Colors,ABA} from '../../utils/config'
 import {Success} from '../../components/Dialog';
 const {width,height} = Dimensions.get('window')
-
+import Base64 from 'crypto-js/enc-base64';
 const list=[
     {
-        title:'ABA Bank',
-        img:require('./img/aba.png')
+        title:'ABA Pay',
+        img:require('./img/abapay.png')
     },
     {
         title:'Wing Money',
@@ -49,6 +49,13 @@ const list=[
     },
 
 ]
+var CryptoJS = require("crypto-js");
+function hmac_512(message, secret) {
+    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA512, secret);
+    hmac.update(message);
+    var hash = hmac.finalize();
+    return hash;
+}
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -59,13 +66,35 @@ class Index extends Component {
             refreshing:false,
             success:false,
             amount:'',
-            showPin:false
+            showPin:false,
+            ABALink:false,
+            body:{}
         }
         this.myRef = React.createRef();
     }
     componentDidMount(): void {
-
+        AppState.addEventListener('change', this.listener);
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+    }
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.listener);
+    }
+    listener=async (state)=>{
+        const {body,ABALink} = this.state;
+
+        if (state == 'active'&&ABALink) {
+            // this.setState({success:true,loading:false})
+            let hash = Base64.stringify(hmac_512(ABA.id+body.tran_id,ABA.key))
+            body.hash=hash;
+            await User.Post('/api/User/aba-verified',body).then((rs) => {
+                if(rs.status){
+                    console.log(JSON.parse(rs.data.message))
+                    this.setState({success:true,loading:false})
+                }
+            })
+            this.setState({loading:false})
+
+        }
     }
     handleTab=(index)=>{
         this.setState({index:index})
@@ -73,25 +102,66 @@ class Index extends Component {
     handleNext=()=>{
         this.props.navigation.navigate('Start')
     }
-    handleVerify=async ()=>{
+    handleABAPay=async ()=>{
         const {map,amount,check,showPin} = this.state;
-        const {params} = this.props.route;
+        const {user} = this.props;
+        const tr_id=new Date().getTime();
         this.setState({showPin:false,loading:true})
-        await User.Post("/api/User/top-up", {
+        let hash = Base64.stringify(hmac_512(ABA.id+tr_id+amount,ABA.key))
+        const body={
+            "hash": hash,
+            "tran_id": tr_id,
             "amount": amount,
-            "bank": (check!=null&&list[check].title),
-            "ref": ""
-        })
-        const credentials = await Keychain.getGenericPassword();
-        const token = credentials.password;
-        await User.CheckUser().then((rs) => {
+            "firstname": user.firstName,
+            "lastname": user.lastName,
+            "phone": user.phone,
+            "email": user.email,
+            "payment_option": "abapay_deeplink"
+        }
+        console.log(JSON.stringify(body))
+        this.setState({body})
+        await User.Post('/api/User/aba-topup',body).then((rs) => {
             if(rs.status){
-                this.props.setUser(rs.data)
-                Keychain.setGenericPassword(JSON.stringify(rs.data), token)
-                this.setState({success:true});
+                const data=JSON.parse(rs.data.message)
+                if(data.status==0){
+                    this.handleABADeeplink(data)
+                }
+            }else{
+                this.setState({loading:false})
             }
         })
-        this.setState({loading:false})
+        // this.setState({showPin:false,loading:false})
+
+    }
+    handleABADeeplink=(data)=>{
+        Linking.openURL(data.abapay_deeplink)
+            .then((res) => {
+                this.setState({ABALink:true})
+            })
+            .catch((error) => {
+                const storeDeepLink = Platform.select({
+                    android: data.play_store,
+                    ios: data.app_store,
+                });
+
+                if (storeDeepLink) {
+
+                    Linking.openURL(storeDeepLink)
+                        .then((res) => {
+                            this.setState({loading:false})
+                        }).catch((error) => { });
+                }
+
+                console.log('error', error);
+            });
+    }
+    handleVerify=async ()=>{
+        const {map,amount,check,showPin} = this.state;
+        if(check==0){
+            this.handleABAPay()
+        }else{
+            this.setState({showPin:false,loading:false})
+        }
     }
     handleBack=()=>{
         this.setState({success:false});
@@ -101,7 +171,7 @@ class Index extends Component {
     render() {
         const {success,loading,amount,check,showPin} = this.state;
         const {user} = this.props;
-        const disable=amount>0&&check!=null
+        const disable=amount>=1&&check!=null
         return (
             <>
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
@@ -132,9 +202,9 @@ class Index extends Component {
                         contentContainerStyle={{width:'95%',alignSelf:'center'}}
                         data={list}
                         renderItem={({item,index}) =>(
-                            <TouchableOpacity onPress={()=>this.setState({check:index})} style={{width:'100%',height:80,justifyContent:'center',borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
+                            <TouchableOpacity onPress={()=>this.setState({check:index==0?index:''})} style={{width:'100%',height:80,justifyContent:'center',borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
                                 <View style={{flexDirection:'row',height:'90%',width:'90%',alignSelf:'center',alignItems:'center'}}>
-                                    <Image source={item.img} style={{width:50,height:50}}/>
+                                    <Image source={item.img} style={{width:index==0?70:50,height:50}}/>
                                     <Text style={{marginLeft:20,fontSize:18,width:'70%'}}>
                                         {item.title}
                                     </Text>
@@ -163,7 +233,7 @@ class Index extends Component {
                 </View>
                 {success&&<Success handleClose={()=>this.setState({switchProfile:false})} handleConfirm={this.handleBack} title={'Success'} subtitle={'The transaction is successful'} visible={success}/>}
 
-                {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
+                {showPin&&<PinCode title={"For Top up: "+amount+"$"} handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
             </View>
                 {loading&&<View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.18)',position:'absolute',justifyContent:'center',alignItems:'center'}}>
             <ActivityIndicator size={'large'} color={Colors.textColor}/>

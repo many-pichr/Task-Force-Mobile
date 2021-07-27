@@ -26,6 +26,7 @@ import moment from "moment";
 import {Input} from 'react-native-elements';
 import User from '../../api/User';
 import {Item} from '../Home/Item';
+import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 
 export default class Index extends Component {
@@ -88,6 +89,7 @@ export default class Index extends Component {
         const { userId,item} = this.props.route.params
         await User.GetList("/api/JobComment/JobPost/"+item.id).then((rs) => {
             if(rs.status){
+                console.log(rs.data)
                 this.setState({comments:rs.data,loading:false})
             }
         })
@@ -108,18 +110,22 @@ export default class Index extends Component {
         const { userId} = this.props.route.params
         return(
             <View>
-            <View style={{width:'90%'}}>
+            <View style={{width:'100%'}}>
                 {item.comment != '' &&
                 <View style={{
                     backgroundColor: item.userId==userId?Colors.textColor:'rgba(0,0,0,0.18)',
                     alignSelf: item.userId==userId?'flex-start':'flex-end',
-                    marginLeft: 10,
+                    marginLeft: item.userId==userId?10:0,
+                    marginRight: item.userId==userId?0:10,
                     marginTop: 10,
                     padding: 10,
                     borderRadius: 10
                 }}>
-                    <Text style={{color: item.userId==userId?'#ffffff':'#000'}}>
-                        {item.comment}
+                    {item.comment.split('/n')[1]&&<Text style={{color: item.userId==userId?'#ffffff':'#000',fontSize:RFPercentage(2)}}>
+                        {item.comment.split('/n')[1]}
+                    </Text>}
+                    <Text style={{color: item.userId==userId?'#ffffff':'#000',fontSize:RFPercentage(2)}}>
+                        {item.comment.split('/n')[0]}
                     </Text>
                 </View>
                 }

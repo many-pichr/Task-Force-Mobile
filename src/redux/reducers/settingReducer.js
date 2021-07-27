@@ -4,7 +4,7 @@ import { SETTING } from '../actions/types';
 
 const initialState = {
     placeName: '',
-    setting: {isAgent:false,touchId:true,lang:''}
+    setting: {isAgent:false,touchId:true,lang:'en'}
 };
 
 const placeReducer = (state = initialState, action) => {

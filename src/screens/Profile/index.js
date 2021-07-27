@@ -26,10 +26,11 @@ import {RFPercentage} from 'react-native-responsive-fontsize';
 import User from '../../api/User';
 import {ImageCroper} from '../../components/ImageCroper';
 import * as Keychain from 'react-native-keychain';
-import {Colors} from '../../utils/config';
+import {Colors, Fonts} from '../../utils/config';
 import {TermCondition} from '../../components/Dialog';
 import {setSetting} from '../../redux/actions/setting';
 import PinCode from '../../components/PinCode';
+import Lang from '../../Language';
 
 const {width, height} = Dimensions.get('window');
 
@@ -174,6 +175,7 @@ class Index extends Component {
         const {viewImage,switchProfile, imageUrl, uri, imgLoading, user,loading} = this.state;
         const {params} = this.props.route;
         const view = params && params.view ? true : false;
+        const {lang} = this.props.setting;
         return (
             <>
             <View style={{flex: 1, alignItems: 'center', backgroundColor: '#f5f7fa'}}>
@@ -211,8 +213,8 @@ class Index extends Component {
                                     <Icons name={'user'} color={Colors.textColor} size={RFPercentage(2.3)}/>
                                     <Text style={{
                                         color: Colors.textColor,
-                                        fontSize: RFPercentage(2),
-                                    }}>{user.userType == '1' ? ' Oraganizer' : ' Agent'}</Text>
+                                        fontSize: RFPercentage(2),fontFamily:Fonts.primary
+                                    }}>{user.userType == '1' ? ' Oraganizer' : Lang[lang].agent}</Text>
                                 </TouchableOpacity>}
                             </View>
                             <View style={{width: '48%'}}>
@@ -248,8 +250,8 @@ class Index extends Component {
                                 flexDirection: 'row',
                             }}>
                                 <View style={{width: '50%', flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
-                                    <Icons name={'mail'} color={Colors.textColor} style={{marginTop: 3}}/>
-                                    <Text style={{color: Colors.textColor}}> {user.email}</Text>
+                                    <Icons name={'mail'} color={Colors.textColor} style={{}}/>
+                                    <Text style={{color: Colors.textColor,fontSize:RFPercentage(1.5)}}> {user.email}</Text>
                                 </View>
                                 <View style={{
                                     width: '50%',
@@ -259,7 +261,7 @@ class Index extends Component {
                                     justifyContent: 'flex-end',
                                 }}>
                                     <Icons name={'phone'} color={Colors.textColor} style={{marginTop: 3}}/>
-                                    <Text style={{color: Colors.textColor}}> {user.phone}</Text>
+                                    <Text style={{color: Colors.textColor,fontSize:RFPercentage(1.8)}}> {user.phone}</Text>
                                 </View>
                             </View>
                         </View>
