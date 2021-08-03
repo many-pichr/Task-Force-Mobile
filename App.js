@@ -149,9 +149,9 @@ class App extends Component{
               <Image source={assets.logo1} style={{width:RFPercentage(60),height:RFPercentage(15),marginTop:height/8}}/>
               <Image source={assets.logo_txt} style={{width:RFPercentage(50),height:RFPercentage(7),marginTop:0}}/>
 
-              <View style={{width:'100%',height:'100%',position:'absolute',justifyContent:'center'}}>
-                  <ActivityIndicator size={50} animating={true} color={Colors.textColor}/>
-              </View>
+              {/*<View style={{width:'100%',height:'100%',position:'absolute',justifyContent:'center'}}>*/}
+              {/*    <ActivityIndicator size={50} animating={true} color={Colors.textColor}/>*/}
+              {/*</View>*/}
           </ImageBackground>
       }
           </View>);

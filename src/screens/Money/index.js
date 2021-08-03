@@ -172,14 +172,19 @@ class Index extends Component {
                             <View style={{width:'10%'}}>
 
                             </View>
-                            <View style={{width:'40%'}}>
+                            <View style={{width:'30%'}}>
                                 <Text style={{fontSize:13,color:Colors.textColor}}>
-                                    {ref.account&&""+ref.account}
+                                    {ref.account&&"#"+ref.account}
                                 </Text>
                             </View>
-                            <View style={{width:'50%',alignItems:'flex-end'}}>
+                            <View style={{width:'40%',alignItems:'flex-end'}}>
                                 <Text style={{fontSize:RFPercentage(1.5)}}>
                                     {moment(item.date).format('DD/MM/YYYY HH:mm')}
+                                </Text>
+                            </View>
+                            <View style={{width:'20%',alignItems:'flex-end'}}>
+                                <Text style={{fontSize:RFPercentage(1.5)}}>
+                                    {item.status}
                                 </Text>
                             </View>
                         </View>
@@ -208,7 +213,8 @@ class Index extends Component {
     render() {
         const {showPin,loading,index,routes,refreshing,data,cashout} = this.state;
         const {user,setting} = this.props;
-        const { face } = this.props.route.params
+        const { face } = this.props.route.params;
+        console.log(cashout)
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
@@ -256,7 +262,7 @@ class Index extends Component {
                         />
                     </View>
 
-                    {showPin&&<PinCode touchId={face} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}
+                    {/*{showPin&&<PinCode touchId={face} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}*/}
 
 
                 </View>

@@ -31,12 +31,13 @@ const {width,height} = Dimensions.get('window')
 const list=[
     {
         title:'ABA Bank',
+        code:"0361006",
         img:require('./img/aba.png')
     },
-    {
-        title:'Wing Money',
-        img:require('./img/wing.png')
-    }
+    // {
+    //     title:'Wing Money',
+    //     img:require('./img/wing.png')
+    // }
 
 ]
 class Index extends Component {
@@ -44,7 +45,7 @@ class Index extends Component {
         super(props);
         this.state={
             loading:false,
-            check:null,
+            check:0,
             data:[1,2,3,4,5],
             refreshing:false,
             amount:'',
@@ -67,22 +68,27 @@ class Index extends Component {
         const {account,amount,check,showPin} = this.state;
         const {params} = this.props.route;
         this.setState({showPin:false,loading:true})
-        await User.Post("/api/User/cash-out", {
-            "amount": amount,
-            "bank": (check!=null&&list[check].title),
-            "ref": JSON.stringify({
-                account:account
-            })
-        })
         const credentials = await Keychain.getGenericPassword();
         const token = credentials.password;
-        await User.CheckUser().then((rs) => {
+        await User.Post("/api/User/cash-out", {
+            "amount": Number(amount),
+            "bank": (check!=null&&list[check].code),
+            "AccountNumber": account,
+            "Currency":"USD",
+            "Note":"Test Case out"
+        }).then((rs) => {
             if(rs.status){
-                this.props.setUser(rs.data)
-                Keychain.setGenericPassword(JSON.stringify(rs.data), token)
-                this.setState({success:true})
+                User.CheckUser().then((rs) => {
+                    if(rs.status){
+                        this.props.setUser(rs.data)
+                        Keychain.setGenericPassword(JSON.stringify(rs.data), token)
+                        this.setState({success:true,amount:'',account:''})
+                    }
+                })
             }
+
         })
+
         this.setState({loading:false})
     }
     handleBack=()=>{

@@ -32,7 +32,8 @@ const {width,height} = Dimensions.get('window')
 import Base64 from 'crypto-js/enc-base64';
 const list=[
     {
-        title:'ABA Pay',
+        title:'ABA PAY',
+        sub:'Tap to pay with ABA Mobile',
         img:require('./img/abapay.png')
     },
     {
@@ -204,10 +205,15 @@ class Index extends Component {
                         renderItem={({item,index}) =>(
                             <TouchableOpacity onPress={()=>this.setState({check:index==0?index:''})} style={{width:'100%',height:80,justifyContent:'center',borderRadius:10,backgroundColor:'#fff',marginTop:10}}>
                                 <View style={{flexDirection:'row',height:'90%',width:'90%',alignSelf:'center',alignItems:'center'}}>
-                                    <Image source={item.img} style={{width:index==0?70:50,height:50}}/>
-                                    <Text style={{marginLeft:20,fontSize:18,width:'70%'}}>
+                                    <Image source={item.img} style={{width:50,height:50}}/>
+                                    <View style={{width:'70%',marginLeft:20,}}>
+                                    <Text style={{fontSize:18}}>
                                         {item.title}
                                     </Text>
+                                        {item.sub&&<Text style={{fontSize:15,color:'gray'}}>
+                                            {item.sub}
+                                        </Text>}
+                                    </View>
                                     {check===index&&<Icon name={'done'} size={25} color={Colors.textColor}/>}
                                 </View>
                             </TouchableOpacity>
