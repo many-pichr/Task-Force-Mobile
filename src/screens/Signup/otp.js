@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Animated,
+    Alert,
     StyleSheet,
     View,
     Text,
@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     Dimensions,
     StatusBar,
-    ScrollView, ImageBackground,
+    ScrollView, ImageBackground, ActivityIndicator,
 } from 'react-native';
 import assets from '../../assets'
 import { Button,Input } from 'react-native-elements';
@@ -19,7 +19,9 @@ import Api from '../../api/User';
 import {setLoading} from '../../redux/actions/loading';
 import {connect} from 'react-redux';
 import {setSetting} from '../../redux/actions/setting';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../../utils/config';
+import {FullIndicator} from '../../components/customIndicator';
 const validate = require("validate.js");
 const {width,height} = Dimensions.get('window')
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 60 : 0
@@ -72,27 +74,86 @@ class App extends Component {
         this.state={
             code:'',
             status:'',
+            loading:false,
+            countDown:60,
+            user:{id:0}
         }
     }
-    componentDidMount(): void {
-        this.props.set(false)
-    }
+    componentDidMount(){
+        const { params } = this.props.route;
+        this.startTimer();
+        if(params.forgot){
+            Api.GetGuest("/api/User/forgot-password/"+params.phone).then((rs) => {
+                if(rs.status){
+                    this.setState({user:rs.data})
+                }
+            })
+        }
 
+    }
+    handleVerify=async ()=>{
+        const {user,code} = this.state;
+        const { params } = this.props.route;
+        this.setState({loading:true})
+        await Api.PostGuest("/api/User/verified-otp-after-reset",{
+            "phone":params.phone,
+            "otp":code,
+            "password":"str"
+        }).then((rs) => {
+            if(rs.status&&rs.data){
+                this.props.navigation.replace('ResetPassword',{forgot:true,phone:params.phone,code})
+            }else{
+                Alert.alert("Warning","Invalid OTP")
+            }
+        })
+        this.setState({loading:false})
+    }
+    handleVerifyAccount=async ()=>{
+        const {user,code} = this.state;
+        const { params } = this.props.route;
+        this.setState({loading:true})
+        const body={
+            "otp": code,
+        }
+
+        await Api.Post('/api/User/confirm-otp',body).then((rs) => {
+            if(rs.status&&rs.data){
+                this.props.navigation.navigate('RootBottomTab')
+            }else{
+                Alert.alert("Warning","Invalid OTP")
+            }
+        })
+        this.setState({loading:false})
+    }
+    TimeCounter () {
+        if(this.state.countDown>0){
+            this.setState({countDown: (this.state.countDown - 1)})
+        }else{
+            clearInterval(this.timer)
+        }
+    }
+    startTimer () {
+        clearInterval(this.timer)
+        this.timer = setInterval(this.TimeCounter.bind(this), 1000)
+    }
+    componentWillUnmount(){
+        clearInterval(this.interval);
+    }
     handleNext=(index,value)=>{
             this.props.navigation.navigate('ChooseCategory')
     }
-
-    handleSignup=()=>{
+    handleResend=()=>{
+        this.setState({countDown:60});
+        this.startTimer();
         const { params } = this.props.route;
-        Api.Signup(this.state.values,params.profileType).then((rs) => {
-            console.log(rs)
-        })
+        this.startTimer();
+        Api.GetGuest("/api/User/forgot-password/"+params.phone)
     }
-    handleVerify=async ()=>{
+    handleGoHome=async ()=>{
         const { params } = this.props.route;
-        this.props.set(true)
+        this.setState({loading:true})
         await setTimeout(()=>{
-            this.props.set(false)
+            this.setState({loading:false})
             const {setting}=this.props;
             setting.isAgent=params.userType=='1'?false:true;
             this.props.setSetting(setting)
@@ -103,18 +164,24 @@ class App extends Component {
         this.setState({status:true,code:code})
     }
     render() {
-        const {focus,values,error} = this.state
-        console.log(error)
+        const {focus,loading,countDown} = this.state;
+        const { params } = this.props.route;
     return (
-
+        <>
         <ImageBackground source={assets.background} style={{flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
             <ScrollView style={{flex:1}}>
 
             <View style={{width:width,height:height*0.8,alignItems:'center',justifyContent:'center'}}>
+                {params.forgot&&
+                <View style={{width:'80%'}}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.goBack()}
+                                      style={{width:50,height:50,marginVertical:50,backgroundColor:Colors.primary,justifyContent:'center',alignItems:'center',borderRadius:25}}>
+                        <Icons name={'arrow-back'} size={30} color={'#fff'}/>
+                    </TouchableOpacity>
+                </View>}
                 <View style={{width:width*0.8,marginTop:20,alignSelf:'center',justifyContent:'center'}}>
-
-                          <Text style={{fontSize:25,color:'#202326'}}>Verify OTP</Text>
+                    <Text style={{fontSize:25,color:'#202326',marginTop:0}}>Verify OTP</Text>
                       <Text style={{fontSize:15,color:'#7F838D',marginVertical:10}}>We have sent the opt to your sms</Text>
                   </View>
 
@@ -132,15 +199,16 @@ class App extends Component {
                       <Button
                           title={'Verify'}
                           disabled={!(this.state.status&&this.state.code.length==6)}
-                          onPress={this.handleVerify}
+                          onPress={params.forgot?this.handleVerify:this.handleVerifyAccount}
                           titleStyle={{fontSize:20}}
                           buttonStyle={{paddingVertical:10,width:width*0.8,borderRadius:10,marginTop:20
                               ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                       />
-                      <View style={{width:'100%',flexDirection:'row',marginTop:30,justifyContent:'center'}}>
-                          <Text style={{color:'#7F838D'}}>Not receive otp? </Text>
-                          <TouchableOpacity onPress={()=>this.props.navigation.navigate('Signin')}>
-                              <Text style={{color:'#1582F4'}}>Resend</Text>
+                    <Text style={{color:'#7F838D',marginTop:30,alignSelf:'center'}}>We have sent OTP to {params.phone}</Text>
+                      <View style={{width:'100%',flexDirection:'row',marginTop:10,justifyContent:'center'}}>
+                          <Text style={{color:'#7F838D'}}>Not receive otp?</Text>
+                          <TouchableOpacity disabled={countDown>0} onPress={this.handleResend}>
+                              <Text style={{color:'#1582F4'}}> {countDown>0?countDown:"Resend"}</Text>
                           </TouchableOpacity>
                       </View>
                   </View>
@@ -152,7 +220,8 @@ class App extends Component {
           {/*</TouchableOpacity>*/}
             </ScrollView>
         </ImageBackground>
-
+            {loading&&<FullIndicator/>}
+        </>
     );
   }
 }

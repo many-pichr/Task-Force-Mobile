@@ -6,11 +6,11 @@ import {
     StyleSheet,
     View,
     Text,
-    Modal,
+    Image,
     Platform,
     Dimensions,
     FlatList,
-    ActivityIndicator, Alert,
+    ActivityIndicator, Alert, Linking,
 } from 'react-native';
 import ImageView from "react-native-image-viewing";
 import Icons from 'react-native-vector-icons/Feather';
@@ -29,8 +29,10 @@ import * as Keychain from 'react-native-keychain';
 import {Colors, Fonts} from '../../utils/config';
 import {TermCondition} from '../../components/Dialog';
 import {setSetting} from '../../redux/actions/setting';
-import PinCode from '../../components/PinCode';
+import assets from '../../assets';
 import Lang from '../../Language';
+import OptionsMenu from 'react-native-option-menu';
+import {checkForPermissions} from '../../components/Permission';
 
 const {width, height} = Dimensions.get('window');
 
@@ -44,36 +46,54 @@ class Index extends Component {
         this.state = {
             index: 1,
             imgLoading: true,
-            loading:false,
+            camera:false,
+            loading: params&&params.loading,
             uri: '',
             user: props.user,
             switchProfile: false,
-            imageUrl: '',
-            viewImage:false
-        };
+            imageUrl:  props.user.profileURL,
+            viewImage: false,
+            info: {
+                jobsCompleted:0,
+                jobsPosted:0,
+                avgRate:3
+            }
+        }
         this.myRef = React.createRef();
-        this.cropViewRef = React.createRef();
+        const {user} = props;
+        const view = params && params.view ? true : false;
+        this._unsubscribe = props.navigation.addListener('focus', (action, state) => {
+            if (params && !params.userId) {
+                this.setState({user});
+            }
+            if (params && params.userId) {
+                this.handleGetUser(params.userId);
+            }
+            // if(!view)this.setState({imageUrl: user.profileURL});
+
+            this.handleGetInfo(params&&params.userId?params.userId:user.id);
+        });
     }
 
     componentDidMount(): void {
-        const {user} = this.props;
-        const {params} = this.props.route;
-        if (params && params.userId) {
-            this.handleGetUser(params.userId);
-        }
-        this.setState({imageUrl: user.profileURL});
-        this.fadeIn();
-        setTimeout(() => {
-            // this.fadeIn();
-            this.setState({loading: false});
-        }, 2000);
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
+    }
+    componentWillUnmount() {
+        this._unsubscribe();
     }
 
     handleGetUser = async (id) => {
         await User.GetList('/api/User/' + id).then((rs) => {
             if (rs.status) {
-                this.setState({user: rs.data, imageUrl: rs.data.profileURL});
+                this.setState({user: rs.data, imageUrl: rs.data.profileURL,loading:false});
+            }
+        });
+    };
+    handleGetInfo = async (id) => {
+        await User.Post("/api/User/job-info-by-user/" + id,{}).then((rs) => {
+            if (rs.status) {
+                this.setState({info: rs.data});
+
             }
         });
     };
@@ -106,27 +126,28 @@ class Index extends Component {
             duration: 600,
         }).start();
     };
-    handleConfirm = async () => {
-        await this.setState({switchProfile: false});
-        const {setting} = this.props;
-        const data = this.state.user;
-        data.userType = data.userType == '1' ? '2' : '1';
-        // this.props.setUser(data)
-        // Keychain.setGenericPassword(JSON.stringify(data), data.token)
-        setting.isAgent = !setting.isAgent;
-        this.props.set(true);
-        await User.SwitchProfile();
-        // this.props.set(false)
-        this.props.setSetting(setting);
-        // this.props.navigation.navigate(data.userType=='1'?'RootBottomTab':'RootBottomTabAgent')
-    };
+    handleProfileType=async (i)=>{
+
+        const setting = this.props.setting;
+        const data = this.props.user;
+        if(i.toString()!=data.userType){
+            data.userType = i.toString()
+            // this.props.setUser(data)
+            // Keychain.setGenericPassword(JSON.stringify(data), data.token)
+            setting.isAgent = data.userType=='1'?false:true
+            User.SwitchProfile()
+            this.props.setSetting(setting)
+            this.props.navigation.navigate('Home')
+        }
+
+    }
     handleImagePicker = (type) => {
         ImagePicker[type](
             {
                 mediaType: 'photo',
                 includeBase64: false,
-                maxHeight: 200,
-                maxWidth: 200,
+                maxHeight: 700,
+                maxWidth: 700,
             },
             (response) => {
                 if (!response.didCancel) {
@@ -155,39 +176,50 @@ class Index extends Component {
         this.setState({imgLoading: false});
 
     };
+    handleCheckPermission=async ()=>{
+        checkForPermissions(true,'camera').then((status) => {
+            this.setState({camera:status})
+        })
+    }
     handlePicker=()=>{
-        Alert.alert(
-            'Choose Image',
-            'Please choose image source',
-            [
-                {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                {text: 'Gallery', onPress: () => this.handleImagePicker('launchImageLibrary')},
-                {text: 'Camera', onPress: () => this.handleImagePicker('launchCamera')},
-            ],
-            {cancelable: true},
-        );
+        const {camera} = this.state;
+        if(!camera) {
+            // alert(true)
+            this.handleCheckPermission()
+        }else {
+            Alert.alert(
+                'Choose Image',
+                'Please choose image source',
+                [
+                    {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    {text: 'Gallery', onPress: () => this.handleImagePicker('launchImageLibrary')},
+                    {text: 'Camera', onPress: () => this.handleImagePicker('launchCamera')},
+                ],
+                {cancelable: true},
+            );
+        }
     }
     render() {
-        const {viewImage,switchProfile, imageUrl, uri, imgLoading, user,loading} = this.state;
+        const {viewImage,info, imageUrl, uri, imgLoading, user,loading} = this.state;
         const {params} = this.props.route;
+        const data = this.props.user;
         const view = params && params.view ? true : false;
         const {lang} = this.props.setting;
+        const isOrg=data.userType == '1';
         return (
             <>
             <View style={{flex: 1, alignItems: 'center', backgroundColor: '#f5f7fa'}}>
                 <StatusBar barStyle="dark-content" hidden={false} backgroundColor={'transparent'} translucent/>
-                <View style={{zIndex: 1}}>
-                    {view && <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{
-                        paddingHorizontal: 10,
+                <View style={{zIndex: 1,width:'95%'}}>
+                    {view &&
+                    <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{
                         position: 'absolute',
                         left: 0,
                         top: 40,
-                        width: RFPercentage(8),
-                        borderRadius: 20,
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}>
@@ -195,27 +227,33 @@ class Index extends Component {
                     </TouchableOpacity>}
                     <View style={{
                         width: width * 0.95, alignSelf: 'center', borderRadius: 20, marginBottom: 10,
-                        backgroundColor: '#fff', marginTop: Platform.OS == 'ios' ? 80 : 100, paddingBottom: 10,
+                        backgroundColor: '#fff', marginTop: Platform.OS == 'ios' ? 80 : 100, paddingBottom: 0,
                     }}>
 
                         <View style={{width: '100%', height: 50, flexDirection: 'row', alignItems: 'center'}}>
                             <View style={{width: '50%'}}>
-                                {!view && <TouchableOpacity onPress={() => this.setState({switchProfile: true})}
-                                                            style={{
-                                                                marginLeft: 10,
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center',
-                                                                width: '60%',
-                                                                height: 25,
-                                                                borderRadius: 15,
-                                                                flexDirection: 'row',
-                                                            }}>
-                                    <Icons name={'user'} color={Colors.textColor} size={RFPercentage(2.3)}/>
-                                    <Text style={{
-                                        color: Colors.textColor,
-                                        fontSize: RFPercentage(2),fontFamily:Fonts.primary
-                                    }}>{user.userType == '1' ? ' Oraganizer' : Lang[lang].agent}</Text>
-                                </TouchableOpacity>}
+                                {!view && <OptionsMenu
+                                    customButton={<View style={{        marginLeft: 10,
+                                                                        justifyContent: 'center',
+                                                                        alignItems: 'center',
+                                                                        width: '60%',
+                                                                        flexDirection: 'row'
+                                                                    }}>
+                                        <Image source={isOrg?assets.bag:assets.person}
+                                               style={{width:30,height:30}}/>
+                                        <Text style={{
+                                            color: Colors.textColor,
+                                            fontSize: RFPercentage(2),
+                                            marginLeft:5,
+                                            marginTop:1,
+                                            fontFamily:Fonts.primary
+                                        }}>{isOrg ? Lang[lang].torg : Lang[lang].agent}</Text>
+                                    </View>}
+                                    buttonStyle={{width:'20%'}}
+                                    destructiveIndex={2}
+                                    options={[Lang[lang].torg,Lang[lang].tagent,Lang[lang].close]}
+                                    actions={[()=>this.handleProfileType(1),
+                                        ()=>this.handleProfileType(2)]}/>}
                             </View>
                             <View style={{width: '48%'}}>
                                 {!view &&
@@ -245,15 +283,44 @@ class Index extends Component {
                             <View style={{
                                 width: '90%',
                                 alignSelf: 'center',
+                                marginBottom: 3,
+                                flexDirection: 'row',
+
+                                alignItems:'center'
+                            }}>
+                                {isOrg ?
+                                <View style={{width: '50%', flexDirection: 'row', alignItems: 'flex-end'}}>
+                                    <Icon name={'done-all'} color={Colors.textColor} size={20}/>
+                                    <Text style={{color: Colors.textColor,fontSize:RFPercentage(2)}}> {info.jobsPosted} Post</Text>
+                                </View>:
+                                    <View style={{width: '50%', flexDirection: 'row', alignItems: 'flex-end'}}>
+                                        <Icon name={'done-all'} color={Colors.textColor} size={20}/>
+                                        <Text style={{color: Colors.textColor,fontSize:RFPercentage(2)}}> {info.jobsCompleted} Done</Text>
+                                    </View>}
+                                <TouchableOpacity style={{
+                                    width: '50%',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-end',
+                                }}>
+                                    <View style={{flexDirection: 'row',borderRadius:5, alignItems: 'center',backgroundColor:'rgba(16,189,206,0.18)'}}>
+                                    <Icon name={'grade'} color={Colors.textColor} style={{padding: 3}} size={15}/>
+                                    <Text style={{color: Colors.textColor,paddingRight:5,fontSize:RFPercentage(2)}}>{info.avgRate}</Text>
+                                    </View>
+                                    </TouchableOpacity>
+                            </View>
+                            {user.isShowPrivacy&&<View style={{
+                                width: '90%',
+                                alignSelf: 'center',
                                 borderTopWidth: 0.3,
-                                marginVertical: 10,
+                                marginBottom: 10,
                                 flexDirection: 'row',
                             }}>
                                 <View style={{width: '50%', flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
                                     <Icons name={'mail'} color={Colors.textColor} style={{}}/>
                                     <Text style={{color: Colors.textColor,fontSize:RFPercentage(1.5)}}> {user.email}</Text>
                                 </View>
-                                <View style={{
+                                <TouchableOpacity onPress={()=>callNumber(user.phone)} style={{
                                     width: '50%',
                                     flexDirection: 'row',
                                     alignItems: 'center',
@@ -262,8 +329,8 @@ class Index extends Component {
                                 }}>
                                     <Icons name={'phone'} color={Colors.textColor} style={{marginTop: 3}}/>
                                     <Text style={{color: Colors.textColor,fontSize:RFPercentage(1.8)}}> {user.phone}</Text>
-                                </View>
-                            </View>
+                                </TouchableOpacity>
+                            </View>}
                         </View>
                         <View style={{
                             position: 'absolute', width: RFPercentage(12), height: RFPercentage(12),
@@ -289,7 +356,7 @@ class Index extends Component {
                                 borderRadius: RFPercentage(12) / 2,
                                 backgroundColor: 'rgba(0,0,0,0.19)',
                             }}>
-                                <ActivityIndicator size={'large'} color={'#fff'}/>
+
                             </View>}
 
                         </View>
@@ -316,13 +383,13 @@ class Index extends Component {
                         </TouchableOpacity>}
                     </View>
 
-                    <Detail navigation={this.props.navigation} view={view} users={user}
+                    <Detail load={loading} navigation={this.props.navigation} view={view} users={user}
                             userId={params && params.userId ? params.userId : 0}/>
 
-                    {switchProfile && <TermCondition handleClose={() => this.setState({switchProfile: false})}
-                                                     handleConfirm={this.handleConfirm} title={'Warning'}
-                                                     subtitle={'Are you sure to switch profile?'}
-                                                     visible={switchProfile}/>}
+                    {/*{switchProfile && <TermCondition handleClose={() => this.setState({switchProfile: false})}*/}
+                    {/*                                 handleConfirm={this.handleConfirm} title={'Warning'}*/}
+                    {/*                                 subtitle={'Are you sure to switch profile?'}*/}
+                    {/*                                 visible={switchProfile}/>}*/}
                     <ImageCroper visible={uri != ''} uri={uri} handleClose={() => this.setState({uri: ''})}
                                  handleCrop={this.handleCrop}/>
 
@@ -407,3 +474,21 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export const callNumber = phone => {
+    let phoneNumber = phone;
+    if (Platform.OS !== 'android') {
+        phoneNumber = `telprompt:${phone}`;
+    }
+    else  {
+        phoneNumber = `tel:${phone}`;
+    }
+    Linking.canOpenURL(phoneNumber)
+        .then(supported => {
+            if (!supported) {
+                Alert.alert('Phone number is not available');
+            } else {
+                return Linking.openURL(phoneNumber);
+            }
+        })
+        .catch(err => console.log(err));
+};

@@ -1,0 +1,106 @@
+[
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-mdpi_bootsplash_logo.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-xhdpi_back1.jpg.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-xhdpi/back1.jpg"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_back1.jpg.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-xxxhdpi/back1.jpg"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable_bootsplash.xml.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable/bootsplash.xml"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi_bootsplash_logo.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxxhdpi/bootsplash_logo.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-mdpi_back1.jpg.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-mdpi/back1.jpg"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-hdpi_back1.jpg.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-hdpi/back1.jpg"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-hdpi_bootsplash_logo.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-mdpi_splash_screen.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-mdpi/splash_screen.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-xxhdpi_splash_screen.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-xxhdpi/splash_screen.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-xhdpi_splash_screen.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-xhdpi/splash_screen.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xhdpi_bootsplash_logo.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi_bootsplash_logo.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-xxhdpi/bootsplash_logo.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-hdpi_splash_screen.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-hdpi/splash_screen.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/res/merged/debug/drawable-xxhdpi_back1.jpg.flat",
+        "source": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/res/drawable-xxhdpi/back1.jpg"
+    }
+]

@@ -55,6 +55,15 @@ export default {
                 return {status:false,message:error}
             });
     },
+    GetGuest: async (url) => {
+        return config.withoutAuth.get(url)
+            .then(function ({data}) {
+                return {status:true,data:data};
+            })
+            .catch(function (error) {
+                return {status:false,message:error}
+            });
+    },
     Put: async (url, body) => {
         // SetLoading()
         return config.withAuth.put(url, body)

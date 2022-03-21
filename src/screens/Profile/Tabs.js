@@ -19,7 +19,7 @@ const About=(props)=>{
 
     return (
         <View style={{alignSelf:'center',width:'100%',backgroundColor:'#fff',paddingVertical:10}}>
-            <View style={{flexDirection:'row',alignItems:'center',width:'90%',alignSelf:'center'}}>
+            <View style={{flexDirection:'row',alignItems:'center',width:'95%',alignSelf:'center'}}>
                 <Text style={{fontSize:RFPercentage(2.5),width:'80%',fontFamily:Fonts.primary}}>
                     {Lang[props.lang].about}
                 </Text>

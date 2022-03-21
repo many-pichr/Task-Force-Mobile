@@ -34,6 +34,7 @@ import FastImage from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing/dist/ImageViewing';
 import Lang from '../../Language';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import assets from '../../assets';
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
     constructor(props) {
@@ -80,11 +81,9 @@ class Index extends Component {
             // this.props.setUser(data)
             // Keychain.setGenericPassword(JSON.stringify(data), data.token)
             setting.isAgent = data.userType=='1'?false:true
-            this.props.set(true)
-            await User.SwitchProfile()
-            // this.props.set(false)
+            User.SwitchProfile()
             this.props.setSetting(setting)
-            this.props.navigation.navigate(data.userType=='1'?'RootBottomTab':'RootBottomTabAgent')
+            this.props.navigation.navigate('Home')
         }
 
     }
@@ -161,7 +160,7 @@ class Index extends Component {
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <View style={{zIndex:1}}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.goBack()}
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate("Setting",{userId:null})}
                         style={{width:'95%',marginTop:RFPercentage(5),alignItems:'center',flexDirection:'row'}}>
                         {params&&params.profile? <>
                         <Icons name={'chevron-left'} size={30} color={'#fff'}/>
@@ -188,14 +187,23 @@ class Index extends Component {
                             <Icons name={'edit'} size={RFPercentage(2)} color={Colors.textColor}/>
                             <Text style={{color:Colors.textColor,fontSize:RFPercentage(1.8),fontFamily:Fonts.primary}}>{Lang[lang].eprofile}</Text>
                         </TouchableOpacity>
+                        <View  style={{position:'absolute',left:10,top:10,flexDirection:'row',alignItems:'center'}}>
+                            <Image source={user.userType == '1' ?assets.bag:assets.person}
+                                   style={{width:30,height:30}}/>
+                            <Text style={{
+                                color: Colors.textColor,
+                                fontSize: RFPercentage(1.8),fontFamily:Fonts.primary
+                            }}>{user.userType == '1' ? Lang[lang].torg : Lang[lang].agent}</Text>
+                        </View>
                         <View style={{position:'absolute',width:RFPercentage(14),height:RFPercentage(12),
                             borderRadius:RFPercentage(12)/2,marginTop:-(RFPercentage(12)/2),alignSelf:'center'}}>
-                            <TouchableOpacity activeOpacity={1} onPress={()=>this.setState({viewImage:true})} style={{position:'absolute',width:'100%',height:'100%',alignItems:'flex-end',justifyContent:'center'}}>
-                                <TouchableOpacity onPress={this.handlePicker} style={{backgroundColor:'#cecece',padding:5,borderRadius:20}}>
-                                    <Icon name={'edit'} size={15}/>
-                                </TouchableOpacity>
+                            <TouchableOpacity activeOpacity={1} disabled={!(imageUrl&&imageUrl!='')} onPress={()=>this.setState({viewImage:true})} style={{position:'absolute',width:'100%',height:'100%',alignItems:'flex-end',justifyContent:'center'}}>
+                                {/*<TouchableOpacity onPress={this.handlePicker} style={{backgroundColor:'#cecece',padding:5,borderRadius:20}}>*/}
+                                {/*    <Icon name={'edit'} size={15}/>*/}
+                                {/*</TouchableOpacity>*/}
                             </TouchableOpacity>
                         </View>
+
 
                         <View style={{marginTop:RFPercentage(5)}}>
                             <Text style={{width:'100%',marginTop:10,textAlign:'center',fontSize:RFPercentage(2.5)}}>

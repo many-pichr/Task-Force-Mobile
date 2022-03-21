@@ -12,14 +12,12 @@ import {
     ScrollView,
     Dimensions,
     FlatList,
-    ActivityIndicator, RefreshControl,
+    ActivityIndicator, RefreshControl, Keyboard,
 } from 'react-native';
-import {ListScreen} from '../../components/ListScreen';
-import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import moment from 'moment'
+import { SearchBar } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
-import ContentLoader from 'react-native-masked-loader';
 import data from '../Home/data';
 import Svg, { Rect } from 'react-native-svg';
 import User from '../../api/User';
@@ -29,28 +27,20 @@ import FastImage from 'react-native-fast-image';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const avatarSize=((width*0.9)*0.9)/5
-function getMaskedElement() {
-    return (
-        <Svg height={100} width="100%" fill={'black'}>
-            {/*<Rect x="0" y="0" rx="8" ry="8" width="50%" height="16" />*/}
-            <Rect x="0" y="10" rx="40" ry="40" width="80" height="80" />
-            <Rect x="90" y="20" rx="4" ry="4" width="70%" height="15" />
-            <Rect x="90" y="60" rx="4" ry="4" width="40%" height="15" />
-        </Svg>
-    );
-}
 class Index extends Component {
     constructor(props) {
         super(props);
         this.state={
+            originData:[],
             data:[],
-            loading:true,
-            refreshing:false
+            loading:false,
+            refreshing:false,
+            search:''
         }
         this.myRef = React.createRef();
         this._unsubscribe = this.props.navigation.addListener('focus', (action, state) => {
             // do something
-            this.handleGetPost('false')
+            this.handleGetPost(false)
         });
     }
     componentDidMount(): void {
@@ -59,6 +49,21 @@ class Index extends Component {
     }
     componentWillUnmount() {
         this._unsubscribe();
+    }
+    handleSearch=async (search)=>{
+       this.setState({search})
+        const {originData} = this.state;
+        const excludeColumns = ["body","type","lastAccess"];
+        const filteredData =await originData.filter(item => {
+            return Object.keys(item).some(key =>
+                excludeColumns.includes(key) ? false : (item[key]==null?false:item[key].toString().toLowerCase().includes(search.toLowerCase()))
+            );
+        });
+        this.setState({data:filteredData})
+    }
+    onCancel=()=>{
+        this.setState({search:''});
+        Keyboard.dismiss();
     }
     handleGetPost=async (refreshing)=>{
         this.setState({refreshing})
@@ -74,12 +79,16 @@ class Index extends Component {
                         item.toUser = fromUser;
                         item.fromUserId=toUser.id;
                         item.toUserId=fromUser.id;
+                        item.firstName=item.toUser.firstName;
+                        item.lastName=item.toUser.lastName;
                         items.push(item)
                     }else{
+                        item.firstName=item.toUser.firstName;
+                        item.lastName=item.toUser.lastName;
                         items.push(item)
                     }
                 }
-                this.setState({data:items})
+                this.setState({originData:items,data:items})
             }
         })
         this.setState({loading:false,refreshing:false})
@@ -139,51 +148,40 @@ class Index extends Component {
         )
     }
     render() {
-        const {map,refreshing,loading,data} = this.state
-        console.log(data)
+        const {search,refreshing,loading,data,originData} = this.state
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#ffff' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <View style={{zIndex:1}}>
                     <View style={{width:'100%',alignSelf:'center',marginTop:barHight,flexDirection:'row',alignItems:'flex-end'}}>
-                        <View style={{width:'10%',justifyContent:'flex-end'}}>
-                            {/*<TouchableOpacity onPress={()=>this.props.navigation.goBack()}>*/}
-                            {/*    <Icons name={'chevron-left'} color={'#fff'} size={35}/>*/}
-                            {/*</TouchableOpacity>*/}
-                        </View>
-                        <View style={{width:'70%',alignSelf:'center',alignItems:'center'}}>
-                            <Text style={{color:'#fff',fontSize:25}}>Message</Text>
-                        </View>
-                        <View style={{width:'10%',justifyContent:'flex-end'}}>
-                            {/*<TouchableOpacity>*/}
-                            {/*    <Icons name={'search'} color={'#fff'} size={30}/>*/}
-                            {/*</TouchableOpacity>*/}
-                        </View>
+                        <SearchBar
+                            containerStyle={{backgroundColor:'transparent',borderTopWidth:0,borderBottomWidth: 0,width:'90%'}}
+                            inputContainerStyle={{backgroundColor:'#f9f9f9'}}
+                            round
+                            placeholder="Search ..."
+                            onClear={this.onCancel}
+                            onChangeText={this.handleSearch}
+                            value={search}
+                            />
                     </View>
                     <View style={{width:width,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
-                        backgroundColor:'#fff',marginTop:20,paddingBottom:data.length<3?100:0}}>
-                            {/*<FlatList*/}
-                            {/*    contentContainerStyle={{flexDirection:'row',alignItems:'center',marginTop:20}}*/}
-                            {/*    data={users}*/}
-                            {/*    renderItem={({item,index}) =>*/}
-                            {/*        <TouchableOpacity onPress={()=>this.props.navigation.navigate('Chat')} style={{marginLeft:20,justifyContent:'center',alignItems:'center',width:avatarSize}}>*/}
-                            {/*            <Image source={{uri:item}} style={{width:avatarSize,height:avatarSize,borderRadius:avatarSize/2,}}/>*/}
-                            {/*            <Text style={{}}>Many</Text>*/}
-                            {/*        </TouchableOpacity>*/}
-                            {/*    }*/}
-                            {/*    horizontal*/}
-                            {/*    showsHorizontalScrollIndicator={false}*/}
-                            {/*    legacyImplementation={false}*/}
-                            {/*    keyExtractor={(item, index) => index.toString()}*/}
-                            {/*    showsVerticalScrollIndicator={false}*/}
-                            {/*/>*/}
+                        backgroundColor:'#fff',marginTop:0,paddingBottom:data.length<3?100:0}}>
 
                         {loading?
-                            <View style={{justifyContent:'center',borderTopLeftRadius:20,borderTopRightRadius:20,alignItems:'center',backgroundColor:'#fff',width:'100%'}}>
+                            <View style={{justifyContent:'center',borderTopLeftRadius:20,height:'90%',borderTopRightRadius:20,alignItems:'center',backgroundColor:'#fff',width:'100%'}}>
 
                                             <ActivityIndicator size={'large'} color={Colors.textColor}/>
                             </View>:
                             <>
+                            {/*{!(data.length==0&&originData.length==0)&&<SearchBar*/}
+                            {/*        containerStyle={{backgroundColor:'transparent',borderTopWidth:0,borderBottomWidth: 0}}*/}
+                            {/*        inputContainerStyle={{backgroundColor:'#e0e0e0'}}*/}
+                            {/*        round*/}
+                            {/*        placeholder="Search ..."*/}
+                            {/*        onClear={this.onCancel}*/}
+                            {/*        onChangeText={this.handleSearch}*/}
+                            {/*        value={search}*/}
+                            {/*    />}*/}
                                 {data.length>0?<FlatList
                             contentContainerStyle={[{alignItems:'center',marginTop:0,width:'100%',alignSelf:'center'},data.length<6&&{height:height*0.8}]}
                             data={data}
@@ -204,7 +202,7 @@ class Index extends Component {
                                     <View style={{width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
                                         <Icons name={'chat'} size={50} color={'gray'}/>
                                         <Text style={{marginTop:20,fontSize:20}}>
-                                            No message yet
+                                            { (data.length==0&&originData.length==0)?"No message yet":"Not found"}
                                         </Text>
                                     </View>
                                 </ScrollView>}

@@ -15,17 +15,14 @@ import {
     FlatList,
     Alert, TextInput, ActivityIndicator, RefreshControl,
 } from 'react-native';
-import {ListScreen} from '../../components/ListScreen';
-import Feather from 'react-native-vector-icons/Feather'
 import Icon  from 'react-native-vector-icons/MaterialIcons'
-import {CustomItem, ItemCandidate, ItemPost} from '../../components/Items';
+import Feather  from 'react-native-vector-icons/Feather'
+import FbGrid from "react-native-fb-image-grid";
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
 import CustomPicker from '../../components/customPicker';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import User from '../../api/User'
-import Geolocation from '@react-native-community/geolocation';
-import * as ImagePicker from 'react-native-image-picker';
 import {Button,CheckBox} from 'react-native-elements';
 import {setLoading} from '../../redux/actions/loading';
 import moment from 'moment';
@@ -45,6 +42,7 @@ class Index extends Component {
         this.state={
             coordinate:null,
             long:104.9282,
+            index:0,
             confirm:false,
             lat:11.5564,
             tab:post?1:0,
@@ -63,8 +61,11 @@ class Index extends Component {
                 reward:'0',
                 location:'',
                 skill:[],
+                name:'',
+                check:false,
 
             },
+            user:null,
             images:[],
             imagesUrl:[],
             loadings:[false,false,false,false,false],
@@ -107,7 +108,7 @@ class Index extends Component {
             {location:this.state.isLocation,
                 long:this.state.long,lat:this.state.lat}
         ).then((rs) => {
-            console.log(rs)
+
         })
         this.props.set(false)
     }
@@ -125,7 +126,6 @@ class Index extends Component {
                 if(rs.status){
                     const {data}=rs
                     const newState={... this.state}
-                    console.log(data)
                     newState.values.id=data.id;
                     newState.values.title=data.title;
                     newState.values.category=data.jobCategory.name;
@@ -135,11 +135,16 @@ class Index extends Component {
                     newState.values.extra=data.extraCharge.toString();
                     newState.values.reward=data.reward.toString();
                     newState.values.address=data.address.toString();
-                    newState.values.deadline=data.isNoneExpired?"No Expiry":FormatDate(data.createDate)+" - "+FormatDate(data.expiryDate);
+                    newState.values.deadline=data.isNoneExpired?"No Expiry":FormatDate(data.createdDate)+" - "+FormatDate(data.expiryDate);
                     newState.isLocation=data.isShowLocation;
                     newState.long=data.locLONG;
                     newState.lat=data.locLAT;
                     newState.region=data.jobPostArea;
+                    newState.values.createDate=data.createdDate;
+                    newState.values.profile=data.user.profileURL;
+                    newState.values.phone=data.user.phone;
+                    newState.user=data.user;
+                    newState.values.name=data.user.lastName+" "+data.user.firstName;
                     const images=[]
                     const imagesUrl=[]
                     for(var j=0;j<data.jobPostPhotos.length;j++){
@@ -149,7 +154,6 @@ class Index extends Component {
                     newState.images=images;
                     newState.imagesUrl=imagesUrl;
                     newState.values.skill=data.jobPostSkills;
-                    console.log(newState)
                     this.setState(newState)
                 }
             })
@@ -188,118 +192,114 @@ class Index extends Component {
     }
     handleSubmitApply=async ()=>{
         const {values} = this.state
-        this.props.set(true)
-        this.setState({apply:false})
+        this.setState({apply:false,loading:true})
         await User.SubmitRequestJob({userId:this.props.user.id,jobId:values.id}).then((rs) => {
             if(rs.status){
             }
         })
-        this.props.set(false)
+        this.setState({loading:false});
+        this.props.navigation.goBack()
 
     }
     openMap=(long,lat)=>{
         const url=Platform.OS=='ios'?'maps://app?saddr=100+101&daddr='+lat+'+'+long:'google.navigation:q='+lat+'+'+long
         Linking.openURL(url)
     }
+    renderTextItem(label,text){
+        return(
+            <View style={{width:'100%',flexDirection:'row',marginTop:5,alignItems:'center'}}>
+                <Text style={styles.textItem}>{label}: </Text>
+                <Text style={[styles.textItem,{fontWeight:'bold'}]}>{text}</Text>
+
+            </View>
+
+        )
+    }
+    handleFavorite=()=>{
+        const newState={... this.state}
+        newState.values.check=!newState.values.check;
+        this.setState(newState);
+        User.AddInterested({userId:this.props.user.id,jobId:newState.values.id})
+    }
+    handleViewCandidate=()=>{
+        this.props.navigation.navigate('ViewUser',{userId:this.state.user.id,view:true})
+    }
     render() {
-        const {loading,selected,candidate,confirm,apply,selectSkill,region,viewImage,imagesUrl,tab,isLocation,images,category,level,priority,skill,values} = this.state
-        const { title,view,home,job } = this.props.route.params;
+        const {loading,index,candidate,confirm,apply,selectSkill,region,viewImage,imagesUrl,tab,isLocation,images,category,level,priority,skill,values} = this.state
+        const { title,view,home,post,job } = this.props.route.params;
         const {user} = this.props
         const data={values,error:[],focus:false}
     return (
         <>
-        <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
+        <View style={{ flex: 1, alignItems: 'center',backgroundColor:Colors.primary }}>
             <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
-            <View style={{zIndex:1}}>
-                <View style={{width:'100%',alignSelf:'center',marginTop:barHight,flexDirection:'row',alignItems:'flex-end'}}>
+            <View style={{height:'10%',justifyContent:'flex-end'}}>
+                <View style={{width:'100%',alignSelf:'center',flexDirection:'row',alignItems:'flex-end',backgroundColor:Colors.primary}}>
                     <View style={{width:'10%',justifyContent:'flex-end',alignItems:'center'}}>
                         <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
                             <Icons name={'chevron-left'} color={'#fff'} size={35}/>
                         </TouchableOpacity>
                     </View>
                     <View style={{width:'80%',alignSelf:'center',alignItems:'center'}}>
-                        <Text style={{color:'#fff',fontSize:25}}>{title}</Text>
+                        <Text style={{color:'#fff',fontSize:20}}>{values.name}</Text>
                     </View>
-                    <View style={{width:'10%',justifyContent:'flex-start'}}>
-                    </View>
-                    {/*<TouchableOpacity disabled={!(this.props.user.userType=='2'&&home)}*/}
-                    {/*    onPress={()=>this.setState({apply:true})} style={{width:'15%',alignSelf:'center',alignItems:'center'}}>*/}
-                    {/*    {this.props.user.userType=='2'&&home&&<Text style={{color:'#fff',fontSize:20}}>Apply</Text>}*/}
-                    {/*</TouchableOpacity>*/}
+                    <TouchableOpacity disabled={post}
+                    onPress={this.handleViewCandidate} style={{width:'10%',alignSelf:'center',alignItems:'center'}}>
+                        <FastImage
+                                   source={values.profile && values.profile != '' ? {
+                                       uri: values.profile,
+                                       priority: FastImage.priority.normal,
+                                   } : require('../../assets/images/avatar.png')}
+                                   resizeMode={FastImage.resizeMode.contain}
+                                   style={{
+                                       width: 30, height: 30,marginRight:10,
+                                       borderWidth: 1, borderColor: '#fff', borderRadius: 25,
+                                   }}/>
+                    </TouchableOpacity>
                 </View>
-                <View style={{width:width*0.9,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
-                    backgroundColor:'#fff',marginTop:10,height:height}}>
-                    {title=="View Post" &&!home&&!job&&
-                    <View style={{width:'90%',alignSelf:'center',height:60,flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:Colors.textColor}}>Agents</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:Colors.textColor}}>Post Detail</Text>
-                        </TouchableOpacity>
-                    </View>}
-                    {tab == 0 ?
+            </View>
+                <View style={{width,alignSelf:'center',
+                    backgroundColor:'#fff',marginTop:10,height:post?'90%':'80%',flex:1}}>
+
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={{
-                                width: (width * 0.9) * 0.9,
+                                width: (width * 0.9),
                                 alignSelf: 'center',
                                 alignItems: 'center',
-                                paddingBottom: 200,
+                                paddingBottom: 10,
                             }}>
-                                {images.length>0&&images[0]!=''&& <>
-                                <View style={{flexDirection: 'row', marginVertical: 5}}>
-                                    <Text style={{color: Colors.textColor, width: '50%',fontSize:RFPercentage(2.5), textAlign: 'left'}}>Photos</Text>
-                                    <Text style={{color: Colors.textColor, width: '50%', textAlign: 'right'}}>{images.length} / 5</Text>
-                                </View>
-                                <View style={{flexDirection: 'row'}}>
-                                                <TouchableOpacity onPress={()=>this.setState({viewImage:true})}>
-                                                    <FastImage onLoadEnd={()=>this.setState({imgLoading:false})}
-                                                               source={{uri:images[0]}}
-                                                               resizeMode={FastImage.resizeMode.cover}
-                                                               style={{width: ((width * 0.9) * 0.9) ,
-                                                                   height: ((width * 0.9) * 0.9) / 2,
-                                                                   borderRadius:10,
-                                                                   backgroundColor: 'rgba(21,130,244,0.18)',
-                                                                   justifyContent: 'center',
-                                                                   alignItems: 'center'}}/>
+                                {images.length>0&&images[0]!=''&&<View style={{width:'110%',height:height*0.3,alignItems:'center'}}>
+                                    <FbGrid
 
-                                                </TouchableOpacity>
-
-                                </View>
-                                </>}
-                                <CustomPicker handleInput={this.handleInput} view label={'Subject'} title={'Title'} name={'title'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view label={'Category'} name={'category'} title={'Mobile App UX/UI'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view label={'Description'} title={'Description'} name={'description'} textarea value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view label={'Task Level'} name={'level'} title={'Medium'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view title={'dsfdfdf'} label={'Deadline'} name={'deadline'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view label={'Priority'} name={'priority'} title={'Urgent'} value={data}/>
-                                <View style={{width:'100%'}}>
-                                    <Text style={{fontSize:16,color:Colors.textColor,marginTop:10,}}>Skill</Text>
-                                </View>
-                                <FlatList
-                                    contentContainerStyle={{marginTop:0}}
-                                    data={values.skill}
-                                    renderItem={({item,index}) =>(
-                                        <View style={{flexDirection:'row',width:'100%',alignSelf:'center',borderBottomWidth:0.3,height:35,alignItems:'center'}}>
-                                            <Text style={{width:'100%'}}>{item.skill.name}</Text>
-                                        </View>
-                                    )}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    showsVerticalScrollIndicator={false}
+                                    images={images}
+                                    onPress={(image,index,e)=>this.setState({viewImage:true,index})}
                                 />
-                                <CustomPicker handleInput={this.handleInput} view  label={'Reward ($)'} title={''} name={'reward'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view  label={'Extra Tip ($)'} title={''} name={'extra'} value={data}/>
-                                <CustomPicker handleInput={this.handleInput} view  label={'Address'} title={''} name={'address'} value={data}/>
+                                </View>}
+                                <Text style={styles.textSm}>{values.title}</Text>
+                                <View style={{width:'100%',flexDirection:'row',marginTop:10,alignItems:'center'}}>
+                                    <Text style={[styles.reward,{fontWeight:'bold',width:'40%'}]}>
+                                        ${(Number(values.reward)+Number(values.extra)).toFixed(2)}
+                                    </Text>
+                                    <Text style={[styles.reward,{width:'40%',fontSize:14,color:'gray',textAlign: 'right'}]}>
+                                        {moment(values.createDate).fromNow()}
+                                    </Text>
+                                    {view&&
+                                    <TouchableOpacity
+                                        onPress={this.handleFavorite} style={{width:'20%',alignSelf:'center',alignItems:'flex-end'}}>
+                                        <Icons name={values.check?'favorite':'favorite-outline'} color={Colors.textColor} size={25}/>
+                                    </TouchableOpacity>}
+                                </View>
+                                <Text style={styles.textTitle}>Description</Text>
+                                {this.renderTextItem('Category',values.category)}
+                                {this.renderTextItem('Task Level',values.level)}
+                                {this.renderTextItem('Deadline',values.deadline)}
+                                {this.renderTextItem('Priority',values.priority)}
+                                {this.renderTextItem('Reward','$'+values.reward)}
+                                {this.renderTextItem('Extra','$'+values.extra)}
+                                {this.renderTextItem('Address',values.address?values.address:"N/A")}
+                                <Text style={[styles.textStyle,{marginTop:10}]}>{values.description}</Text>
+
                                 <View style={{width: '100%', marginTop: 10}}>
-                                    {/*<View style={{flexDirection:'row'}}>*/}
-                                    {/*    <Text style={{fontSize: 18, color: Colors.primary,width:'85%'}}>Location</Text>*/}
-                                    {/*    <Switch*/}
-                                    {/*        trackColor={{ false: "#767577", true: "#81b0ff" }}*/}
-                                    {/*        // thumbColor={isLocation ? "#f5dd4b" : "#f4f3f4"}*/}
-                                    {/*        // ios_backgroundColor="#3e3e3e"*/}
-                                    {/*        value={isLocation}*/}
-                                    {/*    />*/}
-                                    {/*</View>*/}
                                     {isLocation && region &&
                                     <View style={{
                                         width: '100%',
@@ -325,53 +325,26 @@ class Index extends Component {
                                         </TouchableOpacity>
                                     </View>
                                     }
-                                    {!view && <Button
-                                        title={"Submit"}
-                                        onPress={this.handleSubmit}
-                                        titleStyle={{fontSize: 20}}
-                                        containerStyle={{alignSelf: 'center', marginVertical: 20}}
-                                        buttonStyle={{
-                                            paddingVertical: 13,
-                                            width: width * 0.6,
-                                            borderRadius: 10,
-                                            backgroundColor: Colors.textColor
-                                        }}
-                                    />
-                                    }
                                 </View>
                             </View>
 
-                        </ScrollView> :<>
-                        {candidate.length>0?<ScrollView showsVerticalScrollIndicator={false}>
-                            <FlatList
-                                contentContainerStyle={{marginTop:0}}
-                                data={candidate}
-                                renderItem={({item,index}) =><ItemCandidate selected={selected} viewUser={()=>this.props.navigation.navigate('ViewUser',{userId:item.userId,view:true})}
-                                                                            handleSelect={()=>this.handleSelect(item)} status={item.status} date={item.createdDate} item={item} index={index} bottom={index==8?250:0}/>}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsVerticalScrollIndicator={false}
-                            />
-                        </ScrollView>:
+                        </ScrollView>
+                    {view&&
+                    <View style={{height:Platform.OS=='ios'?'10%':'8%',backgroundColor:Colors.primary}}>
+                        <View style={{width:'100%',alignSelf:'center',flexDirection:'row',alignItems:'flex-end',backgroundColor:Colors.primary,height:Platform.OS=='ios'?'80%':'100%'}}>
+                                <TouchableOpacity style={{width:'50%',borderRightWidth:1,height:'100%',borderColor:'#fff',flexDirection:'row',alignItems:'center',justifyContent:'center'}}
+                                                  onPress={()=>callNumber(values.phone)}>
+                                    <Icons name={'phone'} color={'#fff'} size={35}/>
+                                    <Text style={{color:'#fff',fontSize:20}}> Call</Text>
+                                </TouchableOpacity>
+                            <TouchableOpacity style={{width:'50%',height:'100%',flexDirection:'row',alignItems:'center',justifyContent:'center'}}
+                                              onPress={()=>this.setState({apply:true})}>
+                                <Text style={{color:'#fff',fontSize:20}}> Apply</Text>
+                                <Icons name={'done'} color={'#fff'} size={35}/>
 
-                            <ScrollView
-                                // refreshControl={<RefreshControl
-                                // colors={["#9Bd35A", "#689F38"]}
-                                // refreshing={false}
-                                // onRefresh={()=>this.handleGetPredata(true)} />}
-                            >
-                                <View style={{width:'100%',height:height*0.7,justifyContent:'center',alignItems:'center'}}>
-                                    <Text style={{fontSize:20,color:Colors.textColor}}>
-                                        No Agent
-                                    </Text>
-                                </View>
-                            </ScrollView>}
-                            </>
-                    }
-                </View>
-
-            </View>
-            <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
-
+                            </TouchableOpacity>
+                        </View>
+                    </View>}
             </View>
 
             {selectSkill&&<Modal statusBarTranslucent={true} visible={true} animationType={'fade'} transparent={true}>
@@ -412,7 +385,7 @@ class Index extends Component {
         </View>}
             <ImageView
                 images={imagesUrl}
-                imageIndex={0}
+                imageIndex={index}
                 visible={viewImage}
                 backgroundColor={'#000'}
                 onRequestClose={() => this.setState({viewImage:false})}
@@ -421,11 +394,56 @@ class Index extends Component {
     );
   }
 }
+export const callNumber = phone => {
+    let phoneNumber = phone;
+    if (Platform.OS !== 'android') {
+        phoneNumber = `telprompt:${phone}`;
+    }
+    else  {
+        phoneNumber = `tel:${phone}`;
+    }
+    Linking.canOpenURL(phoneNumber)
+        .then(supported => {
+            if (!supported) {
+                Alert.alert('Phone number is not available');
+            } else {
+                return Linking.openURL(phoneNumber);
+            }
+        })
+        .catch(err => console.log(err));
+};
 const styles = StyleSheet.create({
     textStyle:{
         color:'#5e5e5e',
-        fontSize:13,
-        marginTop:2
+        fontSize:14,
+        marginTop:0,
+        width:'100%'
+    },
+    textSm:{
+        color:'#5e5e5e',
+        fontSize:20,
+        marginTop:10,
+        width:'100%'
+    },
+    textLabel:{
+        color:'#5e5e5e',
+        fontSize:14,
+        marginTop:2,
+        width:'100%'
+    },
+    textItem:{
+        color:'#5e5e5e',
+        fontSize:14,
+    },
+    reward:{
+        color:'red',
+        fontSize:20,
+    },
+    textTitle:{
+        color:Colors.textColor,
+        fontSize:20,
+        marginTop:10,
+        width:'100%'
     },
     cardItem:{
         width:'90%',height:height*0.1,backgroundColor:'#fff',borderRadius:10,
@@ -456,4 +474,5 @@ const mapDispatchToProps = dispatch => {
         }
     }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(Index)

@@ -6,11 +6,12 @@ import {
   StyleSheet,
   Image,
   KeyboardAvoidingView,
-  Dimensions, Modal, SafeAreaView, ActivityIndicator,
+  Dimensions, Modal, SafeAreaView, ActivityIndicator, ScrollView,
 } from 'react-native';
 import {Colors} from '../../utils/config'
 import {Button} from 'react-native-elements';
 import Icons from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {RFPercentage} from 'react-native-responsive-fontsize';
@@ -36,7 +37,6 @@ export const SlidePanel = (props) => {
     }
     await User.Post("/api/Chat",body).then((rs) => {
       if(rs.status){
-        console.log(rs.data,222)
         props.navigation.navigate('Chat',{item:rs.data,user:props.user})
       }
     })
@@ -62,14 +62,20 @@ export const SlidePanel = (props) => {
         <>
           <View>
           {props.item&&<View style={{width,backgroundColor:'#f1f1f1',height:'100%'}}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{paddingBottom:100}}>
             <View style={{width:'95%',alignSelf:'center',flexDirection:'row'}}>
               <View style={{width:'100%'}}>
-
-                <Text style={{fontSize:RFPercentage(3)}}>
+                <Text style={{fontSize:RFPercentage(2.6),color:'rgb(76,76,76)'}}>
                   {props.item.title}
                 </Text>
-                <View style={{flexDirection:'row',width:'100%'}}>
-                <Text style={[styles.textStyle,{width:'70%'}]}>
+                <View style={{flexDirection:'row',width:'100%',alignItems:'center'}}>
+                  {props.item.jobCategory.photoURL&&
+                  <View style={{width:30,height:30,right:5,justifyContent:'center'}}>
+                    <Image source={{uri:props.item.jobCategory.photoURL}} resizeMode="cover"
+                                                           style={{flex:1,width:30,height:40}}/>
+                  </View>}
+                <Text style={[styles.textStyle,{right:props.item.jobCategory.photoURL?6:0}]}>
                   {props.item.jobCategory.name}
                 </Text>
                   <View style={{width:'30%',flexDirection:'row',justifyContent:'center'}}>
@@ -86,7 +92,7 @@ export const SlidePanel = (props) => {
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
                   <Icons name={'user'} color={Colors.textColor}/>
-                  <Text style={[styles.textStyle,{fontSize:12}]}>{props.item.user.lastName} {props.item.user.firstName}</Text>
+                  <Text style={[styles.textStyle,{fontSize:12}]}> {props.item.user.lastName} {props.item.user.firstName}</Text>
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center'}}>
                   <Icons name={'phone'} color={Colors.textColor}/>
@@ -102,21 +108,20 @@ export const SlidePanel = (props) => {
               {/*  <Image source={{uri:props.item.jobPostPhotos[0].url}} style={{width:80,height:80,borderRadius:10}}/>*/}
               {/*</View>}*/}
             </View>
-            <View style={{width:'95%',alignSelf:'center',marginTop:10}}>
-              <Text style={[styles.textStyle,{fontSize:18,color:'#000'}]}>Description</Text>
-              <Text style={[styles.textStyle,{fontSize:RFPercentage(1.8)}]}>
-                {trimmedString}
+            <View style={{width:'95%',alignSelf:'center',marginTop:0}}>
+              <Text style={[styles.textStyle,{fontSize:16,color:'#2A2A2A'}]}>Description</Text>
+              <Text style={[styles.textStyle,{fontSize:RFPercentage(1.8)}]}>{trimmedString}
               </Text>
-              <Text style={[styles.textStyle,{fontSize:18,marginTop:10,color:'#000'}]}>Deadline</Text>
-              <Text style={[styles.textStyle,{fontSize:15}]}>{moment(props.item.expireDate).format('DD/MM/YYYY')}</Text>
+              <Text style={[styles.textStyle,{fontSize:16,marginTop:0,color:'#2A2A2A'}]}>Deadline</Text>
+              <Text style={[styles.textStyle,{fontSize:14}]}>{moment(props.item.expireDate).format('DD/MM/YYYY')}</Text>
             </View>
             <View style={{width:'95%',alignSelf:'center',flexDirection:'row'}}>
               <View style={{width:'25%',justifyContent:'center'}}>
-                <Text style={[styles.textStyle,{fontSize:18,marginTop:10,color:'#000'}]}>Reward</Text>
+                <Text style={[styles.textStyle]}>Reward</Text>
                 <Text style={[styles.textStyle,{fontSize:16,color:Colors.textColor}]}>${props.item.reward}.00</Text>
               </View>
               <View style={{width:'25%',justifyContent:'center'}}>
-                <Text style={[styles.textStyle,{fontSize:18,marginTop:10,color:'#000'}]}>Extra</Text>
+                <Text style={[styles.textStyle]}>Extra</Text>
                 <Text style={[styles.textStyle,{fontSize:16,color:Colors.textColor}]}>${props.item.extraCharge}.00</Text>
               </View>
               {props.user.userType == '2' &&
@@ -173,10 +178,13 @@ export const SlidePanel = (props) => {
                     </TouchableOpacity>
                   </>}
                 </View>}
+
+            </View></ScrollView>
           </View>}
           {props.loading&&<View style={{width:'100%',alignItems:'center',justifyContent:'center',height:'100%',position:'absolute',backgroundColor:'rgba(0,0,0,0.25)'}}>
           <ActivityIndicator size={'large'} color={'#fff'}/>
           </View>}
+
         </View>
         {/*{apply&&<Confirm handleClose={()=>setApply(false)} handleConfirm={()=>handleApply(props.item.id)} title={'Confirm'} subtitle={'Are you sure to submit?'} visible={apply}/>}*/}
 
@@ -201,7 +209,7 @@ const styles = StyleSheet.create({
   textStyle:{
     color:'#5e5e5e',
     fontSize:RFPercentage(2),
-    marginTop:2
+    // marginTop:2
   },
   cardItem:{
     width:'90%',height:height*0.1,backgroundColor:'#fff',borderRadius:10,

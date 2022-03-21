@@ -31,20 +31,9 @@ import {SliderPicker} from 'react-native-slider-picker';
 import {checkForPermissions} from '../../components/Permission'
 import Lang from '../../Language'
 const {width,height} = Dimensions.get('window')
-const styles = StyleSheet.create({
-    title:{
-        textAlign:'justify',marginVertical:10,fontWeight:'bold',fontSize:RFPercentage(3),color:'#20354E',fontFamily:Fonts.primary
-    },
-    textLan:{fontSize:RFPercentage(1.8),fontFamily:Fonts.primary,fontWeight:'bold'},
-    img:{width:50,height:50,borderRadius:25,borderWidth:1,borderColor:'#117485'},
-    subTitle:{textAlign:'center',color:'#959595',fontSize:RFPercentage(2),fontFamily:Fonts.primary},
-    bubble:{width:8,height:6,borderRadius:4,backgroundColor:'#b9b9b9'},
-    bubbleContainer:{width:'33.33%',alignItems:'center'},
-    exBubble:{width:16,backgroundColor: Colors.textColor}
-});
-const images=[{source:require('./img/start.png'),width:327.20,height:238.37},
-    {source:require('./img/next.png'),width:327.20,height:238.37},
-    {source:require('./img/go.png'),width:327.20,height:238.37},
+const images=[{source:require('./img/start.png'),width:RFPercentage(50),height:RFPercentage(30)},
+    {source:require('./img/next.png'),width:RFPercentage(50),height:RFPercentage(30)},
+    {source:require('./img/go.png'),width:RFPercentage(50),height:RFPercentage(30)},
 ]
 
 class StartScreen extends Component {
@@ -58,15 +47,13 @@ class StartScreen extends Component {
         }
         this.props.set(true)
         checkForPermissions(false)
-        this.handleCheckSetting()
+        this.handleCheckSetting();
     }
     componentDidMount(): void {
         // OneSignal.init("93 01b7be-36f5-47ec-919b-9ce25be83e21",{kOSSettingsKeyAutoPrompt : true});
         this.fadeIn()
         this.fadeIn1()
-                Keychain.getSupportedBiometryType({}).then((biometryType) => {
 
-        });
         RNBootSplash.hide({ duration: 500,fade:true })
         this.handleGetAuth()
         AsyncStorage.removeItem('setting')
@@ -75,7 +62,6 @@ class StartScreen extends Component {
         try {
             const value = await AsyncStorage.getItem('setting');
             if (value !== null) {
-                console.log(value,123456789)
                 const {setting} = this.props;
                 const values = JSON.parse(value)
                 setting.lang=values.lang?values.lang:"en";
@@ -108,7 +94,6 @@ class StartScreen extends Component {
                     Keychain.setGenericPassword(JSON.stringify(rs.data), auth)
                     this.props.setUser(rs.data)
                     setting.isAgent=rs.data.userType=='1'?false:true;
-                    console.log('testings====>',setting,rs.data.userType)
                     this.props.setSetting(setting)
                     this.props.navigation.replace('RootBottomTab')
                 }else{
@@ -149,10 +134,7 @@ class StartScreen extends Component {
         }).start();
     };
     render() {
-        const {proModal} = this.state
         const {lang} = this.props.setting;
-        console.log(lang,123456789)
-        // const lang='kh'
         return (
             <>
                 <Swiper loop={false} ref='swiper'>
@@ -161,8 +143,8 @@ class StartScreen extends Component {
                     <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
                         <View style={{width:width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
                             <View style={{width:width*0.8,height:width*0.8,justifyContent:'center',alignItems:'center',marginTop:0}}>
-                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(25)}}/>
-                                <Image source={images[0].source} style={{width:images[0].width*0.7,height:images[0].height*0.7}}/>
+                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(15)}}/>
+                                <Image source={images[0].source} style={{width:images[0].width,height:images[0].height}}/>
                             </View>
                             <View style={{width:'80%',alignSelf:'center',alignItems:'center',marginTop:30}}>
                                 <Text style={styles.title}>{Lang[lang].intro1}</Text>
@@ -203,8 +185,8 @@ class StartScreen extends Component {
                     <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
                         <View style={{width:width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
                             <View style={{width:width*0.8,height:width*0.8,justifyContent:'center',alignItems:'center',marginTop:0}}>
-                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(25)}}/>
-                                <Image source={images[1].source} style={{width:images[1].width*0.7,height:images[1].height*0.7}}/>
+                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(15)}}/>
+                                <Image source={images[1].source} style={{width:images[1].width,height:images[1].height}}/>
                             </View>
                             <View style={{width:'80%',alignSelf:'center',alignItems:'center',marginTop:20}}>
                                 <Text style={styles.title}>{Lang[lang].intro2}</Text>
@@ -228,8 +210,8 @@ class StartScreen extends Component {
                     <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
                         <View style={{width:width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
                             <View style={{width:width*0.8,height:width*0.8,justifyContent:'center',alignItems:'center',marginTop:0}}>
-                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(25)}}/>
-                                <Image source={images[2].source} style={{width:images[2].width*0.7,height:images[2].height*0.7}}/>
+                                <Image source={assets.logo} style={{width:RFPercentage(50),height:RFPercentage(15)}}/>
+                                <Image source={images[2].source} style={{width:images[2].width,height:images[2].height}}/>
                             </View>
                             <View style={{width:'80%',alignSelf:'center',alignItems:'center',marginTop:20}}>
                                 <Text style={styles.title}>{Lang[lang].intro3}</Text>
@@ -276,5 +258,15 @@ const mapDispatchToProps = dispatch => {
         }
     }
 }
-
+const styles = StyleSheet.create({
+    title:{
+        textAlign:'justify',marginVertical:10,fontWeight:'bold',fontSize:RFPercentage(3),color:'#20354E',fontFamily:Fonts.primary
+    },
+    textLan:{fontSize:RFPercentage(1.8),fontFamily:Fonts.primary,fontWeight:'bold'},
+    img:{width:50,height:50,borderRadius:25,borderWidth:1,borderColor:'#117485'},
+    subTitle:{textAlign:'center',color:'#959595',fontSize:RFPercentage(2),fontFamily:Fonts.primary},
+    bubble:{width:8,height:6,borderRadius:4,backgroundColor:'#b9b9b9'},
+    bubbleContainer:{width:'33.33%',alignItems:'center'},
+    exBubble:{width:16,backgroundColor: Colors.textColor}
+});
 export default connect(mapStateToProps, mapDispatchToProps)(StartScreen)

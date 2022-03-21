@@ -27,7 +27,7 @@ import PinCode from '../../components/PinCode';
 import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
 import {Colors,ABA} from '../../utils/config'
-import {Success} from '../../components/Dialog';
+import {Success,PayFailed } from '../../components/Dialog';
 const {width,height} = Dimensions.get('window')
 import Base64 from 'crypto-js/enc-base64';
 const list=[
@@ -36,19 +36,6 @@ const list=[
         sub:'Tap to pay with ABA Mobile',
         img:require('./img/abapay.png')
     },
-    {
-        title:'Wing Money',
-        img:require('./img/wing.png')
-    },
-    {
-        title:'Credit Card or Debit',
-        img:require('./img/card.png')
-    },
-    {
-        title:'Pay Pal',
-        img:require('./img/paypal.png')
-    },
-
 ]
 var CryptoJS = require("crypto-js");
 function hmac_512(message, secret) {
@@ -62,12 +49,13 @@ class Index extends Component {
         super(props);
         this.state={
             loading:false,
-            check:null,
+            check:0,
             data:[1,2,3,4,5],
             refreshing:false,
             success:false,
             amount:'',
             showPin:false,
+            failed:false,
             ABALink:false,
             body:{}
         }
@@ -88,9 +76,10 @@ class Index extends Component {
             let hash = Base64.stringify(hmac_512(ABA.id+body.tran_id,ABA.key))
             body.hash=hash;
             await User.Post('/api/User/aba-verified',body).then((rs) => {
-                if(rs.status){
-                    console.log(JSON.parse(rs.data.message))
+                if(rs.status&&rs.data.isValid){
                     this.setState({success:true,loading:false})
+                }else{
+                    this.setState({failed:true,loading:false})
                 }
             })
             this.setState({loading:false})
@@ -119,9 +108,9 @@ class Index extends Component {
             "email": user.email,
             "payment_option": "abapay_deeplink"
         }
-        console.log(JSON.stringify(body))
         this.setState({body})
         await User.Post('/api/User/aba-topup',body).then((rs) => {
+            console.log(123456,rs)
             if(rs.status){
                 const data=JSON.parse(rs.data.message)
                 if(data.status==0){
@@ -170,7 +159,7 @@ class Index extends Component {
 
     }
     render() {
-        const {success,loading,amount,check,showPin} = this.state;
+        const {success,loading,amount,check,showPin,failed} = this.state;
         const {user} = this.props;
         const disable=amount>=1&&check!=null
         return (
@@ -237,6 +226,7 @@ class Index extends Component {
                 <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
+                {failed&&<PayFailed handleClose={()=>this.setState({failed:false})} handleConfirm={this.handleBack} title={'Payment Failed'} subtitle={'The payment could not complete'} visible={failed}/>}
                 {success&&<Success handleClose={()=>this.setState({switchProfile:false})} handleConfirm={this.handleBack} title={'Success'} subtitle={'The transaction is successful'} visible={success}/>}
 
                 {showPin&&<PinCode title={"For Top up: "+amount+"$"} handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}

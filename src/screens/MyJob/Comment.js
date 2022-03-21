@@ -18,11 +18,6 @@ import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemCandidate, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
-import CustomPicker from '../../components/customPicker';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import Comments from "react-native-comments";
-import moment from "moment";
 import {Input} from 'react-native-elements';
 const {width,height} = Dimensions.get('window')
 

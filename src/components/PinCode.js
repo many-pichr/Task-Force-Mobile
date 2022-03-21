@@ -22,6 +22,7 @@ class Pin extends Component {
                     <PINCode touchIDDisabled={props.touchId?false:true} status={'enter'}
                              titleEnter={'Enter your PIN'}
                              subtitleEnter={props.title?props.title:""}
+                             stylePinCodeColorSubtitle={"#fff"}
                              stylePinCodeColorTitle={'#fff'}
                              storedPin={props.user.pinCode}
                              onClickButtonLockedPage={props.handleClose}

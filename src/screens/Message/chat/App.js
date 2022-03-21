@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  PermissionsAndroid,
-  TouchableOpacity, Dimensions, ActivityIndicator,
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    PermissionsAndroid,
+    TouchableOpacity, Dimensions, ActivityIndicator, RefreshControl,
 } from 'react-native';
 import {Colors} from '../../../utils/config'
 import { AudioRecorder, AudioUtils } from 'react-native-audio'
@@ -32,7 +32,7 @@ class App extends Component {
     super(props)
     this.timer = null
     this.state = {
-      messages: message,
+      messages: [],
       chatBg: require('../../../assets/images/bg.jpg'),
       inverted: false, // require
       voiceHandle: true,
@@ -96,16 +96,19 @@ class App extends Component {
         this.timer = setInterval(this.TimeCounter.bind(this), 250)
     }
   handleGetPost=async (refreshing)=>{
-    const {item,user} = this.props
-    await User.GetList("/api/Message?userId="+user.id+"&friendId="+item.toUserId).then((rs) => {
+    const {item,user} = this.props;
+    // await User.GetList("/api/Message/Page?_end=10&_start=0&chatId="+item.id).then((rs) => {
+      await User.GetList("/api/Message?userId="+user.id+"&friendId="+item.toUserId).then((rs) => {
       if(rs.status){
-        this.handleSetData(rs.data)
+        this.handleSetData(rs.data);
       }
     })
   }
   handleSetData=(data)=>{
     const {user,item} = this.props
-    const items=[]
+    const items=[];
+    const count = data.length>11?11:data.length;
+    // for(var i=0;i<count;i++){
     for(var i=0;i<data.length;i++){
 
       const l = data[i]
@@ -144,7 +147,7 @@ class App extends Component {
       this.setState({online:true})
     }
     ws.onmessage = (event) => {this.receive(event)}
-    ws.onerror = (error) => { alert("Connection failed") }
+    ws.onerror = (error) => { console.log("Connection failed") }
     ws.onclose = () => this.reconnect ? this._handleWebSocketSetup() : (this.props.onClose && this.props.onClose())
     this.setState({ws})
   }
@@ -180,7 +183,6 @@ class App extends Component {
 
   random = () => {
     if (this.timer) return
-    console.log('start')
     this.timer = setInterval(() => {
       const num = Math.floor(Math.random() * 10)
       this.setState({
@@ -200,7 +202,6 @@ class App extends Component {
     const nowPath = `${AudioUtils.DocumentDirectoryPath}/voice/voice${Date.now()}.aac`
     this.setState({ audioPath: nowPath, currentTime: 0 })
     this.prepareRecordingPath(nowPath)
-    console.log(nowPath)
     this._record()
   }
 
@@ -263,9 +264,9 @@ class App extends Component {
   _requestAndroidPermission = async () => {
     try {
       const rationale = {
-        title: '麦克风权限',
-        message: '需要权限录制语音.',
-        buttonPositive: '确定'
+        title: '',
+        message: '.',
+        buttonPositive: ''
       }
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, rationale)
       this.setState({ hasPermission: granted === PermissionsAndroid.RESULTS.GRANTED })
@@ -314,7 +315,6 @@ class App extends Component {
           const {playing}={...this.state}
           playing.loading=false;
           playing.progress=0.25;
-          console.log('contuie====>')
           this.setState({ playing: playing })
           this.startTimer()
           this.sound.play((success) => {
@@ -417,7 +417,6 @@ class App extends Component {
         // })
       var whoosh = await new Sound(content.uri, '', (error) => {
         if (error) {
-          console.log('failed to load the sound', error);
           return;
         }
         newMsg.push(
@@ -464,7 +463,6 @@ class App extends Component {
             })
         this.setState({ messages: newMsg})
         User.UploadImage(content.uri).then((rs) => {
-            console.log(content.uri)
             if(rs.status){
                 this.submitChatMessage(rs.data.fileName,'image',0)
 
@@ -498,13 +496,12 @@ class App extends Component {
         {
           mediaType: 'photo',
           includeBase64: false,
-            quality:0.4,
+            quality: 0.3,
           maxWidth: 500,
           maxHeight: 700,
         },
         (response) => {
           if(!response.didCancel){
-            console.log(response)
             this.sendMessage('image',response,true)
           }
 
@@ -549,6 +546,11 @@ class App extends Component {
               isIPhoneX
               headerHeight={Platform.OS=='ios'?90:110}
               useEmoji={false}
+              flatListProps={{refreshControl:<RefreshControl
+                      colors={["#9Bd35A", Colors.textColor]}
+                      tintColor={Colors.textColor}
+                      refreshing={false}
+                      onRefresh={()=>this.handleGetPost(true)} />}}
               // chatBackgroundImage={chatBg}
               sendMessage={this.sendMessage}
               onMessagePress={this.onPress}

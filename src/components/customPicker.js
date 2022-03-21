@@ -1,10 +1,11 @@
 import React, {Component, useEffect,useState,useRef} from 'react';
 import {Platform, Picker, View, Text, TextInput, TouchableOpacity, Dimensions, BackHandler} from 'react-native';
 import {Colors, Fonts} from '../utils/config';
-import moment from 'moment'
+import moment from 'moment';
+import {Input} from 'react-native-elements'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import RNPickerSelect from 'react-native-picker-select';
+import ReactNativePickerModule from 'react-native-picker-module';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import ActionSheet from 'react-native-actions-sheet';
 import Lang from '../Language';
@@ -13,7 +14,7 @@ const {width,height} = Dimensions.get('window')
 function getLabel(data,value,la) {
     const lang=la?la:'en'
     if(data&&data.length>0){
-        let result =Lang[lang].pls+Lang[lang].select
+        let result =Lang[lang].pls+" "+Lang[lang].select
         for(var i=0;i<data.length;i++){
             if(data[i].value==parseInt(value)){
                 result=data[i].label
@@ -31,6 +32,7 @@ const App = (props) => {
     const [choosedate,setChooseDate] = useState(false);
     const {values,error,focus} = props.value
     const dateSlider = useRef(null);
+    const selectPicker = useRef(null);
     const onChange = (event, selectedDate) => {
         setChooseDate(false)
         if(event.type=='set'||Platform.OS=='ios'){
@@ -42,7 +44,6 @@ const App = (props) => {
     function toggleSlider() {
         if(Platform.OS=='ios'){
             dateSlider.current?.setModalVisible()
-
         }else{
             setChooseDate(true)
         }
@@ -93,22 +94,31 @@ const App = (props) => {
                                         onChange={onChange}
                                     />}</>:<>
                                     <View style={{width:'100%'}}>
-                                    <RNPickerSelect
-                                        fixAndroidTouchableBug={true}
-                                        onValueChange={(value) => props.handleInput(props.name,value)}
-                                        value={values[props.name]}
-                                        items={props.items}
+                                    {/*<RNPickerSelect*/}
+                                    {/*    fixAndroidTouchableBug={true}*/}
+                                    {/*    // disabled={true}*/}
+                                    {/*    onValueChange={(value) => props.handleInput(props.name,value)}*/}
+                                    {/*    value={values[props.name]}*/}
+                                    {/*    items={props.items}*/}
 
-                                    >
-                        <View style={{width:'100%',marginTop:5,borderBottomWidth:1,borderBottomColor:Colors.primary}}>
+                                    {/*>*/}
+                        <TouchableOpacity onPress={() => {selectPicker.current?.show()}}
+                            style={{width:'100%',marginTop:5,borderBottomWidth:1,borderBottomColor:Colors.primary}}>
                             <Text style={{fontSize:RFPercentage(2.2),color:Colors.textColor,fontFamily:Fonts.primary}}>{props.label} {props.required&&<Text style={{color:'#ff514d'}}>*</Text>}</Text>
                             <View style={{flexDirection:'row',alignItems:'center'}}>
                             <Text style={{marginTop:10,marginBottom:3,marginLeft:5,fontSize:RFPercentage(2),width:'88%'}}>{getLabel(props.items,values[props.name],props.lang)}</Text>
                                 <MaterialIcons name={'arrow-drop-down'} size={25}/>
                             </View>
 
-                        </View>
-                                    </RNPickerSelect>
+                        </TouchableOpacity>
+                                        <ReactNativePickerModule
+                                            pickerRef={selectPicker}
+                                            value={values[props.name]}
+                                            title={"Select "+props.label}
+                                            items={props.items}
+                                            onValueChange={(value) => props.handleInput(props.name,value)}
+                                        />
+
                                     </View>
 
                         </>}</>}

@@ -29,7 +29,9 @@ import {setLoading} from '../../redux/actions/loading';
 import {setNotify} from '../../redux/actions/notification';
 import {connect} from 'react-redux';
 import {setSetting} from '../../redux/actions/setting';
+import {setUser} from '../../redux/actions/user';
 import Lang from '../../Language';
+import DeviceInfo from 'react-native-device-info';
 import {checkForPermissions} from '../../components/Permission';
 const {width,height} = Dimensions.get('window')
 const profileType = [
@@ -79,6 +81,19 @@ const list = [
         subtitle: 'Vice Chairman'
     },
     {
+        title: 'mycategory',
+        right:'',
+        icon: 'box',
+        subtitle: 'Vice Chairman'
+    },
+    {
+        title: 'scontact',
+        right:'',
+        switch:true,
+        icon: 'shield',
+        subtitle: 'Vice Chairman'
+    },
+    {
         title: 'contact',
         right:'',
         icon: 'phone',
@@ -105,7 +120,8 @@ class Index extends Component {
             index:0,
             switches:{
                 1:true,
-                4:props.setting.touchId
+                4:props.setting.touchId,
+                7:props.user.isShowPrivacy
             },
             logout:false,
             notification:false,
@@ -129,14 +145,17 @@ class Index extends Component {
     }
     handleSelect=(i)=>{
         switch(i) {
-            case 8:
+            case 10:
                 this.setState({logout:true})
                 break;
-            case 7:
-                // this.props.NextScreen("TermCondition");
-                break;
             case 6:
-                alert("Not yet available")
+                this.props.NextScreen("ChooseCategory",{userId:this.props.user.id});
+                break;
+            case 9:
+                this.props.NextScreen("TermCondition",{userId:this.props.user.id});
+                break;
+            case 8:
+                this.props.NextScreen("ContactUs");
                 break;
             case 5:
                 this.props.NextScreen("ChangePin");
@@ -173,23 +192,35 @@ class Index extends Component {
         const value=newState.switches[index]
         newState.switches[index]=index==4?value?!value:false:!value
         this.setState(newState)
-        if(index==4) {
-            if (!value) {
-                if(Platform.OS=='ios'){
-                await checkForPermissions(true, 'faceID').then((status) => {
-                    newState.switches[index] = status;
-                    this.setState(newState)
-                })
-            } else {
-                    newState.switches[index] = !value;
-                    this.setState(newState)
-            }
-        }
-            const {setting} = this.props;
-            setting.touchId=newState.switches[index];
-            this.props.setSetting(setting)
-            AsyncStorage.setItem('setting', JSON.stringify(setting))
-
+        switch(index) {
+            case 4:
+                if (!value) {
+                    if (Platform.OS == 'ios') {
+                        await checkForPermissions(true, 'faceID').then((status) => {
+                            newState.switches[index] = status;
+                            this.setState(newState);
+                        });
+                    } else {
+                        newState.switches[index] = !value;
+                        this.setState(newState);
+                    }
+                }
+                const {setting} = this.props;
+                setting.touchId = newState.switches[index];
+                this.props.setSetting(setting);
+                AsyncStorage.setItem('setting', JSON.stringify(setting));
+                break;
+            case 7:
+                Api.ChangePrivacy({}).then((rs) => {
+                   if(rs.status){
+                       const {user} = this.props;
+                       user.isShowPrivacy=newState.switches[index];
+                       this.props.setUser(user)
+                   }
+                });
+                break;
+            default:
+            // code block
         }
     }
     handleCheckPermission=async ()=>{
@@ -212,7 +243,7 @@ class Index extends Component {
                             {
                                 this.state.data.map((l, i) => (
                                     i==0?
-                                        <View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
+                                        <View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',height:RFPercentage(6.3),alignItems:'center'}}>
                                             <View style={{width:'20%',alignItems:'center'}}>
                                                 <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
@@ -233,7 +264,7 @@ class Index extends Component {
                                                 options={[Lang[lang].torg,Lang[lang].tagent,Lang[lang].close]}
                                                 actions={[()=>this.handleProfileType(1),
                                                     ()=>this.handleProfileType(2)]}/>
-                                        </View> :i==3?<View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
+                                        </View> :i==3?<View style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',height:RFPercentage(6.3),alignItems:'center'}}>
                                             <View style={{width:'20%',alignItems:'center'}}>
                                                 <Icon name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>
                                             </View>
@@ -253,7 +284,7 @@ class Index extends Component {
                                                 actions={[()=>this.handleLang('kh'),
                                                     ()=>this.handleLang('en')]}/>
                                         </View>:
-                                    <TouchableOpacity onPress={()=>this.handleSelect(i)} style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',paddingVertical:15,alignItems:'center'}}>
+                                    <TouchableOpacity onPress={()=>this.handleSelect(i)} style={{width:'100%',flexDirection:'row',borderBottomWidth:0.3,borderColor:'rgba(13,112,217,0.48)',height:RFPercentage(6.3),alignItems:'center'}}>
                                         <View style={{width:'20%',alignItems:'center'}}>
                                             {l.icons?
                                             <Icons name={l.icon} size={RFPercentage(3)} color={l.red?'red':Colors.textColor}/>:
@@ -279,6 +310,10 @@ class Index extends Component {
                                     </TouchableOpacity>
                                 ))
                             }
+                            <View style={{width:'100%',flexDirection:'row'}}>
+                                <Text style={{width:'50%'}}>ID: {this.props.user.userNo}</Text>
+                                <Text style={{width:'50%',textAlign:'right'}}>V: {DeviceInfo.getVersion()}</Text>
+                            </View>
                             <View style={{height:1000/RFPercentage(0.5)}}/>
                         </View>
             </ScrollView>
@@ -315,6 +350,10 @@ const mapDispatchToProps = dispatch => {
     return {
         set: (loading) => {
             dispatch(setLoading(loading))
+
+        },
+        setUser: (user) => {
+            dispatch(setUser(user))
 
         },
         setNotify: (notify) => {

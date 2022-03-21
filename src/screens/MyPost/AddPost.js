@@ -14,10 +14,8 @@ import {
     Dimensions,
     FlatList,
     Button,
-    Alert, TextInput, ActivityIndicator,
+    Alert, TextInput, ActivityIndicator, AppState,
 } from 'react-native';
-import {ListScreen} from '../../components/ListScreen';
-import Feather from 'react-native-vector-icons/Feather'
 import Icon  from 'react-native-vector-icons/MaterialIcons'
 import {CustomItem, ItemCandidate, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/MaterialIcons';
@@ -32,18 +30,24 @@ import {CheckBox} from 'react-native-elements';
 import {setLoading} from '../../redux/actions/loading';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {connect} from 'react-redux';
-import {
-    ModalSelectList,
-} from 'react-native-modal-select-list';
-import {Confirm,MoneyWarning} from '../../components/Dialog';
+import {Confirm, MoneyWarning, PostSuccess} from '../../components/Dialog';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import moment from 'moment';
 import schama from './validator';
 import Lang from '../../Language';
 import {checkForPermissions} from '../../components/Permission';
+import Func from '../../utils/Functions'
 const validate = require("validate.js");
 const FormatDate = (date) => {
     return moment(date).format('DD/MM/YYYY')
+};
+const CheckSkill = (data) => {
+    let sum=0;
+    for(var i=0;i<data.length;i++){
+        const item=data[i];
+        sum+=item;
+    }
+    return sum>0;
 };
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
@@ -58,6 +62,7 @@ class Index extends Component {
             },
             camera:false,
             loading:true,
+            success:false,
             coordinate:null,
             title:'Add Task',
             warning:false,
@@ -97,12 +102,12 @@ class Index extends Component {
             deadline:[],
             priority:[],
             skill:[],
-            selectSkill:false
+            selectSkill:false,
+            checkPerm:false
         }
         this.myRef = React.createRef();
     }
     componentDidMount(): void {
-        console.log(this.props.user)
         const {params } = this.props.route
         if(params&&params.title&&params.view){
             const {title,view } = params
@@ -121,7 +126,22 @@ class Index extends Component {
             }
             this.setState({region})
         });
+        AppState.addEventListener('change', this.listener);
         // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude,coordinate:info.coords}));
+    }
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.listener);
+    }
+    listener=()=>{
+        if(this.state.checkPerm){
+            // this.handleCheckPermission();
+            this.setState({checkPerm:false})
+        }
+
+    }
+    onLink=()=>{
+        this.setState({checkPerm:true})
     }
     handleCheckPermission=async ()=>{
         checkForPermissions(true,'camera').then((status) => {
@@ -149,12 +169,13 @@ class Index extends Component {
             this.state.imagesUrl,
             this.props.user.id,this.state.isLocation,this.state.noExpiry,this.state.region
         ).then((rs) => {
-            this.setState({confirm:false})
             if(params&&params.add){
-                this.props.navigation.goBack()
+                // this.props.navigation.goBack()
+                this.setState({success:true});
             }else{
                 this.handleReset();
-                this.props.navigation.navigate("MyPost",{refresh:true});
+                this.setState({success:true});
+                // this.props.navigation.navigate("MyPost",{refresh:true});
             }
         })
         this.setState({loading:false})
@@ -191,9 +212,9 @@ class Index extends Component {
                 {
                     mediaType: 'photo',
                     includeBase64: false,
-                    quality: 0.4,
+                    quality: 0.3,
                     // maxHeight: 200,
-                    // maxWidth: 200,
+                    // maxWidth: 500,
                 },
                 (response) => {
                     if (!response.didCancel) {
@@ -201,14 +222,12 @@ class Index extends Component {
                         newState.images[index] = response.uri
                         newState.loadings[index] = true;
                         this.setState(newState)
-                        User.UploadImage(response.uri).then((rs) => {
-                            console.log(rs)
+                        User.UploadImage(response.uri,true).then((rs) => {
                             if (rs.status) {
                                 const newState = {...this.state}
                                 newState.loadings[index] = false;
                                 newState.imagesUrl[index] = rs.data.fileName
                                 this.setState(newState);
-                                console.log(this.state.loadings)
                             }
                         })
                     }
@@ -381,11 +400,6 @@ class Index extends Component {
             images:['','','','',''],
             imagesUrl:['','','','',''],
             loadings:[false,false,false,false,false],
-            category:[],
-            level:[],
-            deadline:[],
-            priority:[],
-            skill:[],
             selectSkill:false
         }
         this.setState(newState)
@@ -395,15 +409,19 @@ class Index extends Component {
         this.props.navigation.navigate("CashIn",{post:true})
     }
     onRegionChangeComplete=(region)=>{
-        console.log(region)
         // this.setState({coordinate:coordinate,lat:coordinate.latitude,long:coordinate.longitude})
         this.setState({region})
     }
+    handleBack=()=>{
+        this.setState({success:false});
+        this.props.navigation.goBack()
+    }
     render() {
         const {params} = this.props.route;
-        const {error,region,focus,warning,loading,pinLocation,noExpiry,loadings,view,title,confirm,selectSkill,choosedate,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
+        const {success,error,region,focus,warning,loading,pinLocation,noExpiry,loadings,view,title,confirm,selectSkill,choosedate,coordinate,long,lat,tab,isLocation,images,category,level,priority,skill,values} = this.state
         const data={error,focus,values}
         const {lang} = this.props.setting;
+        const ifSkill = CheckSkill(values.skill)
         return (
         <>
         <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#FFF' }}>
@@ -422,15 +440,7 @@ class Index extends Component {
                 </View>
                 <View style={{flex:1,width:width*0.9,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
                     backgroundColor:'#f7f9fc',marginTop:10,height:height}}>
-                    {title=="View Post"&&
-                    <View style={{width:'90%',alignSelf:'center',height:60,flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(0)}  style={{width:'50%',height:50,borderBottomWidth:tab==0?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:Colors.textColor}}>Post Detail</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.handleSwitch(1)} style={{width:'50%',height:50,borderBottomWidth:tab==1?2:0,borderColor:Colors.textColor,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:Colors.textColor}}>Agents</Text>
-                        </TouchableOpacity>
-                    </View>}
+
                     {tab == 0 ?
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={{
@@ -490,11 +500,11 @@ class Index extends Component {
                                     />
 
                                 </View>
-                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].subject} title={Lang[lang].category} name={'title'} value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].subject} title={Lang[lang].subject} name={'title'} value={data}/>
                                 <CustomPicker required handleInput={this.handleInput} items={category} lang={lang} label={Lang[lang].category} name={'category'} title={'Mobile App UX/UI'} value={data}/>
-                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].description} title={Lang[lang].description} name={'description'} textarea value={data}/>
+                                <CustomPicker required handleInput={this.handleInput} input label={Lang[lang].description} title={"Please write in detail the objective of your task, so that an agent apply can fulfill it accordingly"} name={'description'} textarea value={data}/>
                                 <CustomPicker handleInput={this.handleInput} items={level} lang={lang} label={Lang[lang].level} name={'level'} title={'Medium'} value={data}/>
-                                <CustomPicker noError required date disabled={noExpiry} onPress={()=>this.setState({choosedate:true})} label={Lang[lang].deadline} title={(values.start&&values.end)?(FormatDate(values.start)+' - '+FormatDate(values.end)):Lang[lang].pls+Lang[lang].select} name={'deadline'} value={data}/>
+                                <CustomPicker noError required date disabled={noExpiry} onPress={()=>this.setState({choosedate:true})} label={Lang[lang].deadline} title={(values.start&&values.end)?(FormatDate(values.start)+' - '+FormatDate(values.end)):Lang[lang].pls+" "+Lang[lang].select} name={'deadline'} value={data}/>
                                 <View style={{flexDirection:'row',marginTop:5}}>
                                     <Text style={{fontSize: RFPercentage(2.2), color: Colors.textColor,width:'85%',fontFamily:Fonts.primary}}>{Lang[lang].expiry}</Text>
                                     <Switch
@@ -507,7 +517,7 @@ class Index extends Component {
                                 </View>
                                 <CustomPicker required handleInput={this.handleInput} lang={lang} items={priority} label={Lang[lang].priority} name={'priority'} title={'Urgent'} value={data}/>
                                 <TouchableOpacity style={{width:'100%'}} onPress={()=>this.setState({selectSkill:true})} >
-                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:10,fontFamily:Fonts.primary}}>{Lang[lang].skill}</Text>
+                                    <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor,marginTop:10,fontFamily:Fonts.primary}}>{Lang[lang].skill} <Text style={{color:'#ff514d'}}>*</Text></Text>
                                     <View style={{width:'100%',flexDirection:'row',borderBottomWidth:1,borderBottomColor:Colors.primary}}>
                                         <Text style={{width:'50%',fontSize:RFPercentage(2)}}>{Lang[lang].select}{Lang[lang].skill}</Text>
                                         <View style={{width:'47%',alignItems:'flex-end'}}>
@@ -515,6 +525,9 @@ class Index extends Component {
                                         </View>
                                     </View>
                                 </TouchableOpacity>
+                                <Text style={{width:'100%',fontSize:RFPercentage(1.8),color:'#ff514d'}}>
+                                    {focus&&!ifSkill&&"Please select skill"}
+                                </Text>
                                 <FlatList
                                     contentContainerStyle={{marginTop:0}}
                                     data={skill}
@@ -638,7 +651,7 @@ class Index extends Component {
                 </View>
             </Modal>}
             {choosedate&&<Modal statusBarTranslucent={true} visible={choosedate} animationType={'fade'} transparent={true}>
-                <View style={{width,height:height,backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
+                <View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.43)',alignItems:'center',justifyContent:'center'}}>
                     <View style={{width:'70%',paddingBottom:10,backgroundColor:'#fff',borderRadius:20}}>
                         <View style={{width:'100%',paddingVertical:10,borderBottomWidth:0.3,flexDirection:'row',alignItems:'center'}}>
                             <TouchableOpacity onPress={()=>this.setState({choosedate:false})} style={{width:'15%',alignItems:'center'}}>
@@ -659,10 +672,9 @@ class Index extends Component {
                     </View>
                 </View>
             </Modal>}
-            {pinLocation&&<Modal statusBarTranslucent={true} visible={pinLocation} animationType={'fade'} transparent={true}>
+            {pinLocation&&<Modal onRequestClose={()=>this.setState({pinLocation:false})}
+                statusBarTranslucent={true} visible={pinLocation} animationType={'fade'} transparent={true}>
                 <View style={{width,height:height,backgroundColor:'rgba(0,0,0,0)',alignItems:'center'}}>
-
-
                         <MapView
                             showsUserLocation={true}
                             provider={PROVIDER_GOOGLE}
@@ -672,19 +684,18 @@ class Index extends Component {
                             initialRegion={region}
                             style={{width: '100%', height: height+(height*0.1), borderRadius: 0,justifyContent:'center',alignItems:'center'}}
                         >
-
-                            {/*<MapView.Marker.Animated*/}
-                            {/*    ref={marker => { this.marker = marker }}*/}
-                            {/*    coordinate={{longitude: region.longitude,latitude: region.latitude}}*/}
-                            {/*/>*/}
                             <Icon name={'place'} size={40} style={{marginBottom:30}} color={'rgb(240,0,47)'}/>
                         </MapView>
 
                 </View>
+                {Platform.OS=='android'&&<View style={{width: '100%', height: height+(height*0.1), borderRadius: 0,justifyContent:'center',alignItems:'center',position:'absolute'}}>
+                    <Icon name={'place'} size={40} style={{marginBottom:30}} color={'rgb(240,0,47)'}/>
+                </View>}
                 <TouchableOpacity onPress={()=>this.setState({pinLocation:false})} style={{backgroundColor:'rgba(0,0,0,0.19)',paddingHorizontal:10,position:'absolute',left:20,top:40,width:RFPercentage(8),borderRadius:20,alignItems:'center',justifyContent:'center'}}>
                     <Icons name={'keyboard-backspace'} size={RFPercentage(6)} color={Colors.textColor}/>
                 </TouchableOpacity>
             </Modal>}
+            {success&&<PostSuccess handleClose={this.handleBack} handleConfirm={this.handleBack} title={'Successfull'} subtitle={'You have posted successfully'} visible={success}/>}
             {confirm&&<Confirm handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'Are you sure to submit?'} visible={confirm}/>}
             {warning&&<MoneyWarning handleClose={()=>this.setState({warning:false})} handleConfirm={this.handleWarning} title={'Warning!'} subtitle={'Your balance is not enough'} visible={warning}/>}
         </View>

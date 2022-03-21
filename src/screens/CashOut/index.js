@@ -181,7 +181,7 @@ class Index extends Component {
                 </View>
                 {success&&<Success handleClose={()=>this.setState({switchProfile:false})} handleConfirm={this.handleBack} title={'Success'} subtitle={'The transaction is successful'} visible={success}/>}
 
-                {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
+                {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})} title={'Cash out $'+amount+" to ABA: "+account}/>}
             </View>
                 {loading&&<View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.18)',position:'absolute',justifyContent:'center',alignItems:'center'}}>
             <ActivityIndicator size={'large'} color={Colors.textColor}/>

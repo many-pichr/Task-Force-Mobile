@@ -1,0 +1,145 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-de/values-de.xml",
+            "map": [
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/6ec249d8ca5f46e13b5e5f400316b4ee/biometric-1.0.1/res/values-de/values-de.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,185,294,389,508,640,775,916,1038,1195,1294",
+                        "endColumns": "129,108,94,118,131,134,140,121,156,98,127",
+                        "endOffsets": "180,289,384,503,635,770,911,1033,1190,1289,1417"
+                    },
+                    "to": {
+                        "startLines": "29,48,58,63,64,65,66,67,68,69,70",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "2832,5802,6628,7143,7262,7394,7529,7670,7792,7949,8048",
+                        "endColumns": "129,108,94,118,131,134,140,121,156,98,127",
+                        "endOffsets": "2957,5906,6718,7257,7389,7524,7665,7787,7944,8043,8171"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/6d33cd31ef73f174f27ce50d05d67b98/jetified-play-services-basement-17.0.0/res/values-de/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "247",
+                        "endColumns": "203",
+                        "endOffsets": "450"
+                    },
+                    "to": {
+                        "startLines": "38",
+                        "startColumns": "4",
+                        "startOffsets": "4182",
+                        "endColumns": "203",
+                        "endOffsets": "4381"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/ceea2829b80ad52142c3359db793aacb/android-image-cropper-2.8.0/res/values-de/values-de.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,191,238,299,357,439,517,604,668",
+                        "endColumns": "135,46,60,57,81,77,86,63,73",
+                        "endOffsets": "186,233,294,352,434,512,599,663,737"
+                    },
+                    "to": {
+                        "startLines": "50,51,52,53,54,55,56,57,71",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "6015,6151,6198,6259,6317,6399,6477,6564,8176",
+                        "endColumns": "135,46,60,57,81,77,86,63,73",
+                        "endOffsets": "6146,6193,6254,6312,6394,6472,6559,6623,8245"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/res/values-de/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "207",
+                        "endColumns": "103",
+                        "endOffsets": "310"
+                    },
+                    "to": {
+                        "startLines": "62",
+                        "startColumns": "4",
+                        "startOffsets": "7035",
+                        "endColumns": "107",
+                        "endOffsets": "7138"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/1cb9b9ea592aa2ea85233be252327dcf/appcompat-1.1.0/res/values-de/values-de.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,210,308,420,506,612,727,805,881,973,1066,1162,1263,1371,1471,1575,1673,1771,1868,1949,2060,2162,2260,2367,2470,2574,2730,2832",
+                        "endColumns": "104,97,111,85,105,114,77,75,91,92,95,100,107,99,103,97,97,96,80,110,101,97,106,102,103,155,101,80",
+                        "endOffsets": "205,303,415,501,607,722,800,876,968,1061,1157,1258,1366,1466,1570,1668,1766,1863,1944,2055,2157,2255,2362,2465,2569,2725,2827,2908"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,72",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,210,308,420,506,612,727,805,881,973,1066,1162,1263,1371,1471,1575,1673,1771,1868,1949,2060,2162,2260,2367,2470,2574,2730,8250",
+                        "endColumns": "104,97,111,85,105,114,77,75,91,92,95,100,107,99,103,97,97,96,80,110,101,97,106,102,103,155,101,80",
+                        "endOffsets": "205,303,415,501,607,722,800,876,968,1061,1157,1258,1366,1466,1570,1668,1766,1863,1944,2055,2157,2255,2362,2465,2569,2725,2827,8326"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/fc8046cb9a5df9499609a5f7f8270b1b/play-services-base-17.0.0/res/values-de/values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+                        "startOffsets": "245,352,548,674,784,1021,1150,1297,1441,1680,1790,1990,2119,2340,2542,2639,2728",
+                        "endColumns": "106,195,125,109,236,128,146,143,238,109,199,128,220,201,96,88,104",
+                        "endOffsets": "351,547,673,783,1020,1149,1296,1440,1679,1789,1989,2118,2339,2541,2638,2727,2832"
+                    },
+                    "to": {
+                        "startLines": "30,31,32,33,34,35,36,37,39,40,41,42,43,44,45,46,47",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "2962,3073,3269,3399,3513,3750,3883,4034,4386,4625,4739,4939,5072,5293,5499,5600,5693",
+                        "endColumns": "110,195,129,113,236,132,150,147,238,113,199,132,220,205,100,92,108",
+                        "endOffsets": "3068,3264,3394,3508,3745,3878,4029,4177,4620,4734,4934,5067,5288,5494,5595,5688,5797"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/9ed5b3e7dd22d0b9a8202de238386b3a/browser-1.4.0/res/values-de/values-de.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,159,260,371",
+                        "endColumns": "103,100,110,99",
+                        "endOffsets": "154,255,366,466"
+                    },
+                    "to": {
+                        "startLines": "49,59,60,61",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "5911,6723,6824,6935",
+                        "endColumns": "103,100,110,99",
+                        "endOffsets": "6010,6819,6930,7030"
+                    }
+                },
+                {
+                    "source": "/Users/macbokpro/.gradle/caches/transforms-2/files-2.1/b298a6449b929e26b4e6c009b0de88b9/core-1.6.0/res/values-de/values-de.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "73",
+                        "startColumns": "4",
+                        "startOffsets": "8331",
+                        "endColumns": "100",
+                        "endOffsets": "8427"
+                    }
+                }
+            ]
+        }
+    ]
+}

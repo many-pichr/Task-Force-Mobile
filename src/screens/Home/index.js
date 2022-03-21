@@ -21,7 +21,6 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {TextHorizontal} from '../../components/Texts'
 import {CustomItem} from '../../components/Items'
-import LottieView from 'lottie-react-native';
 import { SvgXml } from 'react-native-svg';
 import {Item} from './Item';
 import data from './data';
@@ -30,16 +29,16 @@ import {map_blue, map_red} from './svg';
 import MapView, {Marker,PROVIDER_GOOGLE,PROVIDER_DEFAULT} from "react-native-maps";
 import {Button} from 'react-native-elements';
 import {SlidePanel} from './SlidePanel';
-import {barHight, Colors} from '../../utils/config';
+import {barHight, Colors, Fonts} from '../../utils/config';
 import RNBootSplash from 'react-native-bootsplash';
 import {setLoading} from '../../redux/actions/loading';
 import {setUser} from '../../redux/actions/user';
 import {connect} from 'react-redux';
 import User from '../../api/User';
-import BlinkView from 'react-native-blink-view'
 import { TouchableOpacity } from 'react-native';
 import {SlideShow} from '../../components/SlideShow';
 import Lang from '../../Language';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
     constructor(props) {
@@ -72,10 +71,12 @@ class Index extends Component {
             filter:false,
             isFilter:false,
             posts:[],
+            recommended:[],
             type:'standard',
             item:null,
             categories:[],
             level:[],
+            slides:[],
 
 
         }
@@ -83,16 +84,13 @@ class Index extends Component {
     }
     componentDidMount(): void {
         const {user} = this.props;
-        const {start} = this.state;
         RNBootSplash.hide({ duration: 500,fade:true })
         this.fadeIn()
         setTimeout(()=>{
-            // this.fadeIn();
             this.setState({loading: false})
 
         }, 2000);
         setTimeout(()=>{
-            // this.fadeIn();
             this.props.set(false)
 
         }, 1500);
@@ -101,7 +99,9 @@ class Index extends Component {
             this.props.navigation.replace('PinCode')
         }
             this._unsubscribe = this.props.navigation.addListener('focus', () => {
-                    this.handleGetPost(false)
+                this.handleGetPost(false)
+                this.handleGetCategory(false)
+                this.handleCheckCagegory();
 
             });
         this.handleGps()
@@ -110,8 +110,9 @@ class Index extends Component {
         this._unsubscribe();
     }
     handleDetail=(id)=>{
+        const {user} = this.props;
         this.myRef.current.snapTo(2)
-        this.props.navigation.navigate('ViewPost',{title:'View Post',home:true,view:true,id:id})
+        this.props.navigation.navigate('ViewPost',{title:'View Post',home:true,view:user.userType=='1'?false:true,id:id,agent:user.userType=='1'?false:true})
     }
     handleInput=async (f,v)=>{
         const newState={... this.state}
@@ -128,16 +129,39 @@ class Index extends Component {
         }
     }
     handleMapType=()=>{
-        const {type}=this.state
-        const newType=Platform.OS=='ios'&&type=='standard'?'hybrid':'standard'
-        this.setState({type:newType})
+        const {type}=this.state;
+        if(Platform.OS=='ios'){
+            const newType=type=='standard'?'hybrid':'standard'
+            this.setState({type:newType})
+        }else{
+            const newType=type=='standard'?'satellite':'standard'
+            this.setState({type:newType})
+        }
+
+    }
+    handleCheckCagegory=async ()=>{
+        const {user} = this.props;
+        const value = await AsyncStorage.getItem('chooseCategory');
+        // await AsyncStorage.removeItem('chooseCategory');
+        if (value===null) {
+            await User.GetList('/api/UserCategory').then((rs) => {
+                if (rs.status && !rs.data.length > 0) {
+                    this.props.navigation.navigate("ChooseCategory", {userId: user.id});
+                    AsyncStorage.setItem('chooseCategory', 'true');
+                }
+            })
+        }
     }
     handleGetPost=async (refreshing)=>{
         // this.props.set(!refreshing)
+        await User.GetList('/api/JobPost/recommended?_end=5&_start=0&categoryId=0&joblevelId=0&jobPriorityId=0&priceFrom=0&priceTo=0&_order=ASC&_sort=id').then((rs) => {
+            if(rs.status){
+                this.setState({recommended:rs.data,refreshing:false})
+            }
+        })
         await User.GetList('/api/JobPost?_end=20&_start=0&categoryId=0&joblevelId=0&jobPriorityId=0&priceFrom=0&priceTo=0&_order=ASC&_sort=id').then((rs) => {
             if(rs.status){
                 this.setState({posts:rs.data,refreshing:false})
-                console.log(1111,rs.data)
             }
         })
         // this.props.set(false)
@@ -149,7 +173,11 @@ class Index extends Component {
         const level=values.level!=""?values.level:0;
         const category=values.category!=""?values.category:0;
         this.setState({filter:false,loading:true,isFilter:true,values})
-        await User.GetList('/api/JobPost?_end=20&_start=0&categoryId='+category+'&joblevelId='+level+'&jobPriorityId=0&priceFrom='+priceFrom+'&priceTo='+priceTo+'&search='+values.search+'&_order=ASC&_sort=id').then((rs) => {
+        const url="/api/JobPost?_end=10000&_start=0&categoryId="+category+"&joblevelId="+level+"&jobPriorityId=0&priceFrom="+priceFrom+"&priceTo="+priceTo+"&_order=ASC&_sort=id"
+        // const url='/api/JobPost?_end=2000000&_start=0&categoryId='+category+'&joblevelId='+level+'&jobPriorityId=0&priceFrom='+priceFrom+'&priceTo='+priceTo+'&search='+values.search+'&_order=ASC&_sort=id';
+        await User.GetList(url)
+            .then((rs) => {
+
             if(rs.status){
                 this.setState({filters:rs.data,loading:false})
             }
@@ -158,6 +186,11 @@ class Index extends Component {
     }
     handleGetCategory=async (refreshing)=>{
         // this.props.set(!refreshing)
+        await User.GetList('/api/SlideShow').then((rs) => {
+            if(rs.status){
+                this.setState({slides:rs.data})
+            }
+        })
         await User.GetList('/api/JobCategory?_end=100&_start=0&_order=ASC&_sort=id').then((rs) => {
             if(rs.status){
                 this.setState({categories:this.changeKeyName(rs.data),refreshing:false})
@@ -187,7 +220,7 @@ class Index extends Component {
         await this.setState({fadeAnimation:new Animated.Value(0)})
         Animated.timing(this.state.fadeAnimation, {
             toValue: 1,
-            duration: 600
+            duration:500
         }).start();
     };
     handleSwitch=()=>{
@@ -255,8 +288,12 @@ class Index extends Component {
         newState.isFilter=false;
         this.setState(newState)
     }
+    handleClosePanel=()=>{
+        this.myRef.current.snapTo(2)
+        this.setState({show:true})
+    }
     render() {
-        const {appleMap,filters,isFilter,values,loading,map,type,region,focus,refreshing,filter,posts,categories,show,level} = this.state;
+        const {slides,appleMap,recommended,filters,isFilter,values,loading,map,type,region,focus,refreshing,filter,posts,categories,show,level} = this.state;
         const {user,notify} = this.props;
         const filterData={categories,level};
         const renderItem = ({ item, index }: any) => (
@@ -273,7 +310,7 @@ class Index extends Component {
                             <HeaderOrganizer notiScreen={()=>this.props.navigation.navigate('Notification')} bgColor={'#F5F7FA'} map={map} switchView={this.handleSwitch} handleFilter={()=>this.setState({filter:true})}/>:
                             <Headers handleGo={this.handleGo} onChange={this.handleInput} search={values.search} isFilter={isFilter} handleClear={this.handleClear} notiScreen={()=>this.props.navigation.navigate('Notification')} onFocus={()=>this.setState({focus:true})} bgColor={'#F5F7FA'} map={map} switchView={this.handleSwitch} handleFilter={()=>this.setState({filter:true})}/>}
 
-                        {map?
+                        {map&&!isFilter?
                             <View style={{alignItems:'center',width,height:height}}>
 
                                     <>
@@ -295,7 +332,7 @@ class Index extends Component {
                             isFilter?
                                 <View style={{alignItems:'center',paddingBottom:100,width}}>
                                     <TextHorizontal title={"Result"} onPress={()=>this.props.navigation.navigate('JobList')}/>
-                                    <View style={{width:'90%',alignSelf:'center',marginTop:0}}>
+                                    <View style={{width:'100%',alignSelf:'center',marginTop:0}}>
                             <FlatList
                             data={filters}
                             refreshControl={<RefreshControl
@@ -313,19 +350,27 @@ class Index extends Component {
                             </View>}
                             </View>
                                 </View>:
+                                <Animated.View
+                                    style={[
+                                        {
+                                            opacity: this.state.fadeAnimation,
+                                        },
+                                    ]}
+                                >
                             <ScrollView showsVerticalScrollIndicator={false}
                                         refreshControl={<RefreshControl
                                             colors={["#9Bd35A", Colors.textColor]}
                                             tintColor={Colors.textColor}
                                             refreshing={refreshing}
                                             onRefresh={()=>this.handleGetPost(true)} />}>
-                                <SlideShow/>
+                                <SlideShow top={0} items={slides}/>
                                 <View style={{alignItems:'center',paddingBottom:100}}>
+                                    {recommended.length>0&&<>
                                     <TextHorizontal title={Lang[lang].recommend} onPress={()=>this.props.navigation.navigate('JobList')}/>
-                                    <View style={{width:'90%',alignSelf:'center',marginTop:0}}>
+                                    <View style={{width:'100%',alignSelf:'center',marginTop:0}}>
                                         <FlatList
                                             scrollEnabled={false}
-                                            data={posts}
+                                            data={recommended}
                                             refreshControl={<RefreshControl
                                                 colors={["#9Bd35A", "#689F38"]}
                                                 refreshing={refreshing}
@@ -335,6 +380,7 @@ class Index extends Component {
                                             showsVerticalScrollIndicator={false}
                                         />
                                     </View>
+                                    </>}
                                     {/*<TextHorizontal title={Lang[lang].tcategory} onPress={()=>this.props.navigation.navigate('Category')}/>*/}
                                     {/*<FlatList*/}
                                     {/*    data={categories}*/}
@@ -345,8 +391,9 @@ class Index extends Component {
                                     {/*    showsHorizontalScrollIndicator={false}*/}
                                     {/*    showsVerticalScrollIndicator={false}*/}
                                     {/*/>*/}
+                                    {posts.length?<>
                                     <TextHorizontal title={Lang[lang].lpost} onPress={()=>this.props.navigation.navigate('JobList')}/>
-                                    <View style={{width:'90%',alignSelf:'center',marginTop:10}}>
+                                    <View style={{width:'100%',alignSelf:'center',marginTop:0}}>
                                         <FlatList
                                             data={posts}
                                             scrollEnabled={false}
@@ -354,17 +401,28 @@ class Index extends Component {
                                                 colors={["#9Bd35A", "#689F38"]}
                                                 refreshing={refreshing}
                                                 onRefresh={()=>this.handleGetPost(true)} />}
-                                            renderItem={({item}) =><CustomItem lang={lang} onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>}
+                                            renderItem={({item,index}) =><>
+                                                <CustomItem lang={lang} onPress={()=>this.handleOpen(item)} userType={this.props.user.userType} userId={this.props.user.id} item={item}/>
+                                                {/*{index==2&&<SlideShow top={10}/>}*/}
+                                                </>}
                                             keyExtractor={(item, index) => index.toString()}
                                             showsVerticalScrollIndicator={false}
                                         />
                                     </View>
+                                    </>:
+                                        <Text style={{fontSize:20,color:Colors.textColor,fontFamily:Fonts.primary,marginTop: height/4}}>
+                                            {Lang[lang].nodata}
+                                        </Text>}
                                 </View>
-                            </ScrollView>}
+                                <View style={{height:50}}/>
+                            </ScrollView>
+                                </Animated.View>}
 
 
                     </View>
-
+                    {!show&&<TouchableOpacity onPress={this.handleClosePanel}
+                        style={{width:'100%',height:'100%',backgroundColor:'rgba(0,0,0,0.31)',position:'absolute'}}>
+                    </TouchableOpacity>}
                     <SlidePanel navigation={this.props.navigation} handleStart={()=>this.setState({show:false})} handleClose={()=>this.setState({show:true})}
                         loading={this.state.sloading} handleCofirm={()=>this.setState({apply:true})} handleApply={this.handleSubmitApply} onInterested={this.handleInterested} user={user} userId={user.id} item={this.state.item} myRef={this.myRef} handleDetail={this.handleDetail}/>
                     {filter&&<Filter values={values} visible={filter} handleApply={this.handleApply} data={filterData} handleClose={()=>this.setState({filter:false})}/>}
@@ -383,7 +441,7 @@ class Index extends Component {
                                     color="white"
                                 />
                             }
-                            buttonStyle={{width:50,height:50,borderRadius:30,backgroundColor:Colors.primary}}
+                            buttonStyle={{width:50,height:50,borderRadius:30,backgroundColor:'rgb(255,158,0)'}}
                         />
 
                     </View>
@@ -424,6 +482,7 @@ class Index extends Component {
                     {/*    buttonStyle={{width:40,height:40,borderRadius:30,backgroundColor:'rgba(24,132,255,0.91)'}}*/}
                     {/*/>}*/}
                 </View>}
+
             </>
         );
     }

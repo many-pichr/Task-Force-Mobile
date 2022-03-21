@@ -11,15 +11,11 @@ export default {
     firstName: {
         presence: { allowEmpty: false, message: ' is required' },
     },
-    companyName: {
+    lastName: {
         presence: { allowEmpty: false, message: ' is required' },
 
     },
-    startDate: {
-        presence: { allowEmpty: false, message: ' is required' },
-
-    },
-    endDate: {
+    email: {
         presence: { allowEmpty: false, message: ' is required' },
 
     }

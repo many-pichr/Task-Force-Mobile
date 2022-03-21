@@ -142,7 +142,6 @@ class Index extends Component {
             await User.GetList('/api/JobPost/'+id).then((rs) => {
                 if(rs.status){
                     const {data}=rs
-                    console.log(data)
                     const newState={... this.state}
                     newState.values.title=data.title;
                     newState.values.category=data.jobCategory.name;

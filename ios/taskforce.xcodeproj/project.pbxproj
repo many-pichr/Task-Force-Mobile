@@ -12,15 +12,15 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1D968540E64C02AF3D3AE87D /* libPods-taskforce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B972B19773BD5C2B732F1EEA /* libPods-taskforce.a */; };
+		1E71FA3CEA7F9E0AD3D059BD /* libPods-taskforce-taskforceTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11318C45A82FF133626D3027 /* libPods-taskforce-taskforceTests.a */; };
 		32EF9916087B41E1A66195EA /* Battambang-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E74507922B0D4D87846B1EDF /* Battambang-Regular.ttf */; };
 		351B4523263993DC00E15D4A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 351B4522263993DC00E15D4A /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		81E4EBC5921B6F33C07BFDC3 /* libPods-taskforce-taskforceTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98250EC57CCA0C5E303C0057 /* libPods-taskforce-taskforceTests.a */; };
 		9B94FCFE262AF4A800A96C63 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B94FCFD262AF4A800A96C63 /* NotificationService.m */; };
 		9B94FD02262AF4A800A96C63 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9B94FCFA262AF4A800A96C63 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CA0C8E2FD44E401496CA1F67 /* Bokor.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 02D8173C3C9049EE94071C68 /* Bokor.ttf */; };
-		EF5EA8D1F6804D5F28DF58E8 /* libPods-taskforce-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF49FD36FAA4E1E68001BE1 /* libPods-taskforce-OneSignalNotificationServiceExtension.a */; };
+		D3A07EF05412DB2D450D4325 /* libPods-taskforce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AC455279F5B435A1674E872 /* libPods-taskforce.a */; };
+		F79C4EA897563B184289CB27 /* libPods-taskforce-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60CD18E976DFE0165D19EE5E /* libPods-taskforce-OneSignalNotificationServiceExtension.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +60,7 @@
 		00E356F21AD99517003FC87E /* taskforceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = taskforceTests.m; sourceTree = "<group>"; };
 		02D8173C3C9049EE94071C68 /* Bokor.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Bokor.ttf; path = ../src/assets/fonts/Bokor.ttf; sourceTree = "<group>"; };
 		0A2748499BA647249D389611 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		11318C45A82FF133626D3027 /* libPods-taskforce-taskforceTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce-taskforceTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		12B90E1454D44E4D9490C048 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* taskforce.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = taskforce.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = taskforce/AppDelegate.h; sourceTree = "<group>"; };
@@ -68,35 +69,34 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = taskforce/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = taskforce/main.m; sourceTree = "<group>"; };
 		13EA1506C02145218050AAE7 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
-		1B1253E4D505BF32EA81C457 /* Pods-taskforce-taskforceTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-taskforceTests.release.xcconfig"; path = "Target Support Files/Pods-taskforce-taskforceTests/Pods-taskforce-taskforceTests.release.xcconfig"; sourceTree = "<group>"; };
-		28832617941478D90469FE12 /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		1DF94A74283F80E097877CB2 /* Pods-taskforce.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce.debug.xcconfig"; path = "Target Support Files/Pods-taskforce/Pods-taskforce.debug.xcconfig"; sourceTree = "<group>"; };
+		2AC455279F5B435A1674E872 /* libPods-taskforce.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		33EA52EFADBF1807B7DBAD50 /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		351B4522263993DC00E15D4A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		3AF49FD36FAA4E1E68001BE1 /* libPods-taskforce-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		40B681B8DEA1A0C75D507A27 /* Pods-taskforce.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce.release.xcconfig"; path = "Target Support Files/Pods-taskforce/Pods-taskforce.release.xcconfig"; sourceTree = "<group>"; };
 		458490DBC99D4DFCA2D4834A /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		4BC0943A3C0244B7A57AA7A5 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		5A8BD758B89947F595C25620 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		60CD18E976DFE0165D19EE5E /* libPods-taskforce-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		69FC8E30C59C8C1227699C38 /* Pods-taskforce.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce.release.xcconfig"; path = "Target Support Files/Pods-taskforce/Pods-taskforce.release.xcconfig"; sourceTree = "<group>"; };
 		7C48F2539569434CA3E305DE /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		7CF4F1DD7B604D389A0B092A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = taskforce/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9456CB072EB84D1AB28A49D2 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		98250EC57CCA0C5E303C0057 /* libPods-taskforce-taskforceTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce-taskforceTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B94F76C262AD43200A96C63 /* taskforce.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = taskforce.entitlements; path = taskforce/taskforce.entitlements; sourceTree = "<group>"; };
 		9B94FCFA262AF4A800A96C63 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B94FCFC262AF4A800A96C63 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
 		9B94FCFD262AF4A800A96C63 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
 		9B94FCFF262AF4A800A96C63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9E6C2EED59F954E1223076DD /* Pods-taskforce-taskforceTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-taskforceTests.debug.xcconfig"; path = "Target Support Files/Pods-taskforce-taskforceTests/Pods-taskforce-taskforceTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A131144841404C7282A2E721 /* OdorMeanChey.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = OdorMeanChey.ttf; path = ../src/assets/fonts/OdorMeanChey.ttf; sourceTree = "<group>"; };
 		A59034181688419A909346C6 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		B3756D76B4B0440CA64A4827 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
-		B972B19773BD5C2B732F1EEA /* libPods-taskforce.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-taskforce.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD0BA419BBB61305B78F347A /* Pods-taskforce-taskforceTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-taskforceTests.debug.xcconfig"; path = "Target Support Files/Pods-taskforce-taskforceTests/Pods-taskforce-taskforceTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C130AAFF60814221B168A07E /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		C949EE470DBE4406A1D5F19F /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		D0B51F83729F13AE13B2FA5D /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		D1BFAE29985D4F38B9848D30 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		D21323D43A634585B0D84777 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		D608D0BFAFB19F00C0F2658A /* Pods-taskforce.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce.debug.xcconfig"; path = "Target Support Files/Pods-taskforce/Pods-taskforce.debug.xcconfig"; sourceTree = "<group>"; };
+		D2EE8FD349091B0753FCCEDC /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		D8162A10BA37B70BFFA12433 /* Pods-taskforce-taskforceTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-taskforce-taskforceTests.release.xcconfig"; path = "Target Support Files/Pods-taskforce-taskforceTests/Pods-taskforce-taskforceTests.release.xcconfig"; sourceTree = "<group>"; };
 		E4BABE8232994F229A813C87 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		E74507922B0D4D87846B1EDF /* Battambang-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Battambang-Regular.ttf"; path = "../src/assets/fonts/Battambang-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -107,7 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81E4EBC5921B6F33C07BFDC3 /* libPods-taskforce-taskforceTests.a in Frameworks */,
+				1E71FA3CEA7F9E0AD3D059BD /* libPods-taskforce-taskforceTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,7 +115,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D968540E64C02AF3D3AE87D /* libPods-taskforce.a in Frameworks */,
+				D3A07EF05412DB2D450D4325 /* libPods-taskforce.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF5EA8D1F6804D5F28DF58E8 /* libPods-taskforce-OneSignalNotificationServiceExtension.a in Frameworks */,
+				F79C4EA897563B184289CB27 /* libPods-taskforce-OneSignalNotificationServiceExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,9 +166,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				B972B19773BD5C2B732F1EEA /* libPods-taskforce.a */,
-				3AF49FD36FAA4E1E68001BE1 /* libPods-taskforce-OneSignalNotificationServiceExtension.a */,
-				98250EC57CCA0C5E303C0057 /* libPods-taskforce-taskforceTests.a */,
+				2AC455279F5B435A1674E872 /* libPods-taskforce.a */,
+				60CD18E976DFE0165D19EE5E /* libPods-taskforce-OneSignalNotificationServiceExtension.a */,
+				11318C45A82FF133626D3027 /* libPods-taskforce-taskforceTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -246,12 +246,12 @@
 		C1C02D86575388422F5E6300 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				D608D0BFAFB19F00C0F2658A /* Pods-taskforce.debug.xcconfig */,
-				40B681B8DEA1A0C75D507A27 /* Pods-taskforce.release.xcconfig */,
-				28832617941478D90469FE12 /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */,
-				D0B51F83729F13AE13B2FA5D /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */,
-				BD0BA419BBB61305B78F347A /* Pods-taskforce-taskforceTests.debug.xcconfig */,
-				1B1253E4D505BF32EA81C457 /* Pods-taskforce-taskforceTests.release.xcconfig */,
+				1DF94A74283F80E097877CB2 /* Pods-taskforce.debug.xcconfig */,
+				69FC8E30C59C8C1227699C38 /* Pods-taskforce.release.xcconfig */,
+				D2EE8FD349091B0753FCCEDC /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */,
+				33EA52EFADBF1807B7DBAD50 /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */,
+				9E6C2EED59F954E1223076DD /* Pods-taskforce-taskforceTests.debug.xcconfig */,
+				D8162A10BA37B70BFFA12433 /* Pods-taskforce-taskforceTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -263,11 +263,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "taskforceTests" */;
 			buildPhases = (
-				D1ACA01CB53230711E1DC600 /* [CP] Check Pods Manifest.lock */,
+				A9CAF06B03704B86AD843B40 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				B1E91AFBC3833E731BFC5C71 /* [CP] Copy Pods Resources */,
+				2F33A8E1E3E0E9D803B91866 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -283,14 +283,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "taskforce" */;
 			buildPhases = (
-				EAB1CC5F85C9149136E9BC13 /* [CP] Check Pods Manifest.lock */,
+				B00B7FF1B8A94FDDAA468177 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				9B94F77C262AD47000A96C63 /* Embed App Extensions */,
-				DF9DF1EDA023B396CD2E046F /* [CP] Copy Pods Resources */,
+				3AD36835FA76717ADFA4308F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -306,11 +306,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9B94FD03262AF4A900A96C63 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
 			buildPhases = (
-				5252D1DF549CE76F6C84A49D /* [CP] Check Pods Manifest.lock */,
+				C88E1BFB3D4719850F87C624 /* [CP] Check Pods Manifest.lock */,
 				9B94FCF6262AF4A800A96C63 /* Sources */,
 				9B94FCF7262AF4A800A96C63 /* Frameworks */,
 				9B94FCF8262AF4A800A96C63 /* Resources */,
-				7983BE3207817DE844D67C95 /* [CP] Copy Pods Resources */,
+				E43539396418C921816C2AAA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -407,46 +407,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		5252D1DF549CE76F6C84A49D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-taskforce-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7983BE3207817DE844D67C95 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B1E91AFBC3833E731BFC5C71 /* [CP] Copy Pods Resources */ = {
+		2F33A8E1E3E0E9D803B91866 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -463,7 +424,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-taskforce-taskforceTests/Pods-taskforce-taskforceTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D1ACA01CB53230711E1DC600 /* [CP] Check Pods Manifest.lock */ = {
+		3AD36835FA76717ADFA4308F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A9CAF06B03704B86AD843B40 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -485,24 +463,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DF9DF1EDA023B396CD2E046F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-taskforce/Pods-taskforce-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EAB1CC5F85C9149136E9BC13 /* [CP] Check Pods Manifest.lock */ = {
+		B00B7FF1B8A94FDDAA468177 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -522,6 +483,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C88E1BFB3D4719850F87C624 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-taskforce-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E43539396418C921816C2AAA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-taskforce-OneSignalNotificationServiceExtension/Pods-taskforce-OneSignalNotificationServiceExtension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -589,7 +589,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD0BA419BBB61305B78F347A /* Pods-taskforce-taskforceTests.debug.xcconfig */;
+			baseConfigurationReference = 9E6C2EED59F954E1223076DD /* Pods-taskforce-taskforceTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 63US7M8B3P;
@@ -617,7 +617,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1B1253E4D505BF32EA81C457 /* Pods-taskforce-taskforceTests.release.xcconfig */;
+			baseConfigurationReference = D8162A10BA37B70BFFA12433 /* Pods-taskforce-taskforceTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -642,13 +642,15 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D608D0BFAFB19F00C0F2658A /* Pods-taskforce.debug.xcconfig */;
+			baseConfigurationReference = 1DF94A74283F80E097877CB2 /* Pods-taskforce.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = taskforce/taskforce.entitlements;
-				CURRENT_PROJECT_VERSION = 1.0.24;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 63US7M8B3P;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -733,7 +735,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -741,6 +743,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.taskforce;
 				PRODUCT_NAME = taskforce;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -749,13 +752,15 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 40B681B8DEA1A0C75D507A27 /* Pods-taskforce.release.xcconfig */;
+			baseConfigurationReference = 69FC8E30C59C8C1227699C38 /* Pods-taskforce.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = taskforce/taskforce.entitlements;
-				CURRENT_PROJECT_VERSION = 1.0.24;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 63US7M8B3P;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -839,7 +844,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -847,6 +852,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.taskforce;
 				PRODUCT_NAME = taskforce;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -981,7 +987,7 @@
 		};
 		9B94FD04262AF4A900A96C63 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 28832617941478D90469FE12 /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */;
+			baseConfigurationReference = D2EE8FD349091B0753FCCEDC /* Pods-taskforce-OneSignalNotificationServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -990,7 +996,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.24;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 63US7M8B3P;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1001,7 +1007,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.taskforce.OneSignalNotificationServiceExtension;
@@ -1013,7 +1019,7 @@
 		};
 		9B94FD05262AF4A900A96C63 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0B51F83729F13AE13B2FA5D /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */;
+			baseConfigurationReference = 33EA52EFADBF1807B7DBAD50 /* Pods-taskforce-OneSignalNotificationServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1023,7 +1029,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.0.24;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 63US7M8B3P;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1034,7 +1040,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.taskforce.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";

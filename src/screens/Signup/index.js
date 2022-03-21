@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     Dimensions,
     StatusBar,
-    ScrollView, Alert, ImageBackground,
+    ScrollView, Alert, ImageBackground, ActivityIndicator,
 } from 'react-native';
 import assets from '../../assets'
 import { Button,Input } from 'react-native-elements';
@@ -26,28 +26,9 @@ import {RFPercentage} from 'react-native-responsive-fontsize';
 import {Warning} from '../../components/Dialog';
 import {setSetting} from '../../redux/actions/setting';
 import {Colors} from '../../utils/config';
+import {FullIndicator} from '../../components/customIndicator';
 const validate = require("validate.js");
 const {width,height} = Dimensions.get('window')
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 60 : 0
-const styles = StyleSheet.create({
-    title:{
-        textAlign:'justify',marginVertical:10,fontWeight:'bold',fontSize:fontSizer(width),color:'#20354E'
-    },
-    subTitle:{textAlign:'center',color:'#959595',fontSize:16},
-    bubble:{width:8,height:6,borderRadius:4,backgroundColor:'#b9b9b9'},
-    bubbleContainer:{width:'33.33%',alignItems:'center'},
-    exBubble:{width:16,backgroundColor: '#1582F4'}
-});
-
-function fontSizer (screenWidth) {
-    if(screenWidth > 400){
-        return 18;
-    }else if(screenWidth > 250){
-        return 23;
-    }else {
-        return 12;
-    }
-}
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -82,8 +63,31 @@ class Index extends Component {
         this.fadeIn()
         this.fadeIn1()
         // this.props.navigation.navigate('Otp')
+        // this.handleTest()
     }
-
+    handleTest=()=>{
+        Request.GetToken('086999580','11111111').then((rs) => {
+            if(rs.status)
+            {
+                Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
+                Api.CheckUser().then((r) => {
+                    if(r.status){
+                        Keychain.setGenericPassword(JSON.stringify(r.data), rs.data.token)
+                        this.props.setUser(r.data)
+                        const {setting}=this.props;
+                        setting.isAgent=r.data.userType=='1'?false:true;
+                        this.props.setSetting(setting)
+                        this.props.navigation.replace('Otp',{signin:true,phone:'',userId:r.data.id})
+                    }else{
+                        this.setState({loading:false})
+                    }
+                })
+            }else{
+                Alert.alert('Warning',"Login Failed")
+                this.setState({loading:false})
+            }
+        })
+    }
     handleNext=(index,value)=>{
             this.props.navigation.navigate('ChooseCategory')
     }
@@ -112,9 +116,9 @@ class Index extends Component {
     handleSignup=async ()=>{
         const { params } = this.props.route;
         const {values} = this.state
-        this.props.set(true)
-        await Api.Signup(values,params.profileType).then(({status}) => {
-            if(status){
+        this.setState({loading:true})
+        await Api.Signup(values,params.profileType).then((rs) => {
+            if(rs.status){
                 Request.GetToken(values.phone,values.password).then((rs) => {
                     if(rs.status)
                     {
@@ -126,19 +130,19 @@ class Index extends Component {
                                 const {setting}=this.props;
                                 setting.isAgent=r.data.userType=='1'?false:true;
                                 this.props.setSetting(setting)
-                                this.props.navigation.replace('Otp',{signin:true})
+                                this.props.navigation.replace('Otp',{signin:true,phone:values.phone,userId:r.data.id})
                             }else{
-                                this.props.set(false)
+                                this.setState({loading:false})
                             }
                         })
                     }else{
                         Alert.alert('Warning',"Login Failed")
-                        this.props.set(false)
+                        this.setState({loading:false})
                     }
                 })
             }
         })
-
+        this.setState({loading:false})
     }
     hancleCheckPhone=async ()=>{
         const { params } = this.props.route;
@@ -155,13 +159,11 @@ class Index extends Component {
                         }
                     }
                 })
-
-
     }
     render() {
         const {focus,values,error,loading,confirm} = this.state
     return (
-
+        <>
         <ImageBackground source={assets.background} style={{flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
 
         <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent = {true}/>
@@ -258,14 +260,12 @@ class Index extends Component {
                   </View>
 
           </View>
-
-    {/*<TouchableOpacity onPress={()=>this.props.navigation.navigate('RootBottomTab')}>*/}
-          {/*  <Text>Get Start</Text>*/}
-          {/*</TouchableOpacity>*/}
             </ScrollView>
             <KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={0}/>
-            {confirm&&<Warning handleClose={()=>this.setState({confirm:false})} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'This phone number already existing'} visible={confirm}/>}
+            {confirm&&<Warning handleClose={()=>this.setState({confirm:false})} btn={'Close'} handleConfirm={this.handleConfirm} title={'Warning!'} subtitle={'This phone number already existing'} visible={confirm}/>}
         </ImageBackground>
+            {loading&&<FullIndicator/>}
+        </>
 
     );
   }

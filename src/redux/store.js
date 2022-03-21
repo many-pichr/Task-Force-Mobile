@@ -10,6 +10,7 @@ import settingReducer from './reducers/settingReducer';
 import mapReducer from './reducers/mapReducer';
 import notificationReducer from './reducers/notificationReducer';
 import sfocusReducer from './reducers/sfocusReducer';
+import jobPostReducer from './reducers/jobPostReducer';
 
 const rootReducer = combineReducers({
     places: notifyReducer,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     map:mapReducer,
     notify:notificationReducer,
     focus:sfocusReducer,
+    jobpost:jobPostReducer ,
 });
 
 const configureStore = () => {

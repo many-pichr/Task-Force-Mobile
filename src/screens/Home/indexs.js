@@ -87,7 +87,6 @@ class Index extends Component {
         await User.GetList('/api/JobPost?_end=20&_start=0&_order=ASC&_sort=id').then((rs) => {
             if(rs.status){
                 this.setState({posts:rs.data,refreshing:false})
-                console.log(rs.data)
             }
         })
         // this.props.set(false)

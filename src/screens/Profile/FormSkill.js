@@ -68,7 +68,6 @@ class Index extends Component {
             newState.values=params.item;
             const err = await validate(newState.values, schama);
             newState.error=err
-            console.log(1111,newState)
             this.setState(newState)
         }
         this.handleGetPost()

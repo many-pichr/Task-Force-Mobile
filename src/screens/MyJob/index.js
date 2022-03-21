@@ -85,12 +85,13 @@ class Index extends Component {
                 const items=[]
                 const completed=[]
                 for(var i=0;i<rs.data.length;i++){
+
                     const item=rs.data[i].jobPost
-                    if(item.status=='selected'){
-                        if(item.completedStatus<100){
-                            items.push(item)
+                    if(item.status=='selected'||item.status=='completed'){
+                        if(item.completedStatus<100&&item.status=='selected'){
+                            items.push(rs.data[i])
                         }else{
-                            completed.push(item)
+                            completed.push(rs.data[i])
                         }
 
                     }
@@ -149,19 +150,18 @@ class Index extends Component {
     handleDelete=()=>{
 
     }
-    handleAction=(index,item)=>{
+    handleAction=(index,item,date)=>{
         const {user} = this.props
        if(index==1){
-           this.props.navigation.navigate('ViewPost',{title:'View Post',view:true,home:false,id:item.id,job:true})
+           this.props.navigation.navigate('ViewPost',{title:'View Post',view:false,home:false,id:item.id,job:true})
        }else if(index==2){
            this.props.navigation.navigate('AddPost',{title:'Edit Post'})
        }else if(index==4){
            this.props.navigation.navigate('Comment',{title:'Edit Post',item:item,userId:user.id})
-    }else if(index==5){
-    this.props.navigation.navigate('Review',{title:'Edit Post',item:item})
-    }else if(index==7){
+       }else if(index==5){
+           this.props.navigation.navigate('Review',{title:'Edit Post',item:item,agent:true,date})
+       }else if(index==7){
            this.setState({cancel:true,id:item.id,currentValue:item.completedStatus/100,value:item.completedStatus/10})
-
        }else if(index==3){
            this.handleDelete()
        }else if(index==6){
@@ -189,7 +189,7 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={data}
-                        renderItem={({item,index}) =><ItemPost lang={lang} status={item.status} agent onPress={()=>this.handleAction(1,item.jobPost)} handleAction={this.handleAction} item={item.jobPost} index={index} bottom={(index+1)==data.length?250:0}/>}
+                        renderItem={({item,index}) =><ItemPost lang={lang} status={item.status} createDate={item.createdDate} agent onPress={()=>this.handleAction(1,item.jobPost)} handleAction={this.handleAction} item={item.jobPost} index={index} bottom={(index+1)==data.length?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -213,7 +213,7 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={inprogress}
-                        renderItem={({item,index}) =><ItemProgress lang={lang} agent={true} onPress={()=>this.handleAction(1,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress.length?250:0}/>}
+                        renderItem={({item,index}) =><ItemProgress lang={lang} agent={true} onPress={()=>this.handleAction(1,item)} item={item.jobPost} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress.length?250:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -230,14 +230,13 @@ class Index extends Component {
                 </>:
                     <>
                         {completed.length>0?<FlatList
-                            contentContainerStyle={{marginTop:0,paddingBottom:completed.length>3?0:300}}
                             refreshControl={<RefreshControl
                                 colors={["#9Bd35A", Colors.textColor]}
                                 tintColor={Colors.textColor}
                                 refreshing={refreshing}
                                 onRefresh={()=>this.handleGetPost(true)} />}
                             data={completed}
-                            renderItem={({item,index}) =><ItemComplete lang={lang} agent={true} onPress={()=>this.handleAction(1,item.jobPost)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress.length?250:0}/>}
+                            renderItem={({item,index}) =><ItemComplete createDate={item.createdDate} lang={lang} agent={true} onPress={()=>this.handleAction(1,item.jobPost)} item={item.jobPost} handleAction={this.handleAction} index={index} bottom={(index+1)==completed.length?250:0}/>}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
                         />:<ScrollView showsVerticalScrollIndicator={false}  refreshControl={<RefreshControl

@@ -37,6 +37,7 @@ class Index extends Component {
             loading:false,
             text:props.user.about,
             confirm:false,
+            enableScroll:false,
             values:{
                 id:0,
                 userId:props.user.id,
@@ -62,6 +63,8 @@ class Index extends Component {
         if(!params.add){
             const newState={... this.state}
             newState.values=params.item;
+            newState.values.startDate=new Date(params.item.startDate);
+            newState.values.endDate=new Date(params.item.endDate);
             delete newState.values.user;
             const err = await validate(newState.values, schama);
             newState.error=err
@@ -94,13 +97,15 @@ class Index extends Component {
         this.setState(newState)
 
     }
+    handleFocus=(val)=>{
+        this.setState({enableScroll:val})
+    }
     render() {
-        const {loading,confirm} = this.state
+        const {loading,confirm,enableScroll} = this.state
         const {user} = this.props;
         const {error,focus,values} = this.state
         const data={error,focus,values}
         const {params } = this.props.route
-        console.log(data)
         return (
             <>
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#edeff2' }}>
@@ -111,6 +116,7 @@ class Index extends Component {
 
                     <TouchableOpacity onPress={Keyboard.dismiss} activeOpacity={1} style={{width:width*0.95,marginTop:20,alignSelf:'center',borderRadius:20,height:height,
                         backgroundColor:'#fff',paddingBottom:10}}>
+                        <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={10} enabled={enableScroll}>
                         <View style={{width:'90%',alignSelf:'center',marginTop:20}}>
                             <CustomPicker required handleInput={this.handleInput} input label={'Job Title'} title={'Job Title'} name={'jobTitle'} value={data}/>
                             <CustomPicker required handleInput={this.handleInput} input label={'Company Name'} title={'Company Name'} name={'companyName'} value={data}/>
@@ -123,7 +129,7 @@ class Index extends Component {
                             />
                             <CustomPicker required subDate date handleInput={this.handleInput} label={'Start Date'} title={'Choose Date'} name={'startDate'} value={data}/>
                             {!values.isTillNow&&<CustomPicker required subDate date handleInput={this.handleInput} label={'End Date'} title={'Choose Date'} name={'endDate'} value={data}/>}
-                            <CustomPicker handleInput={this.handleInput} input label={'Description'} title={'Description'} name={'description'} textarea value={data}/>
+                            <CustomPicker onFocus={this.handleFocus} handleInput={this.handleInput} input label={'Description'} title={'Description'} name={'description'} textarea value={data}/>
 
                         </View>
 
@@ -143,11 +149,10 @@ class Index extends Component {
 
                                 </TouchableOpacity>
                             </View>}
-
-
+                        </KeyboardAvoidingView>
                     </TouchableOpacity>
                 </ScrollView>
-                <KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={RFPercentage(0)}/>
+                {/*<KeyboardAvoidingView behavior={'padding'} keyboardVerticalOffset={RFPercentage(0)}/>*/}
                 </View>
                 <View style={{position:'absolute',width,height:180,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 

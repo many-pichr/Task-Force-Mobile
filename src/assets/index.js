@@ -9,4 +9,7 @@ export default {
     taskforce:require('./images/taskforce.png'),
     kh:require('./images/kh.png'),
     en:require('./images/en.jpg'),
+    appLogo:require('./images/logo-app.png'),
+    bag:require('./images/bag.png'),
+    person:require('./images/person.png'),
 }

@@ -20,7 +20,6 @@ import {connect} from 'react-redux';
 const {width,height} = Dimensions.get('window')
 
 function Index({setting,field}) {
-console.log(setting.lang=='en'?"Hello":"សថដថដថ")
 
 return <>{setting.lang=='en'?"Hello":"សថដថដថ"}</>
 

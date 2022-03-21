@@ -25,6 +25,8 @@ import {setNotify} from '../../redux/actions/notification';
 import {SliderPicker} from 'react-native-slider-picker';
 import {Button} from 'react-native-elements';
 import Lang from '../../Language';
+import {setJobPost} from '../../redux/actions/jobpost';
+import Func from '../../utils/Functions';
 const {width,height} = Dimensions.get('window')
 
 class Index extends Component {
@@ -33,14 +35,16 @@ class Index extends Component {
         this.state={
             confirm:false,
             active:0,
-            loading:true,
+            loading:false,
             refreshing:false,
             currentValue:0,
-            data:[],
+            data:props.jobpost,
             inprogress:[],
             value:0,
             proModal:true,
             cancel:false,
+            cancel1:false,
+            cancel2:false,
             completed:[]
         }
         this.myRef = React.createRef();
@@ -75,22 +79,9 @@ class Index extends Component {
         this._unsubscribeBlur();
     }
     handleGetPost=async (refresh)=>{
-            await User.GetList('/api/JobPost/CurrentUser?_end=10&_start=0&_order=ASC&_sort=id').then((rs) => {
-                if(rs.status){
-                    const items=[]
-                    const completed=[]
-                    for(var i=0;i<rs.data.length;i++){
-                        if(rs.data[i].status=='selected'||rs.data[i].status=='completed'){
-                            if(rs.data[i].completedStatus<100&&rs.data[i].status=='selected'){
-                                items.push(rs.data[i])
-                            }else{
-                                completed.push(rs.data[i])
-                            }
-                        }
-                    }
-                    this.setState({completed,data:rs.data,inprogress:items,refreshing:false,loading:false})
-                }
-            })
+        await Func.GetJobPost().then((data) => {
+                this.props.setJobPost(data);
+        });
         this.setState({refreshing:false,loading:false})
         this.handleSetNotify()
     }
@@ -112,7 +103,6 @@ class Index extends Component {
             focus.isComplete=false;
         }
         this.props.setNotify(notify)
-        console.log('focus===>',focus)
         this.props.setFocus({
             "MyPost": focus.MyPost,
             "isProgress": focus.isProgress,
@@ -136,51 +126,50 @@ class Index extends Component {
         this.setState({map:!this.state.map})
         this.fadeIn()
     }
-    handleDelete=()=>{
-        Alert.alert(
-            //title
-            'Please confirm!',
-            //body
-            'Are you sure to delete ?',
-            [
-
-                {
-                    text: 'No',
-                    onPress: () => console.log('No Pressed'), style: 'cancel'
-                },
-                {
-                    text: 'Yes',
-                    // onPress: () => this.props.navigation.goBack()
-                },
-            ],
-            {cancelable: false},
-            //clicking out side of alert will not cancel
-        );
-    }
     handleCancel=async ()=>{
         const {id} = this.state;
         this.setState({cancel:false,refreshing:true})
         const url="/api/JobPost/ChangeStatus/"+id+"/cancel"
-        await User.Put(url)
+        await User.Put(url).then((rs) => {
+        })
         this.handleGetPost(true);
         this.setState({refreshing:false})
 
     }
     handleAction=(index,item)=>{
-        const {user} = this.props
+        const {user} = this.props;
+        if(index==0){
+            this.props.navigation.navigate('ViewPost',{title:'View Post',id:item.id,post:true,agent:false})
+        }else
         if(index==1){
-           this.props.navigation.navigate('ViewPost',{title:'View Post',view:true,id:item.id,post:true})
+            this.props.navigation.navigate('ViewCandidate',{title:'View Candidate',id:item.id,post:true,agent:false})
        }else if(index==2){
-           this.props.navigation.navigate('AddPost',{title:'Edit Post',view:true,id:item.id,add:true})
+           this.props.navigation.navigate('EditPost',{title:'Edit Post',view:true,id:item.id,add:true,item})
        }else if(index==4){
            this.props.navigation.navigate('Comment',{title:'Edit Post',item:item,userId:user.id})
        }else if(index==7){
-            this.setState({cancel:true,id:item.id,currentValue:item.completedStatus/100,value:item.completedStatus/10})
+            if(item.completedStatus<=20){
+                this.setState({cancel1:true,id:item.id})
+            }else if(item.completedStatus>20){
+                this.setState({cancel2:true,id:item.id})
+            }else{
+                this.setState({cancel:true,id:item.id})
+            }
+            // this.setState({cancel:true,id:item.id,currentValue:item.completedStatus/100,value:item.completedStatus/10})
 
         }else if(index==5){
-           this.props.navigation.navigate('Review',{title:'Edit Post',item:item})
+           this.props.navigation.navigate('Review',{title:'Edit Post',item:item,user})
        }else if(index==3){
-           this.handleDelete()
+            if(item.completedStatus<=20){
+                this.setState({cancel1:true,id:item.id})
+            }else if(item.completedStatus>20){
+                this.setState({cancel2:true,id:item.id})
+            }else{
+                this.setState({cancel:true,id:item.id})
+            }
+
+       }else if(index==8){
+            this.props.navigation.navigate('ViewUser',{userId:item.agent.id,view:true,loading:true})
        }
     }
     handleSwitch=(status)=>{
@@ -188,8 +177,9 @@ class Index extends Component {
         this.handleSetNotify(status)
     }
     render() {
-        const {cancel,loading,inprogress,data,refreshing,active,completed} = this.state
+        const {cancel,loading,refreshing,active, cancel1, cancel2} = this.state
         const {lang} = this.props.setting;
+        const {data,completed,inprogress} = this.props.jobpost;
         return (<>
             <MyPostList
                 title={Lang[lang].mtask}
@@ -207,7 +197,7 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={data}
-                        renderItem={({item,index}) =><ItemPost lang={lang} isPost={true} status={item.status} onPress={()=>this.handleAction(1,item)} handleAction={this.handleAction} item={item} index={index} bottom={(index+1)==data.length?250:0}/>}
+                        renderItem={({item,index}) =><ItemPost lang={lang} isPost={true} status={item.status} onPress={()=>this.handleAction(0,item)} handleAction={this.handleAction} item={item} index={index} bottom={(index+1)==data.length?300:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -231,7 +221,7 @@ class Index extends Component {
                             refreshing={refreshing}
                             onRefresh={()=>this.handleGetPost(true)} />}
                         data={inprogress}
-                        renderItem={({item,index}) =><ItemProgress onPress={()=>this.handleAction(1,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
+                        renderItem={({item,index}) =><ItemProgress onPress={()=>this.handleAction(0,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress.length?300:0}/>}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
                     />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -257,7 +247,7 @@ class Index extends Component {
                                 refreshing={refreshing}
                                 onRefresh={()=>this.handleGetPost(true)} />}
                             data={completed}
-                            renderItem={({item,index}) =><ItemComplete lang={lang} isPost={true} onPress={()=>this.handleAction(5,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==inprogress?250:0}/>}
+                            renderItem={({item,index}) =><ItemComplete createDate={new Date()} lang={lang} isPost={true} onPress={()=>this.handleAction(5,item)} item={item} handleAction={this.handleAction} index={index} bottom={(index+1)==completed.length?300:0}/>}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
                         />:<ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl
@@ -277,6 +267,8 @@ class Index extends Component {
 
             />
         {cancel&&<Confirm handleClose={()=>this.setState({cancel:false})} handleConfirm={this.handleCancel} title={'Warning'} subtitle={'Are you sure to cancel?'} visible={cancel}/>}
+        {cancel1&&<Confirm handleClose={()=>this.setState({cancel1:false})} handleConfirm={this.handleCancel} title={'Warning'} subtitle={'If you cancel your task now, 50% of the reward will be deduct from your poket'} visible={cancel1}/>}
+        {cancel2&&<Confirm handleClose={()=>this.setState({cancel2:false})} handleConfirm={this.handleCancel} title={'Warning'} subtitle={'If you cancel your task now, 100% of the reward will be deduct from your poket'} visible={cancel2}/>}
 
         </>
     );
@@ -309,6 +301,7 @@ const mapStateToProps = state => {
         user: state.user.user,
         notify: state.notify.notify,
         focus: state.focus.focus,
+        jobpost: state.jobpost.data,
     }
 }
 
@@ -323,7 +316,11 @@ const mapDispatchToProps = dispatch => {
         },
         setFocus: (focus) => {
             dispatch(setFocus(focus))
-        }
+        },
+        setJobPost: (jobpost) => {
+            dispatch(setJobPost(jobpost))
+
+        },
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Index)

@@ -210,7 +210,6 @@ class Message extends Component{
     componentDidMount() {
         const {message,index} = this.props;
         if(message.animated) {
-            console.log('========>')
             Animated.timing(this._animated, {
                 toValue: 1,
                 // useNativeDriver:true,

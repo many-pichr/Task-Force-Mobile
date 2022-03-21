@@ -30,8 +30,8 @@ export default class customInput extends Component {
                                 placeholder={props.placeholder}
                                 placeholderTextColor={Colors.textColor}
                                 labelStyle={[focus&&{color:Colors.textColor,fontFamily:props.secure?"":Fonts.primary},{fontWeight:'normal'}]}
-                                keyboardType={'default'}
-                                inputStyle={{fontSize:RFPercentage(2),marginLeft:10,fontFamily:props.secure?"Arial":Fonts.primary}}
+                                keyboardType={props.number?'numeric':'default'}
+                                inputStyle={{fontSize:RFPercentage(2),marginLeft:10}}
                                 errorMessage={(props.focus&&props.focus[props.name])&&(props.error&&props.error[props.name])?props.error[props.name][0]:''}
                                 errorStyle={{marginTop:0}}
                                 inputContainerStyle={[focus&&{borderColor:Colors.primary},{height:RFPercentage(7),borderWidth:1,borderRadius:5}]}

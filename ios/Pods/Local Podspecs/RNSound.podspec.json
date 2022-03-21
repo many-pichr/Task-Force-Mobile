@@ -1,6 +1,6 @@
 {
   "name": "RNSound",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "summary": "React Native module for playing sound clips on iOS, Android, and Windows",
   "homepage": "https://github.com/zmxv/react-native-sound",
   "license": "MIT",
@@ -11,7 +11,7 @@
   },
   "source": {
     "git": "https://github.com/zmxv/react-native-sound.git",
-    "tag": "v0.11.0"
+    "tag": "v0.11.1"
   },
   "default_subspecs": "Core",
   "requires_arc": true,
@@ -19,7 +19,7 @@
     "ios": "7.0"
   },
   "dependencies": {
-    "React": [
+    "React-Core": [
 
     ]
   },

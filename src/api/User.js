@@ -1,5 +1,7 @@
 import axios from '../utils/axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Func from '../utils/Functions';
+import {Platform} from 'react-native';
 export default {
     Signup: async (data,type) => {
         var body = {
@@ -16,6 +18,9 @@ export default {
 
         const URL = `/api/User`;
         return await axios.PostGuest(URL,body)
+    },
+    PostGuest: async (url,body) => {
+        return await axios.PostGuest(url,body)
     },
     AddJob: async (data,image,userId,location,noExpiry,region) => {
         const images=[]
@@ -80,6 +85,69 @@ export default {
         const rs=await axios.Post(URL,body);
         return rs;
     },
+    EditJob: async (data,image,userId,location,noExpiry,region) => {
+        const images=[]
+        const skills=[]
+        let mainImage=''
+        for(var i=0;i<image.length;i++){
+            if(image[i]!=''){
+                if(mainImage!='') mainImage=image[i];
+                images.push(
+                    {
+                        "id": 0,
+                        "jobPostId": data.id,
+                        "url": image[i]
+                    }
+                )
+            }
+        }
+        for(var i=0;i<data.skill.length;i++){
+            if(data.skill[i]>0){
+                skills.push(
+                    {
+                        "skillId": data.skill[i],
+                    }
+                )
+            }
+        }
+        var body =
+            {
+                "id": data.id,
+                "title": data.title,
+                "description": data.description,
+                "address": data.address,
+                "jobPriorityId": data.priority,
+                "isNoneExpired": noExpiry,
+                "jobLevelId": data.level,
+                "jobCategoryId": data.category,
+                "extraCharge": parseInt(data.extra==''?0:data.extra),
+                "reward": parseInt(data.reward),
+                "isShowLocation": location,
+                "locLAT": region.latitude,
+                "locLONG": region.longitude,
+                "jobPostArea":{
+                    "id": 0,
+                    "jobPostId": 0,
+                    "latitude": region.latitude,
+                    "longitude": region.longitude,
+                    "latitudeDelta": region.latitudeDelta,
+                    "longitudeDelta": region.longitudeDelta
+                },
+                "createDate": data.start,
+                "expireDate": data.end,
+                "userId": userId,
+                "status": "Pending",
+                "completedStatus": 0,
+                "profileURL": mainImage,
+                "order": 0,
+                "jobPostPhotos": images,
+                "jobPostSkills": skills,
+            }
+
+        const URL = '/api/JobPost/'+data.id;
+        const rs=await axios.Put(URL,body);
+        return rs;
+    },
     AddInterested: async (data) => {
         var body =
             {
@@ -126,14 +194,20 @@ export default {
         const URL = '/api/Authenticate/SwitchProfile';
         return await axios.Get(URL)
     },
+    ChangePrivacy: async (data) => {
+        const URL = '/api/Authenticate/ChangePrivacy';
+        return await axios.Get(URL)
+    },
     CheckUser: async (data) => {
         const token = await AsyncStorage.getItem('@notification_id')
         const URL = "/api/Authenticate?notification_id="+token;
-        console.log(URL)
         return await axios.Get(URL)
     },
     GetList: async (URL) => {
         return await axios.Get(URL)
+    },
+    GetGuest: async (URL) => {
+        return await axios.GetGuest(URL)
     },
     Delete: async (URL) => {
         return await axios.Delete(URL)
@@ -144,16 +218,23 @@ export default {
     Post: async (URL,body) => {
         return await axios.Post(URL,body)
     },
-    UploadImage: async (uri) => {
-        const config = {
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-            }
+    UploadImage: async (url,resize) => {
+        if(Platform.OS=='ios'){
+            return await Func.ResizeImage(url).then(rs => {
+
+                let formdata = new FormData();
+                formdata.append("file", {uri: rs.path, name: 'post_'+new Date().getTime()+'.jpg', type: 'image/jpeg'})
+                const URL = `/api/file/upload`;
+                return axios.Post(URL,formdata)
+            })
+        }else{
+            let formdata = new FormData();
+            formdata.append("file", {uri: url, name: 'post_'+new Date().getTime()+'.jpg', type: 'image/jpeg'})
+            const URL = `/api/file/upload`;
+            return await axios.Post(URL,formdata)
         }
-        let formdata = new FormData();
-        formdata.append("file", {uri: uri, name: 'post_'+new Date().getTime()+'.jpg', type: 'image/jpeg'})
-        const URL = `/api/file/upload`;
-        return await axios.Post(URL,formdata)
+
+
     },
     UploadVoice: async (uri) => {
         const config = {

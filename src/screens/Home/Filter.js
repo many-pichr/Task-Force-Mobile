@@ -57,8 +57,8 @@ export default class Filter extends React.Component{
               Alert.alert("Modal has been closed.");
             }}
         >
-          <TouchableOpacity onPress={Keyboard.dismiss} activeOpacity={1} style={{width,height,flex:1,backgroundColor:'rgba(0,0,0,0.62)',justifyContent:'center',alignItems:'center'}}>
-            <View style={{width:'90%',paddingBottom:0,backgroundColor:'#fff',borderRadius:10}}>
+          <TouchableOpacity onPress={Keyboard.dismiss} activeOpacity={1} style={{width,height,flex:1,backgroundColor:'rgba(0,0,0,0.62)',alignItems:'center'}}>
+            <View style={{width:'90%',paddingBottom:0,backgroundColor:'#fff',borderRadius:10,marginTop:height/5}}>
                 <View style={{flexDirection:'row',width:'100%',height:50,backgroundColor:Colors.primary,borderTopLeftRadius:10,borderTopRightRadius:10}}>
                   <TouchableOpacity onPress={this.props.handleClose} style={{width:'15%',justifyContent:'center',alignItems:'center'}}>
                     <Icon name={'close'} size={30} color={'#fff'}/>

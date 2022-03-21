@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import {Animated, StyleSheet, View, Text, Image, TouchableOpacity, Dimensions, Modal, ScrollView} from 'react-native';
-import { ConfirmDialog } from 'react-native-simple-dialogs';
+import moment from 'moment'
 import Icon  from 'react-native-vector-icons/MaterialIcons'
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import FastImage from 'react-native-fast-image';
 import {Colors, Fonts} from '../utils/config';
+import Func from '../utils/Functions';
 const {width,height} = Dimensions.get('window')
 
 const Confirm=(props)=>{
@@ -12,22 +13,23 @@ const Confirm=(props)=>{
         return (
             <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
                 <TouchableOpacity activeOpacity={0.5} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
-                    <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:20}}>
-                            <Icon name={'warning'} color={'#ffae00'} size={RFPercentage(12)} style={{alignSelf:'center',marginTop:10}}/>
-                        <View style={{width:'100%',height:'42%',alignItems:'center'}}>
-                            <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3.5)}}>
+                    <TouchableOpacity activeOpacity={1} style={{width:width*0.8,backgroundColor:'#fff',borderRadius:0}}>
+                        <View style={{width:'95%',alignItems:'center',alignSelf:'center'}}>
+                            <Icon name={'warning'} color={'#ffae00'} size={RFPercentage(10)} style={{alignSelf:'center',marginTop:10}}/>
+
+                            <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3)}}>
                                 {props.title}
                             </Text>
-                            <Text style={{marginTop:RFPercentage(2),fontSize:RFPercentage(2.5)}}>
+                            <Text style={{marginTop:RFPercentage(2),fontSize:RFPercentage(2)}}>
                                 {props.subtitle}
                             </Text>
                         </View>
-                        <View style={{width:'100%',height:'20%',flexDirection:'row',alignSelf:'center',borderTopWidth:0.3}}>
-                            <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%'}}>
+                        <View style={{width:'100%',flexDirection:'row',marginTop:10,alignSelf:'center',paddingVertical:15,borderTopWidth:0.3,borderColor:'#cbcbcb'}}>
+                            <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'47.5%'}}>
                                 <Text style={{fontSize:RFPercentage(2.5),color:'#ff003e'}}>NO</Text>
                             </TouchableOpacity>
                             <View style={{width:'5%'}}/>
-                            <TouchableOpacity onPress={props.handleConfirm} style={{justifyContent:'center',alignItems:'center',width:'47.5%',height:'100%',borderLeftWidth:0.3}}>
+                            <TouchableOpacity onPress={props.handleConfirm} style={{justifyContent:'center',alignItems:'center',width:'47.5%',borderColor:'#cbcbcb',borderLeftWidth:0.3}}>
                                 <Text style={{fontSize:RFPercentage(2.5),color:'#0096ff'}}>YES</Text>
                             </TouchableOpacity>
                         </View>
@@ -57,6 +59,55 @@ const Confirm=(props)=>{
             </Modal>
 
         );
+}
+const WalletDetail=(props)=>{
+    const {item}=props
+    const name=Func.GetFromUser(item.type,item.fromUsername,item.toUsername)
+    return (
+        <Modal statusBarTranslucent={true} visible={true} animationType={'fade'} transparent={true}>
+            <TouchableOpacity activeOpacity={0.1} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.29)',alignItems:'center',justifyContent:'center'}}>
+                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,paddingBottom:50,backgroundColor:'#fff',borderRadius:0}}>
+                <View style={{width:'100%',height:50,backgroundColor:Colors.primary,justifyContent:'center',alignItems:'center'}}>
+                    <Text style={{color:'#fff',fontSize:18}}>{props.item.type}</Text>
+                </View>
+
+                    <View style={{width:'90%',alignSelf:'center',marginTop:10}}>
+                        <Text style={{color:Colors.textColor,fontSize:15,textAlign:'justify'}}>{props.item.description}</Text>
+                        <View style={{width:'100%',marginTop:20,flexDirection:'row'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>Tran No: </Text>
+                            <Text style={{fontSize:13,width:'70%'}}>{item.walletDetailNo}</Text>
+                        </View>
+                        <View style={{width:'100%',marginTop:5,flexDirection:'row',alignItems:'center'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>Tran Date: </Text>
+                            <Text style={{fontSize:12,width:'70%'}}>{moment(item.date).format('DD/MM/YYYY HH:mm')}</Text>
+                        </View>
+                        {name.from&&name.from!=""&&<View style={{width:'100%',marginTop:5,flexDirection:'row'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>From user: </Text>
+                            <Text style={{fontSize:13,width:'70%',fontWeight:'bold'}}>{name.from}</Text>
+                        </View>}
+                        {name.to&&name.to!=""&&<View style={{width:'100%',marginTop:5,flexDirection:'row'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>To user: </Text>
+                            <Text style={{fontSize:13,width:'70%',fontWeight:'bold'}}>{name.to}</Text>
+                        </View>}
+                        <View style={{width:'100%',marginTop:5,flexDirection:'row'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>Status: </Text>
+                            <Text style={{fontSize:13,width:'70%',color:Func.GetPaymentStatus(item.status,"")}}>{item.status}</Text>
+                        </View>
+                        <View style={{width:'100%',marginTop:5,flexDirection:'row',alignItems:'center'}}>
+                            <Text style={{fontSize:14,width:'30%'}}>Amount: </Text>
+                            <Text style={{fontSize:16,width:'70%',color:Colors.textColor,fontWeight:'bold'}}>{item.amount}</Text>
+                        </View>
+                    </View>
+
+
+                </TouchableOpacity>
+
+
+            </TouchableOpacity>
+
+        </Modal>
+
+    );
 }
 const TermCondition=(props)=>{
 
@@ -122,13 +173,13 @@ const Warning=(props)=>{
     return (
         <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
             <TouchableOpacity activeOpacity={0.5} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
-                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:20}}>
+                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.7,backgroundColor:'#fff',borderRadius:0}}>
                     <Icon name={'warning'} color={'#ffae00'} size={RFPercentage(12)} style={{alignSelf:'center',marginTop:10}}/>
                     <View style={{width:'100%',height:'42%',alignItems:'center'}}>
-                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3.5),fontFamily:Fonts.primary}}>
+                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(3),fontFamily:Fonts.primary}}>
                             {props.title}
                         </Text>
-                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(2.5),fontFamily:Fonts.primary}}>
+                        <Text style={{marginTop:RFPercentage(1),fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>
                             {props.subtitle}
                         </Text>
                     </View>
@@ -170,7 +221,7 @@ const Success=(props)=>{
                         </View>
                         <View style={{width:'90%',height:'18%',flexDirection:'row',alignSelf:'center',justifyContent:'center'}}>
                             <TouchableOpacity onPress={props.handleConfirm} style={{justifyContent:'center',alignItems:'center',width:'80%',height:'100%',borderRadius:10,backgroundColor:Colors.textColor}}>
-                                <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>Back to Wallet</Text>
+                                <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>Back to Money</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -179,6 +230,72 @@ const Success=(props)=>{
             </Modal>
 
         );
+}
+const PayFailed=(props)=>{
+
+    return (
+        <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
+            <TouchableOpacity activeOpacity={0.5} onPress={props.handleClose} style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
+
+                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.8,backgroundColor:'#fff',borderRadius:10}}>
+                    <View style={{width:'100%',height:'75%',alignItems:'center'}}>
+
+                        <FastImage
+                            source={require('../assets/images/pay-fail.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                            style={{width:RFPercentage(20),height:RFPercentage(20),
+                                borderWidth:3,borderColor:'#fff',borderRadius:RFPercentage(12)/2}}/>
+                        <Text style={{fontSize:RFPercentage(3),fontWeight:'bold',color:'red'}}>
+                            {props.title}
+                        </Text>
+                        <Text style={{marginTop:RFPercentage(2),fontSize:RFPercentage(2.5),color:'gray'}}>
+                            {props.subtitle}
+                        </Text>
+                    </View>
+                    <View style={{width:width*0.7,height:width/8,flexDirection:'row',alignSelf:'center',justifyContent:'center'}}>
+                        <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'80%',height:'100%',borderRadius:10,backgroundColor:Colors.textColor}}>
+                            <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>Try Again</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </TouchableOpacity>
+            </TouchableOpacity>
+        </Modal>
+
+    );
+}
+const PostSuccess=(props)=>{
+
+    return (
+        <Modal statusBarTranslucent={true} visible={true} animationType={'slide'} transparent={true}>
+            <View style={{width,height:'100%',backgroundColor:'rgba(0,0,0,0.11)',alignItems:'center',justifyContent:'center'}}>
+
+                <TouchableOpacity activeOpacity={1} style={{width:width*0.8,height:width*0.8,backgroundColor:'#fff',borderRadius:10}}>
+                    <View style={{width:'100%',height:'75%',alignItems:'center'}}>
+
+                        <FastImage
+                            source={require('../assets/images/pay-fail.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                            style={{width:RFPercentage(20),height:RFPercentage(20),
+                                borderWidth:3,borderColor:'#fff',borderRadius:RFPercentage(12)/2}}/>
+                        <Text style={{fontSize:RFPercentage(3),fontWeight:'bold',color:'green'}}>
+                            {props.title}
+                        </Text>
+                        <Text style={{marginTop:RFPercentage(2),fontSize:RFPercentage(2.5),color:'gray'}}>
+                            {props.subtitle}
+                        </Text>
+                    </View>
+                    <View style={{width:width*0.7,height:width/8,flexDirection:'row',alignSelf:'center',justifyContent:'center'}}>
+                        <TouchableOpacity onPress={props.handleClose} style={{justifyContent:'center',alignItems:'center',width:'80%',height:'100%',borderRadius:10,backgroundColor:Colors.textColor}}>
+                            <Text style={{fontSize:RFPercentage(2.5),color:'#fff'}}>Go Back</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </TouchableOpacity>
+            </View>
+        </Modal>
+
+    );
 }
 const MoneyWarning=(props)=>{
 
@@ -231,4 +348,4 @@ const MoneyWarning=(props)=>{
 
     );
 }
-export {Confirm,TermCondition,Warning,Success,MoneyWarning}
+export {PostSuccess,Confirm,WalletDetail,TermCondition,Warning,Success,MoneyWarning,PayFailed}

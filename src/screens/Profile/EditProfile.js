@@ -9,18 +9,15 @@ import {
     Text,
     Modal,
     Platform,
+    KeyboardAvoidingView,
     ScrollView,
     Dimensions,
     FlatList,
     ActivityIndicator, Alert, Keyboard, Switch,
 } from 'react-native';
-import {ListScreen} from '../../components/ListScreen';
-import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Colors, Fonts} from '../../utils/config';
-import Detail from './Detail'
-import Setting from './Setting'
 import {setLoading} from '../../redux/actions/loading';
 import {setUser} from '../../redux/actions/user';
 import {setSetting} from '../../redux/actions/setting';
@@ -30,11 +27,8 @@ import User from '../../api/User';
 import Api from '../../api/User';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import schama from './validatorEdit';
-import Request from '../../utils/Request';
-import CustomInput from '../../components/customInput';
 import {Button,CheckBox} from 'react-native-elements';
 import CustomPicker from '../../components/customPicker';
-import Lang from '../../Language';
 const validate = require("validate.js");
 const {width,height} = Dimensions.get('window')
 class Index extends Component {
@@ -54,7 +48,7 @@ class Index extends Component {
                 phone:'',
                 password:'',
                 cpassword:'',
-                dob:'',
+                dob:new Date(),
                 gender:'F'
             },
             focus:{
@@ -67,9 +61,10 @@ class Index extends Component {
                 cpassword:false,
             },
             error:[],
+            enableScroll:false
         }
     }
-    componentDidMount(): void {
+    async componentDidMount(): void {
         this.fadeIn()
         this.fadeIn1()
         const {user} = this.props.route.params;
@@ -77,14 +72,18 @@ class Index extends Component {
         ns.values.firstName=user.firstName;
         ns.values.lastName=user.lastName;
         ns.values.email=user.email;
-        ns.values.dob=user.dob;
+        ns.values.dob=user.dob?new Date(user.dob):new Date();
         ns.values.gender=user.gender;
         ns.values.address=user.address;
-        this.setState(ns)
+        await this.setState(ns);
+        this.checkValidate();
     }
+    checkValidate=async ()=>{
+        const newState={... this.state}
+        const err = await validate(newState.values, schama);
+        newState.error=err
+        this.setState(newState)
 
-    handleNext=(index,value)=>{
-        this.props.navigation.navigate('ChooseCategory')
     }
     fadeIn = async () => {
         await this.setState({fadeAnimation:new Animated.Value(0)})
@@ -105,43 +104,43 @@ class Index extends Component {
         newState.focus[f]=true;
         const err = await validate(newState.values, schama);
         newState.error=err
-        console.log(err)
         this.setState(newState)
 
     }
-
-    handleSignup=async ()=>{
-        const { params } = this.props.route;
-        const {values} = this.state
-        this.props.set(true)
-        await Api.Signup(values,params.profileType).then(({status}) => {
-            if(status){
-                Request.GetToken(values.phone,values.password).then((rs) => {
-                    if(rs.status)
-                    {
-                        Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
-                        Api.CheckUser().then((r) => {
-                            if(r.status){
-                                Keychain.setGenericPassword(JSON.stringify(r.data), rs.data.token)
-                                this.props.setUser(r.data)
-                                this.props.setSetting({isAgent:r.data.userType=='1'?false:true})
-                                this.props.navigation.replace('Otp',{signin:true})
-                            }else{
-                                this.props.set(false)
-                            }
-                        })
-                    }else{
-                        Alert.alert('Warning',"Login Failed")
-                        this.props.set(false)
-                    }
-                })
+    handleFocus=(val)=>{
+        this.setState({enableScroll:val})
+    }
+    handleUpdate=async ()=>{
+        const {values} = this.state;
+        const {user} = this.props.route.params;
+        this.setState({showPin:false,loading:true})
+        const body={
+            "firstName": values.firstName,
+            "lastName": values.lastName,
+            "email": values.email,
+            "address": values.address,
+            "dob": values.dob,
+            "phone": user.phone,
+            "username": user.username,
+            "password": '123456',
+            "gender": values.gender}
+        await User.Post("/api/User/change-user", JSON.stringify(body)).then((rs) => {
+        }).catch((e) => {
+            console.log(e)
+        })
+        const credentials = await Keychain.getGenericPassword();
+        const token = credentials.password;
+        await User.CheckUser().then((rs) => {
+            if(rs.status){
+                this.props.setUser(rs.data)
+                Keychain.setGenericPassword(JSON.stringify(rs.data), token)
+                this.props.navigation.goBack();
             }
         })
-
+        this.setState({loading:false})
     }
-
     render() {
-        const {focus,values,error,loading,confirm} = this.state
+        const {focus,values,error,loading,enableScroll} = this.state
         const data={error,focus,values}
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
@@ -155,8 +154,9 @@ class Index extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss} style={{width:width*0.95,marginTop:20,alignSelf:'center',borderRadius:20,height:height,
                         backgroundColor:'#fff',paddingBottom:10}}>
-
-                        <View style={{width:width*0.85,alignSelf:'center',marginVertical:20}}>
+                        <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={10} enabled={enableScroll}>
+                            <View style={{width:'100%',borderRadius:20,backgroundColor:'#fff'}}>
+                        <View style={{width:width*0.85,alignSelf:'center',marginVertical:10,}}>
                             <CustomPicker required handleInput={this.handleInput} input label={'First name'} title={"First Name"} name={'firstName'} value={data}/>
                             <CustomPicker required handleInput={this.handleInput} input label={'Last name'} title={"Last Name"} name={'lastName'} value={data}/>
                             <CustomPicker required handleInput={this.handleInput} input label={'Email'} title={"Email"} name={'email'} value={data}/>
@@ -164,7 +164,7 @@ class Index extends Component {
                             <View style={{flexDirection:'row',marginTop:5}}>
                                 <CheckBox
                                     center
-                                    title='Female'
+                                    title={'Female'}
                                     onPress={()=>this.handleInput('gender','F')}
                                     checkedIcon='dot-circle-o'
                                     uncheckedIcon='circle-o'
@@ -182,21 +182,21 @@ class Index extends Component {
                                 />
                             </View>
                             <CustomPicker subDate choosedate date handleInput={this.handleInput} label={"Date of birth"} title={"Pick up date"} name={'dob'} value={data}/>
-                            <CustomPicker textarea={false} handleInput={this.handleInput} input label={'Address'} title={'Address'} name={'address'} value={data}/>
+                            <CustomPicker onFocus={this.handleFocus} textarea={false} handleInput={this.handleInput} input label={'Address'} title={'Address'} name={'address'} value={data}/>
 
                             <Button
                                 title={'Update'}
                                 disabled={error!=undefined}
                                 loading={loading}
-                                onPress={this.hancleCheckPhone}
+                                onPress={this.handleUpdate}
                                 titleStyle={{fontSize:RFPercentage(3)}}
                                 buttonStyle={{height:RFPercentage(7),width:width*0.8,borderRadius:10,marginTop:20
                                     ,backgroundColor:Colors.textColor,alignSelf:'center'}}
                             />
 
                         </View>
-
-
+                            </View>
+                        </KeyboardAvoidingView>
 
                         </TouchableOpacity>
                 </View>

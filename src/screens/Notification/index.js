@@ -19,7 +19,6 @@ import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
 import moment from 'moment'
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
-import ContentLoader from 'react-native-masked-loader';
 import data from '../Home/data';
 import Svg, { Rect } from 'react-native-svg';
 import User from '../../api/User';
@@ -29,16 +28,6 @@ import FastImage from 'react-native-fast-image';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const avatarSize=((width*0.9)*0.9)/6
-function getMaskedElement() {
-    return (
-        <Svg height={100} width="100%" fill={'black'}>
-            {/*<Rect x="0" y="0" rx="8" ry="8" width="50%" height="16" />*/}
-            <Rect x="0" y="10" rx="40" ry="40" width="80" height="80" />
-            <Rect x="90" y="20" rx="4" ry="4" width="70%" height="15" />
-            <Rect x="90" y="60" rx="4" ry="4" width="40%" height="15" />
-        </Svg>
-    );
-}
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -68,11 +57,32 @@ class Index extends Component {
         this.setState({refreshing})
         await User.GetList("/api/Notification/ByUser").then((rs) => {
             if(rs.status){
-                console.log(rs.data)
                 this.setState({data:rs.data})
             }
         })
         this.setState({loading:false,refreshing:false})
+    }
+    handleGetIcon(status){
+        let str='notifications';
+        switch(status) {
+            case "Message": {
+                str="chat";
+                break;
+            }
+            case "Cash Out": {
+                str="monetization-on";
+                break;
+            }
+            case "Top Up": {
+                str="monetization-on";
+                break;
+            }
+            default: {
+                //statements;
+                break;
+            }
+        }
+        return str;
     }
     handleNext=()=>{
         this.props.navigation.navigate('Signin')
@@ -84,20 +94,9 @@ class Index extends Component {
             duration: 600
         }).start();
     };
-    handleSwitch=()=>{
-        this.setState({map:!this.state.map})
-        this.fadeIn()
-    }
-    setLocation=(coor)=>{
-        const {items} = this.state
-        items.push(coor)
-        this.setState(items)
-    }
-
     renderItems=({item,index})=>{
-        const {map,refreshing,loading,data} = this.state
         let format = 'ddd MMM YY'
-        const d = item.lastAccess;
+        const d = item.date;
         const year = moment(new Date()).isSame(d, 'year');
         const month = moment(new Date()).isSame(d, 'month');
         const day = moment(new Date()).isSame(d, 'day');
@@ -111,15 +110,8 @@ class Index extends Component {
             return(
             <TouchableOpacity key={index} bottomDivider style={{width:'100%',flexDirection:'row',alignItems:'center',paddingVertical:10,
                 borderBottomColor:'#d9d9d9',borderBottomWidth:0.3}}>
-                {/*<FastImage onLoadEnd={() => this.setState({imgLoading: false})}*/}
-                {/*           source={item.toUser.profileURL && item.toUser.profileURL != '' ? {*/}
-                {/*               uri: item.toUser.profileURL,*/}
-                {/*               priority: FastImage.priority.normal,*/}
-                {/*           } : require('../../assets/images/avatar.png')}*/}
-                {/*           resizeMode={FastImage.resizeMode.contain}*/}
-                {/*           style={{width:avatarSize,height:avatarSize,borderRadius:avatarSize/2,marginLeft:10}}/>*/}
                 <View style={{left:3,width:avatarSize,height:avatarSize,alignItems:'center',justifyContent:'center',borderRadius:avatarSize,backgroundColor:'rgba(16,189,206,0.15)'}}>
-                <Icons name={'notifications'} size={30} color={Colors.textColor}/>
+                <Icons name={this.handleGetIcon(item.heading)} size={30} color={Colors.textColor}/>
                 </View>
                 <View style={{marginLeft:10,width:'80%',alignSelf:'center'}}>
                     <View style={{flexDirection:'row'}}>
@@ -133,7 +125,6 @@ class Index extends Component {
     }
     render() {
         const {map,refreshing,loading,data} = this.state
-        console.log('12345678====',this.props.notify)
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#ffff' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
@@ -155,24 +146,9 @@ class Index extends Component {
                     </View>
                     <View style={{width:width,alignSelf:'center',borderTopLeftRadius:20,borderTopRightRadius:20,
                         backgroundColor:'#fff',marginTop:20,paddingBottom:data.length<3?100:0}}>
-                            {/*<FlatList*/}
-                            {/*    contentContainerStyle={{flexDirection:'row',alignItems:'center',marginTop:20}}*/}
-                            {/*    data={users}*/}
-                            {/*    renderItem={({item,index}) =>*/}
-                            {/*        <TouchableOpacity onPress={()=>this.props.navigation.navigate('Chat')} style={{marginLeft:20,justifyContent:'center',alignItems:'center',width:avatarSize}}>*/}
-                            {/*            <Image source={{uri:item}} style={{width:avatarSize,height:avatarSize,borderRadius:avatarSize/2,}}/>*/}
-                            {/*            <Text style={{}}>Many</Text>*/}
-                            {/*        </TouchableOpacity>*/}
-                            {/*    }*/}
-                            {/*    horizontal*/}
-                            {/*    showsHorizontalScrollIndicator={false}*/}
-                            {/*    legacyImplementation={false}*/}
-                            {/*    keyExtractor={(item, index) => index.toString()}*/}
-                            {/*    showsVerticalScrollIndicator={false}*/}
-                            {/*/>*/}
 
                         {loading?
-                            <View style={{justifyContent:'center',borderTopLeftRadius:20,borderTopRightRadius:20,alignItems:'center',backgroundColor:'#fff',width:'100%'}}>
+                            <View style={{justifyContent:'center',borderTopLeftRadius:20,height:'90%',borderTopRightRadius:20,alignItems:'center',backgroundColor:'#fff',width:'100%'}}>
 
                                             <ActivityIndicator size={'large'} color={Colors.textColor}/>
                             </View>:
@@ -195,9 +171,8 @@ class Index extends Component {
                                     refreshing={refreshing}
                                     onRefresh={()=>this.handleGetPost(true)} />}>
                                     <View style={{width,height:height*0.7,alignItems:'center',justifyContent:'center'}}>
-                                        <Icons name={'chat'} size={50} color={'gray'}/>
                                         <Text style={{marginTop:20,fontSize:20}}>
-                                            No message yet
+                                            No Notification
                                         </Text>
                                     </View>
                                 </ScrollView>}

@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import * as Keychain from "react-native-keychain";
-const url='http://data-solution.expressloan.info:8081/'
+const url='https://api.taskforce.asia/'
 const bearer = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEiLCJuYmYiOjE2MDk5MDcxODcsImV4cCI6MTYxMDUxMTk4NywiaWF0IjoxNjA5OTA3MTg3fQ.JU2OxCiFt9a0Y79Sm9-xjfoKvzZ3oY3AflAuxGQpHkg'
 
  const withAuth = Axios.create({

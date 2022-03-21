@@ -38,6 +38,9 @@ export default {
             presence: { allowEmpty: false, message: 'is required' },
             numericality: true,
         },
+    skill: {
+            presence: { allowEmpty: false, message: 'is required' },
+        },
 
 
 

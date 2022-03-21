@@ -7,7 +7,7 @@ import {
     StartScreen, ChooseProfile, Signin, Message, Chat, Profile, Category,
     Signup, ChooseCategory, JobList, Home, AddPost, Comment, Review, Settings,
     MyFavorite, MyPost, Otp, ViewPost, CashOut, CashIn, MyMoney, TermCondition, PinCode, FormAbout, Notification,
-    EditProfile, ChangePin,
+    EditProfile, ChangePin, MyJob, ViewCandidate, FormExperience, FormEducation, FormSkill,EditPost,ContactUs,ResetPassword,ViewPdf
 } from './src/screens/index';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Feather';
@@ -29,13 +29,12 @@ console.disableYellowBox = true;
 const RootStack = createStackNavigator();
 const BottomTab = createMaterialBottomTabNavigator();
 
-const BottomMenu = ({notify,setting}) => {
+const BottomMenu = ({notify,setting,navigation}) => {
     const {lang} = setting;
     return (
         <BottomTab.Navigator
             initialRouteName="Home"
             activeColor={Colors.primary}
-
             barStyle={{ backgroundColor: "#fff",height:60,justifyContent:'center' }}
             sceneAnimationEnabled={Platform.OS === "ios"} // TODO: Since it has buggy with android elevation
         >
@@ -53,9 +52,26 @@ const BottomMenu = ({notify,setting}) => {
                     ),
                 }}
             />
+            {setting.isAgent?
             <BottomTab.Screen
-                name="MyPost"
-                component={MyPost}
+                name="MyTask"
+                title={'My Task'}
+                component={MyJob}
+                options={{
+                    title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].mjob}</Text>,
+                    tabBarBadge: notify.isMyTask?'':false,
+                    tabBarIcon: ({ focused }) => (
+                        <MaterialIcons
+                            name="list-alt"
+                            size={25}
+                            color={focused ? Colors.primary : "lightgray"}
+                        />
+                    ),
+                }}
+            />:
+            <BottomTab.Screen
+                name={"MyPost"}
+                component={setting.isAgent?MyJob:MyPost}
                 options={{
                     title:<Text style={{fontFamily:Fonts.primary}}>{Lang[lang].mtask}</Text>,
                     tabBarBadge: notify.isMyPost?'':false,
@@ -67,22 +83,44 @@ const BottomMenu = ({notify,setting}) => {
                         />
                     ),
                 }}
-            />
-            <BottomTab.Screen
+            />}
+
+            {setting.isAgent?<BottomTab.Screen
+                name="Favorite"
+                component={MyFavorite}
+                options={{
+                    title:<Text style={{fontFamily:Fonts.primary,fontSize:10}}>{Lang[lang].favorite}</Text>,
+                    tabBarIcon: ({ focused }) => (
+                        <Icon
+                            name="heart-outline"
+                            size={25}
+                            color={focused ? Colors.primary : "lightgray"}
+                        />
+                    ),
+                }}
+            />:<BottomTab.Screen
                 name=" "
                 component={AddPost}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{width:100,alignItems:'center',marginTop:focused?-10:-15,position:'absolute'}}>
                             <Icons
-                                name="plus-circle"
+                                name={"plus-circle"}
                                 size={50}
-                                color={focused ? Colors.primary : "lightgray"}
+                                color={'rgb(255,158,0)'}
                             />
                         </View>
                     ),
                 }}
-            />
+
+                listeners={{
+                    tabPress: e => {
+                        // Prevent default action
+                        e.preventDefault();
+                        navigation.navigate("AddPost",{title:'Add Post',view:false,add:true})
+                    },
+                }}
+            />}
             <BottomTab.Screen
                 name="Message"
                 options={{
@@ -109,12 +147,13 @@ const BottomMenu = ({notify,setting}) => {
                         />
                     ),
                 }}
-                component={Settings}
+                component={Profile}
             />
 
         </BottomTab.Navigator>
     );
 };
+
 const mapStateToProps = state => {
     return {
         notify: state.notify.notify,
@@ -163,8 +202,16 @@ const RootStackNavigator = ()=> {
                     <RootStack.Screen name="PinCode" component={PinCode}/>
                     <RootStack.Screen name="ChangePin" component={ChangePin}/>
                     <RootStack.Screen name="FormAbout" component={FormAbout}/>
+                    <RootStack.Screen name="FormExperience" component={FormExperience}/>
+                    <RootStack.Screen name="FormEducation" component={FormEducation}/>
+                    <RootStack.Screen name="FormSkill" component={FormSkill}/>
                     <RootStack.Screen name="Notification" component={Notification}/>
                     <RootStack.Screen name="EditProfile" component={EditProfile}/>
+                    <RootStack.Screen name="ViewCandidate" component={ViewCandidate}/>
+                    <RootStack.Screen name="EditPost" component={EditPost}/>
+                    <RootStack.Screen name="ContactUs" component={ContactUs}/>
+                    <RootStack.Screen name="ResetPassword" component={ResetPassword}/>
+                    <RootStack.Screen name="ViewPdf" component={ViewPdf}/>
                 </RootStack.Navigator>
             </NavigationContainer>
         </SafeAreaProvider>

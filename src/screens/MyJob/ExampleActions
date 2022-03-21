@@ -34,7 +34,7 @@ export function paginateComments(
             const start = lastIndex - 6 > 1 ? lastIndex - 6 : 0;
 
             const part = c.slice(start, lastIndex);
-            console.log(start, lastIndex);
+
             comments = [...part, ...comments];
         }
     } else {

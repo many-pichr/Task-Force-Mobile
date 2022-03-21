@@ -17,7 +17,10 @@ import {CustomItem} from './Items';
 import { Avatar, Badge, Icon, withBadge } from 'react-native-elements'
 import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
-
+const getColor=(active,index)=>{
+    let color=active==index?"#0b626e":"rgba(11,109,121,0.62)";
+    return color;
+}
 const ListScreen=(props)=>{
     const [check, setCheck] = useState(false);
         return (
@@ -35,7 +38,7 @@ const ListScreen=(props)=>{
                         </View>
                     </View>
 
-                    <View style={{width:'90%',alignSelf:'center'}}>
+                    <View style={{width:'95%',alignSelf:'center'}}>
                         {props.renderItem}
                     </View>
                 </View>
@@ -67,16 +70,16 @@ const MyPostList=(props)=>{
                     <View style={{flexDirection:'row'}}>
                         <TouchableOpacity onPress={()=>props.onSwitch(0)} activeOpacity={0.9}
                             style={[styles.borderCorner,{backgroundColor:props.active==0?'#F5F7FA':'#fff',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[0]}</Text>
+                            <Text style={[styles.txtTitle,{color:getColor(props.active,0)}]}>{props.titles[0]}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity  onPress={()=>props.onSwitch(1)} activeOpacity={0.9}
                             style={[styles.borderCorner,{backgroundColor:props.active==1?'#F5F7FA':'#fcfcfc',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[1]}</Text>
+                            <Text style={[styles.txtTitle,{color:getColor(props.active,1)}]}>{props.titles[1]}</Text>
                             {props.notify&&props.notify.isProgress&&<Badge value=" " status="error" containerStyle={{position:'absolute',top:-5,right:0}} />}
                         </TouchableOpacity>
                         <TouchableOpacity  onPress={()=>props.onSwitch(2)} activeOpacity={0.9}
                                            style={[styles.borderCorner,{backgroundColor:props.active==2?'#F5F7FA':'#fff',height:50,width:(width*0.9)/3,justifyContent:'center',alignItems:'center'}]}>
-                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(2),fontFamily:Fonts.primary}}>{props.titles[2]}</Text>
+                            <Text style={[styles.txtTitle,{color:getColor(props.active,2)}]}>{props.titles[2]}</Text>
                             {props.notify&&props.notify.isComplete&&<Badge value=" " status="error" containerStyle={{position:'absolute',top:-5,right:0}} />}
                         </TouchableOpacity>
                     </View>
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
     borderCorner:{
         borderTopStartRadius:20,
         borderTopEndRadius:20,
-    }
+    },
+    txtTitle:{color:"#0b6d79",fontSize:RFPercentage(2),fontFamily:Fonts.primary}
 });
 export {ListScreen,MyPostList}

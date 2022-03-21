@@ -18,11 +18,6 @@ import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemCandidate, ItemPost} from '../../components/Items';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
-import CustomPicker from '../../components/customPicker';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import Comments from "react-native-comments";
-import moment from "moment";
 import {Input} from 'react-native-elements';
 import User from '../../api/User';
 import {Item} from '../Home/Item';
@@ -89,7 +84,6 @@ export default class Index extends Component {
         const { userId,item} = this.props.route.params
         await User.GetList("/api/JobComment/JobPost/"+item.id).then((rs) => {
             if(rs.status){
-                console.log(rs.data)
                 this.setState({comments:rs.data,loading:false})
             }
         })

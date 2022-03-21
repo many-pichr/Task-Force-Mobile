@@ -1,0 +1,702 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.taskforce"
+4    android:versionCode="17"
+5    android:versionName="1.0.16" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="29" />
+9-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.CAMERA" />
+11-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:4:5-64
+11-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:4:22-62
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:5:5-67
+12-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:5:22-64
+13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+13-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:6:5-81
+13-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:6:22-78
+14    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+14-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:7:5-79
+14-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:7:22-76
+15    <uses-permission android:name="android.permission.VIBRATE" />
+15-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:8:5-66
+15-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:8:22-63
+16    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+16-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:9:5-71
+16-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:9:22-68
+17    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+17-->[:react-native-fs] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-fs/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-81
+17-->[:react-native-fs] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-fs/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:22-78
+18    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+18-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-72
+18-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:22-69
+19    <uses-permission android:name="android.permission.USE_FINGERPRINT" /> <!-- Create a unique permission for your app and use it so only your app can receive your OneSignal messages. -->
+19-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-74
+19-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:22-71
+20    <permission
+20-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:7:5-9:47
+21        android:name="com.taskforce.permission.C2D_MESSAGE"
+21-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:8:9-63
+22        android:protectionLevel="signature" />
+22-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:9:9-44
+23
+24    <uses-permission android:name="com.taskforce.permission.C2D_MESSAGE" /> <!-- c2dm RECEIVE are basic requirements for push messages through Google's FCM -->
+24-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:11:5-79
+24-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:11:22-76
+25    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> <!-- Required, makes sure notifications are delivered on time. -->
+25-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:17:5-82
+25-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:17:22-79
+26    <uses-permission android:name="android.permission.WAKE_LOCK" />
+26-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:18:5-68
+26-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:18:22-65
+27    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+27-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:24:5-79
+27-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:24:22-76
+28    <!--
+29 Use to restore notifications the user hasn't interacted with.
+30         They could be missed notifications if the user reboots their device if this isn't in place.
+31    -->
+32    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- START: ShortcutBadger -->
+32-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:29:5-81
+32-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:29:22-78
+33    <!-- Samsung -->
+34    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+34-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:31:5-86
+34-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:31:22-83
+35    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- HTC -->
+35-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:32:5-87
+35-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:32:22-84
+36    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+36-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:33:5-81
+36-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:33:22-78
+37    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- Sony -->
+37-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:34:5-83
+37-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:34:22-80
+38    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+38-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:35:5-88
+38-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:35:22-85
+39    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- Apex -->
+39-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:36:5-92
+39-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:36:22-89
+40    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- Solid -->
+40-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:37:5-84
+40-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:37:22-81
+41    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- Huawei -->
+41-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:38:5-83
+41-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:38:22-80
+42    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+42-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:39:5-91
+42-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:39:22-88
+43    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+43-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:40:5-92
+43-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:40:22-89
+44    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- ZUK -->
+44-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:41:5-93
+44-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:41:22-90
+45    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- OPPO -->
+45-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:42:5-73
+45-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:42:22-70
+46    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+46-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:43:5-82
+46-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:43:22-79
+47    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- EvMe -->
+47-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:44:5-83
+47-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:44:22-80
+48    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+48-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:45:5-88
+48-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:45:22-85
+49    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+49-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:46:5-89
+49-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:46:22-86
+50
+51    <uses-feature
+51-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:26:5-28:35
+52        android:glEsVersion="0x00020000"
+52-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:27:9-41
+53        android:required="true" /> <!-- Include required permissions for Advertising Id -->
+53-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
+54    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+54-->[com.google.android.gms:play-services-ads-identifier:17.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/d4f6b43b08c86175594b4c9dfa93d9cb/play-services-ads-identifier-17.1.0/AndroidManifest.xml:23:5-79
+54-->[com.google.android.gms:play-services-ads-identifier:17.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/d4f6b43b08c86175594b4c9dfa93d9cb/play-services-ads-identifier-17.1.0/AndroidManifest.xml:23:22-76
+55    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+55-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:28:5-77
+55-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:28:22-74
+56    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+56-->[com.android.installreferrer:installreferrer:1.1.2] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/744c11701aa7144a8d6a8e89bcdad6bd/installreferrer-1.1.2/AndroidManifest.xml:9:5-110
+56-->[com.android.installreferrer:installreferrer:1.1.2] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/744c11701aa7144a8d6a8e89bcdad6bd/installreferrer-1.1.2/AndroidManifest.xml:9:22-107
+57
+58    <application
+58-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:11:5-39:19
+59        android:name="com.taskforce.MainApplication"
+59-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:13:7-38
+60        android:allowBackup="false"
+60-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:17:7-34
+61        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+61-->[androidx.core:core:1.6.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/b298a6449b929e26b4e6c009b0de88b9/core-1.6.0/AndroidManifest.xml:24:18-86
+62        android:icon="@mipmap/ic_launcher"
+62-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:15:7-41
+63        android:label="@string/app_name"
+63-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:14:7-39
+64        android:roundIcon="@mipmap/ic_launcher_round"
+64-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:16:7-52
+65        android:theme="@style/AppTheme"
+65-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:18:7-38
+66        android:usesCleartextTraffic="true" >
+66-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:12:9-44
+67        <activity
+67-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:19:7-26:18
+68            android:name="com.taskforce.MainActivity"
+68-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:20:9-37
+69            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+69-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:23:9-86
+70            android:label="@string/app_name"
+70-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:21:9-41
+71            android:launchMode="singleTask"
+71-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:24:9-40
+72            android:screenOrientation="portrait"
+72-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:22:9-45
+73            android:windowSoftInputMode="adjustResize" >
+73-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:25:9-51
+74        </activity>
+75        <activity
+75-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:27:9-35:20
+76            android:name="com.zoontek.rnbootsplash.RNBootSplashActivity"
+76-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:28:13-73
+77            android:launchMode="singleTask"
+77-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:30:13-44
+78            android:theme="@style/BootTheme" >
+78-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:29:13-45
+79            <intent-filter>
+79-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:31:13-34:29
+80                <action android:name="android.intent.action.MAIN" />
+80-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:32:17-69
+80-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:32:25-66
+81
+82                <category android:name="android.intent.category.LAUNCHER" />
+82-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:33:17-77
+82-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:33:27-74
+83            </intent-filter>
+84        </activity>
+85
+86        <meta-data
+86-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:36:9-38:70
+87            android:name="com.google.android.geo.API_KEY"
+87-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:37:13-58
+88            android:value="AIzaSyCOPz_8hCFl1iXkDhoykfXPVa3Ei9WwR_8" />
+88-->/Users/macbokpro/Documents/project/personal/project/taskforce/android/app/src/main/AndroidManifest.xml:38:13-68
+89
+90        <provider
+90-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:9-20:20
+91            android:name="com.imagepicker.ImagePickerProvider"
+91-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:13:13-63
+92            android:authorities="com.taskforce.imagepickerprovider"
+92-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:14:13-71
+93            android:exported="false"
+93-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:15:13-37
+94            android:grantUriPermissions="true" >
+94-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:16:13-47
+95            <meta-data
+95-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:17:13-19:70
+96                android:name="android.support.FILE_PROVIDER_PATHS"
+96-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:18:17-67
+97                android:resource="@xml/imagepicker_provider_paths" />
+97-->[:react-native-image-picker] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:19:17-67
+98        </provider> <!-- suppress AndroidDomInspection -->
+99        <activity
+99-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:17:9-20:67
+100            android:name="androidx.biometric.DeviceCredentialHandlerActivity"
+100-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:18:13-78
+101            android:exported="true"
+101-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:19:13-36
+102            android:theme="@style/DeviceCredentialHandlerTheme" />
+102-->[:react-native-keychain] /Users/macbokpro/Documents/project/personal/project/taskforce/node_modules/react-native-keychain/android/build/intermediates/library_manifest/release/AndroidManifest.xml:20:13-64
+103
+104        <receiver
+104-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:49:9-59:20
+105            android:name="com.onesignal.FCMBroadcastReceiver"
+105-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:50:13-62
+106            android:permission="com.google.android.c2dm.permission.SEND" >
+106-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:51:13-73
+107
+108            <!-- High priority so OneSignal payloads can be filtered from other FCM receivers -->
+109            <intent-filter android:priority="999" >
+109-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:54:13-58:29
+109-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:54:28-50
+110                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+110-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:55:17-81
+110-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:55:25-78
+111
+112                <category android:name="com.taskforce" />
+112-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:57:17-61
+112-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:57:27-58
+113            </intent-filter>
+114        </receiver>
+115
+116        <service
+116-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:61:9-67:19
+117            android:name="com.onesignal.HmsMessageServiceOneSignal"
+117-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:62:13-68
+118            android:exported="false" >
+118-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:63:13-37
+119            <intent-filter>
+119-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:64:13-66:29
+120                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
+120-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:65:17-81
+120-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:65:25-78
+121            </intent-filter>
+122        </service>
+123
+124        <activity
+124-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:69:9-76:20
+125            android:name="com.onesignal.NotificationOpenedActivityHMS"
+125-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:70:13-71
+126            android:noHistory="true"
+126-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:71:13-37
+127            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+127-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:72:13-72
+128            <intent-filter>
+128-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:73:13-75:29
+129                <action android:name="android.intent.action.VIEW" />
+129-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:74:17-69
+129-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:74:25-66
+130            </intent-filter>
+131        </activity>
+132
+133        <service android:name="com.onesignal.FCMIntentService" />
+133-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:78:9-66
+133-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:78:18-63
+134        <service
+134-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:79:9-81:72
+135            android:name="com.onesignal.FCMIntentJobService"
+135-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:80:13-61
+136            android:permission="android.permission.BIND_JOB_SERVICE" />
+136-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:81:13-69
+137        <service
+137-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:82:9-84:43
+138            android:name="com.onesignal.FocusDelaySyncService"
+138-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:83:13-63
+139            android:stopWithTask="true" />
+139-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:84:13-40
+140        <service
+140-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:85:9-87:72
+141            android:name="com.onesignal.FocusDelaySyncJobService"
+141-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:86:13-66
+142            android:permission="android.permission.BIND_JOB_SERVICE" />
+142-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:87:13-69
+143        <service
+143-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:88:9-90:43
+144            android:name="com.onesignal.SyncService"
+144-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:89:13-53
+145            android:stopWithTask="true" />
+145-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:90:13-40
+146        <service
+146-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:91:9-93:72
+147            android:name="com.onesignal.SyncJobService"
+147-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:92:13-56
+148            android:permission="android.permission.BIND_JOB_SERVICE" />
+148-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:93:13-69
+149
+150        <activity
+150-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:95:9-97:75
+151            android:name="com.onesignal.PermissionsActivity"
+151-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:96:13-61
+152            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+152-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:97:13-72
+153
+154        <receiver android:name="com.onesignal.NotificationDismissReceiver" />
+154-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:99:9-78
+154-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:99:19-75
+155        <receiver android:name="com.onesignal.BootUpReceiver" >
+155-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:100:9-105:20
+155-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:100:19-62
+156            <intent-filter>
+156-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:101:13-104:29
+157                <action android:name="android.intent.action.BOOT_COMPLETED" />
+157-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:102:17-79
+157-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:102:25-76
+158                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+158-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:103:17-82
+158-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:103:25-79
+159            </intent-filter>
+160        </receiver>
+161        <receiver android:name="com.onesignal.UpgradeReceiver" >
+161-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:106:9-110:20
+161-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:106:19-63
+162            <intent-filter>
+162-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:107:13-109:29
+163                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+163-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:108:17-84
+163-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:108:25-81
+164            </intent-filter>
+165        </receiver>
+166
+167        <activity
+167-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:112:9-115:75
+168            android:name="com.onesignal.NotificationOpenedReceiver"
+168-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:113:13-68
+169            android:noHistory="true"
+169-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:114:13-37
+170            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+170-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:115:13-72
+171
+172        <receiver
+172-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:28:9-35:20
+173            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+173-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:29:13-78
+174            android:exported="true"
+174-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:30:13-36
+175            android:permission="com.google.android.c2dm.permission.SEND" >
+175-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:31:13-73
+176            <intent-filter>
+176-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:32:13-34:29
+177                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+177-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:55:17-81
+177-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:55:25-78
+178            </intent-filter>
+179        </receiver>
+180        <!--
+181             FirebaseMessagingService performs security checks at runtime,
+182             but set to not exported to explicitly avoid allowing another app to call it.
+183        -->
+184        <service
+184-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:41:9-48:19
+185            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+185-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:42:13-82
+186            android:directBootAware="true"
+186-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:43:13-43
+187            android:exported="false" >
+187-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:44:13-37
+188            <intent-filter android:priority="-500" >
+188-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:45:13-47:29
+188-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:45:28-51
+189                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+189-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:46:17-78
+189-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:46:25-75
+190            </intent-filter>
+191        </service>
+192        <service
+192-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:49:9-55:19
+193            android:name="com.google.firebase.components.ComponentDiscoveryService"
+193-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:50:13-84
+194            android:directBootAware="true"
+194-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:35:13-43
+195            android:exported="false" >
+195-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:51:13-37
+196            <meta-data
+196-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:52:13-54:85
+197                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+197-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:53:17-119
+198                android:value="com.google.firebase.components.ComponentRegistrar" />
+198-->[com.google.firebase:firebase-messaging:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/edaf2bbdb883964b36f30728bc958b62/jetified-firebase-messaging-21.1.0/AndroidManifest.xml:54:17-82
+199            <meta-data
+199-->[com.google.firebase:firebase-datatransport:17.0.10] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/b403f53b475397337b03a4649f850ab1/firebase-datatransport-17.0.10/AndroidManifest.xml:28:13-30:85
+200                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+200-->[com.google.firebase:firebase-datatransport:17.0.10] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/b403f53b475397337b03a4649f850ab1/firebase-datatransport-17.0.10/AndroidManifest.xml:29:17-115
+201                android:value="com.google.firebase.components.ComponentRegistrar" />
+201-->[com.google.firebase:firebase-datatransport:17.0.10] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/b403f53b475397337b03a4649f850ab1/firebase-datatransport-17.0.10/AndroidManifest.xml:30:17-82
+202            <meta-data
+202-->[com.google.firebase:firebase-iid:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/c645f814c327789e3a69a4744bf18878/firebase-iid-21.1.0/AndroidManifest.xml:32:13-34:85
+203                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+203-->[com.google.firebase:firebase-iid:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/c645f814c327789e3a69a4744bf18878/firebase-iid-21.1.0/AndroidManifest.xml:33:17-96
+204                android:value="com.google.firebase.components.ComponentRegistrar" />
+204-->[com.google.firebase:firebase-iid:21.1.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/c645f814c327789e3a69a4744bf18878/firebase-iid-21.1.0/AndroidManifest.xml:34:17-82
+205            <meta-data
+205-->[com.google.firebase:firebase-installations:16.3.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cb2c46af1b59aaeb22d02f341eec81ce/firebase-installations-16.3.5/AndroidManifest.xml:18:13-20:85
+206                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+206-->[com.google.firebase:firebase-installations:16.3.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cb2c46af1b59aaeb22d02f341eec81ce/firebase-installations-16.3.5/AndroidManifest.xml:19:17-127
+207                android:value="com.google.firebase.components.ComponentRegistrar" />
+207-->[com.google.firebase:firebase-installations:16.3.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cb2c46af1b59aaeb22d02f341eec81ce/firebase-installations-16.3.5/AndroidManifest.xml:20:17-82
+208            <!--
+209                This registrar is not defined in the dynamic-module-support sdk itself to allow non-firebase
+210                clients to use it as well, by defining this registrar in their own core/common library.
+211            -->
+212            <meta-data
+212-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:43:13-45:85
+213                android:name="com.google.firebase.components:com.google.firebase.dynamicloading.DynamicLoadingRegistrar"
+213-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:44:17-121
+214                android:value="com.google.firebase.components.ComponentRegistrar" />
+214-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:45:17-82
+215        </service>
+216        <service
+216-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:29:9-35:19
+217            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+217-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:30:13-103
+218            android:exported="false" >
+218-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:31:13-37
+219            <meta-data
+219-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:32:13-34:39
+220                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+220-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:33:17-94
+221                android:value="cct" />
+221-->[com.google.android.datatransport:transport-backend-cct:2.3.3] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/0ec5b032ee197a9bccca704a2ab6cae0/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:34:17-36
+222        </service>
+223        <service
+223-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:26:9-30:19
+224            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+224-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:27:13-117
+225            android:exported="false"
+225-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:28:13-37
+226            android:permission="android.permission.BIND_JOB_SERVICE" >
+226-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:29:13-69
+227        </service>
+228
+229        <receiver
+229-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:32:9-34:40
+230            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+230-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:33:13-132
+231            android:exported="false" />
+231-->[com.google.android.datatransport:transport-runtime:2.2.5] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/001bdfcba462fe5569a51cc941796202/jetified-transport-runtime-2.2.5/AndroidManifest.xml:34:13-37
+232
+233        <meta-data
+233-->[com.github.bumptech.glide:okhttp3-integration:4.12.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/7d409a49ea761d61edde3378601dee86/okhttp3-integration-4.12.0/AndroidManifest.xml:11:9-13:43
+234            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+234-->[com.github.bumptech.glide:okhttp3-integration:4.12.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/7d409a49ea761d61edde3378601dee86/okhttp3-integration-4.12.0/AndroidManifest.xml:12:13-84
+235            android:value="GlideModule" /> <!-- Needs to be explicitly declared on P+ -->
+235-->[com.github.bumptech.glide:okhttp3-integration:4.12.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/7d409a49ea761d61edde3378601dee86/okhttp3-integration-4.12.0/AndroidManifest.xml:13:13-40
+236        <uses-library
+236-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
+237            android:name="org.apache.http.legacy"
+237-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
+238            android:required="false" />
+238-->[com.google.android.gms:play-services-maps:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/3ca81724f46a1af5d268488a528eb8e5/play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
+239
+240        <activity
+240-->[com.google.android.gms:play-services-base:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/fc8046cb9a5df9499609a5f7f8270b1b/play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
+241            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+241-->[com.google.android.gms:play-services-base:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/fc8046cb9a5df9499609a5f7f8270b1b/play-services-base-17.0.0/AndroidManifest.xml:24:13-79
+242            android:exported="false"
+242-->[com.google.android.gms:play-services-base:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/fc8046cb9a5df9499609a5f7f8270b1b/play-services-base-17.0.0/AndroidManifest.xml:25:13-37
+243            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+243-->[com.google.android.gms:play-services-base:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/fc8046cb9a5df9499609a5f7f8270b1b/play-services-base-17.0.0/AndroidManifest.xml:26:13-72
+244
+245        <provider
+245-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:26:9-31:39
+246            android:name="com.google.firebase.provider.FirebaseInitProvider"
+246-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:27:13-77
+247            android:authorities="com.taskforce.firebaseinitprovider"
+247-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:28:13-72
+248            android:directBootAware="true"
+248-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:29:13-43
+249            android:exported="false"
+249-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:30:13-37
+250            android:initOrder="100" />
+250-->[com.google.firebase:firebase-common:19.5.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/8116dfd2a91d7bde09c4ee9bd7fc572d/jetified-firebase-common-19.5.0/AndroidManifest.xml:31:13-36
+251
+252        <meta-data
+252-->[com.google.android.gms:play-services-basement:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/6d33cd31ef73f174f27ce50d05d67b98/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+253            android:name="com.google.android.gms.version"
+253-->[com.google.android.gms:play-services-basement:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/6d33cd31ef73f174f27ce50d05d67b98/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+254            android:value="@integer/google_play_services_version" />
+254-->[com.google.android.gms:play-services-basement:17.0.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/6d33cd31ef73f174f27ce50d05d67b98/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+255
+256        <provider
+256-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:31:9-39:20
+257            android:name="androidx.startup.InitializationProvider"
+257-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:32:13-67
+258            android:authorities="com.taskforce.androidx-startup"
+258-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:33:13-68
+259            android:exported="false" >
+259-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:34:13-37
+260            <meta-data
+260-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:36:13-38:52
+261                android:name="androidx.work.WorkManagerInitializer"
+261-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:37:17-68
+262                android:value="androidx.startup" />
+262-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:38:17-49
+263        </provider>
+264
+265        <service
+265-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:41:9-46:35
+266            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+266-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:42:13-88
+267            android:directBootAware="false"
+267-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:43:13-44
+268            android:enabled="@bool/enable_system_alarm_service_default"
+268-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:44:13-72
+269            android:exported="false" />
+269-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:45:13-37
+270        <service
+270-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:47:9-53:35
+271            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+271-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:48:13-84
+272            android:directBootAware="false"
+272-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:49:13-44
+273            android:enabled="@bool/enable_system_job_service_default"
+273-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:50:13-70
+274            android:exported="true"
+274-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:51:13-36
+275            android:permission="android.permission.BIND_JOB_SERVICE" />
+275-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:52:13-69
+276        <service
+276-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:54:9-59:35
+277            android:name="androidx.work.impl.foreground.SystemForegroundService"
+277-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:55:13-81
+278            android:directBootAware="false"
+278-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:56:13-44
+279            android:enabled="@bool/enable_system_foreground_service_default"
+279-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:57:13-77
+280            android:exported="false" />
+280-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:58:13-37
+281
+282        <receiver
+282-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:61:9-66:35
+283            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+283-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:62:13-88
+284            android:directBootAware="false"
+284-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:63:13-44
+285            android:enabled="true"
+285-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:64:13-35
+286            android:exported="false" />
+286-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:65:13-37
+287        <receiver
+287-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:67:9-77:20
+288            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+288-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:68:13-106
+289            android:directBootAware="false"
+289-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:69:13-44
+290            android:enabled="false"
+290-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:70:13-36
+291            android:exported="false" >
+291-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:71:13-37
+292            <intent-filter>
+292-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:73:13-76:29
+293                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+293-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:74:17-87
+293-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:74:25-84
+294                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+294-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:75:17-90
+294-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:75:25-87
+295            </intent-filter>
+296        </receiver>
+297        <receiver
+297-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:78:9-88:20
+298            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+298-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:79:13-104
+299            android:directBootAware="false"
+299-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:80:13-44
+300            android:enabled="false"
+300-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:81:13-36
+301            android:exported="false" >
+301-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:82:13-37
+302            <intent-filter>
+302-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:84:13-87:29
+303                <action android:name="android.intent.action.BATTERY_OKAY" />
+303-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:85:17-77
+303-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:85:25-74
+304                <action android:name="android.intent.action.BATTERY_LOW" />
+304-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:86:17-76
+304-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:86:25-73
+305            </intent-filter>
+306        </receiver>
+307        <receiver
+307-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:89:9-99:20
+308            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+308-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:90:13-104
+309            android:directBootAware="false"
+309-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:91:13-44
+310            android:enabled="false"
+310-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:92:13-36
+311            android:exported="false" >
+311-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:93:13-37
+312            <intent-filter>
+312-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:95:13-98:29
+313                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+313-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:96:17-83
+313-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:96:25-80
+314                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+314-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:97:17-82
+314-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:97:25-79
+315            </intent-filter>
+316        </receiver>
+317        <receiver
+317-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:100:9-109:20
+318            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+318-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:101:13-103
+319            android:directBootAware="false"
+319-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:102:13-44
+320            android:enabled="false"
+320-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:103:13-36
+321            android:exported="false" >
+321-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:104:13-37
+322            <intent-filter>
+322-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:106:13-108:29
+323                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+323-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:107:17-79
+323-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:107:25-76
+324            </intent-filter>
+325        </receiver>
+326        <receiver
+326-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:110:9-121:20
+327            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+327-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:111:13-88
+328            android:directBootAware="false"
+328-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:112:13-44
+329            android:enabled="false"
+329-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:113:13-36
+330            android:exported="false" >
+330-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:114:13-37
+331            <intent-filter>
+331-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:116:13-120:29
+332                <action android:name="android.intent.action.BOOT_COMPLETED" />
+332-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:102:17-79
+332-->[com.onesignal:OneSignal:4.3.0] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/03ae515231e7620a752b63815a1e8c06/jetified-OneSignal-4.3.0/AndroidManifest.xml:102:25-76
+333                <action android:name="android.intent.action.TIME_SET" />
+333-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:118:17-73
+333-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:118:25-70
+334                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+334-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:119:17-81
+334-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:119:25-78
+335            </intent-filter>
+336        </receiver>
+337        <receiver
+337-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:122:9-131:20
+338            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+338-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:123:13-99
+339            android:directBootAware="false"
+339-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:124:13-44
+340            android:enabled="@bool/enable_system_alarm_service_default"
+340-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:125:13-72
+341            android:exported="false" >
+341-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:126:13-37
+342            <intent-filter>
+342-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:128:13-130:29
+343                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+343-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:129:17-98
+343-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:129:25-95
+344            </intent-filter>
+345        </receiver>
+346        <receiver
+346-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:132:9-142:20
+347            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+347-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:133:13-78
+348            android:directBootAware="false"
+348-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:134:13-44
+349            android:enabled="true"
+349-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:135:13-35
+350            android:exported="true"
+350-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:136:13-36
+351            android:permission="android.permission.DUMP" >
+351-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:137:13-57
+352            <intent-filter>
+352-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:139:13-141:29
+353                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+353-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:140:17-88
+353-->[androidx.work:work-runtime:2.8.0-alpha01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/5a1828db5e8314bb56302a2997635960/work-runtime-2.8.0-alpha01/AndroidManifest.xml:140:25-85
+354            </intent-filter>
+355        </receiver>
+356
+357        <service
+357-->[androidx.room:room-runtime:2.4.0-rc01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cc101cf5f73a4ae53d09b2dd250cb9ab/room-runtime-2.4.0-rc01/AndroidManifest.xml:25:9-28:40
+358            android:name="androidx.room.MultiInstanceInvalidationService"
+358-->[androidx.room:room-runtime:2.4.0-rc01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cc101cf5f73a4ae53d09b2dd250cb9ab/room-runtime-2.4.0-rc01/AndroidManifest.xml:26:13-74
+359            android:directBootAware="true"
+359-->[androidx.room:room-runtime:2.4.0-rc01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cc101cf5f73a4ae53d09b2dd250cb9ab/room-runtime-2.4.0-rc01/AndroidManifest.xml:27:13-43
+360            android:exported="false" />
+360-->[androidx.room:room-runtime:2.4.0-rc01] /Users/macbokpro/.gradle/caches/transforms-2/files-2.1/cc101cf5f73a4ae53d09b2dd250cb9ab/room-runtime-2.4.0-rc01/AndroidManifest.xml:28:13-37
+361    </application>
+362
+363</manifest>

@@ -99,7 +99,7 @@ class Index extends Component {
             {location:this.state.isLocation,
                 long:this.state.long,lat:this.state.lat}
         ).then((rs) => {
-            console.log(rs)
+
         })
         this.props.set(false)
     }

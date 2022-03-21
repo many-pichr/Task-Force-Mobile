@@ -37,7 +37,7 @@ export default class App extends Component {
         const chatMessages = this.state.chatMessages.map(chatMessage => (
             <Text key={chatMessage}>{chatMessage}</Text>
         ));
-        console.log(this.state.ws)
+
         return (
             <View style={styles.container}>
                 <TextInput

@@ -7,9 +7,15 @@ import Lang from '../../Language';
 const {width,height} = Dimensions.get('window')
 
 const data=[
-    {id:1,title:'iorganizer',source:require('./img/bag.png'),width:61.046875,height:52.78125},
-    {id:2,title:'iagent',source:require('./img/person.png'),width:53.78125,height:65},
-    {id:3,title:'both',source:require('./img/people.png'),width:77.0625,height:46.71875},
+    {id:1,title:'iorganizer',
+        subTittle: 'You will be organizing a task, and reward an agent accordingly.',
+        source:require('../../assets/images/bag.png'),width:61.046875,height:52.78125},
+    {id:2,title:'iagent',
+        subTittle: 'You will apply to complete a task, and get reward accordingly.',
+        source:require('../../assets/images/person.png'),width:61.046875,height:52.78125},
+    {id:3,title:'both',
+        subTittle: 'Please select both if you are not sure.',
+        source:require('../../assets/images/people.png'),width:61.046875,height:52.78125},
 ]
 class Index extends Component {
     constructor(props) {
@@ -60,12 +66,15 @@ class Index extends Component {
                         {data.map((item,index) => {
                         return (
                             <TouchableOpacity onPress={()=>this.handleNext(item.id)} style={styles.cardItem}>
-                                <View style={{width:'30%',justifyContent:'center',alignItems:'center',height:'100%'}}>
+                                <View style={{width:'20%',justifyContent:'center',alignItems:'center',height:'100%'}}>
                                     <Image source={item.source} style={{width:item.width*(RFPercentage(10)/100),height:item.height*(RFPercentage(10)/100)}}/>
                                 </View>
-                                <View style={{width:'70%',height:'100%',justifyContent:'center'}}>
-                                    <Text style={{fontSize:20,color:'#20354E',fontFamily:Fonts.primary}}>
+                                <View style={{width:'80%',height:'100%',justifyContent:'center'}}>
+                                    <Text style={[{fontSize:18,color:'#20354E'}, lang==='kh'&&{fontFamily:Fonts.primary}]}>
                                         {Lang[lang][item.title]}
+                                    </Text>
+                                    <Text style={{fontSize:13,color:'#838383'}}>
+                                        {item.subTittle}
                                     </Text>
                                 </View>
                             </TouchableOpacity>

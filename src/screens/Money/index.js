@@ -15,7 +15,7 @@ import {
     RefreshControl, ActivityIndicator,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Feather';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import PinCode from '../../components/PinCode';
 import {setLoading} from '../../redux/actions/loading';
 import {setUser} from '../../redux/actions/user';
 import {connect} from 'react-redux';
@@ -26,7 +26,8 @@ import * as Keychain from "react-native-keychain";
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {About, Education, Experience, Skill} from '../Profile/Tabs';
 import {Colors} from '../../utils/config';
-import PinCode from '../../components/PinCode';
+import {WalletDetail} from '../../components/Dialog';
+import Func from '../../utils/Functions'
 import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const initialLayout = { width: Dimensions.get('window').width };
@@ -43,7 +44,8 @@ const renderTabBar = props => (
         activeColor={Colors.textColor}
         inactiveColor={Colors.primary}
         indicatorStyle={{backgroundColor:Colors.textColor}}
-        style={{ backgroundColor: 'white' }}
+        labelStyle={{fontSize:13}}
+        style={{ backgroundColor: 'white',fontSize:10 }}
     />
 );
 class Index extends Component {
@@ -54,12 +56,16 @@ class Index extends Component {
             data:[],
             showPin:true,
             cashout:[],
+            blocked:[],
             routes:[
                 { key: '0', title: 'Transaction' },
                 { key: '1', title: 'Cash Out' },
+                { key: '2', title: 'Blocked' },
             ],
             start:true,
             loading:true,
+            detail:false,
+            item:null,
             refreshing:false
         }
         this.myRef = React.createRef();
@@ -88,19 +94,22 @@ class Index extends Component {
             }
         })
         await User.Post("/api/User/wallet-details",{}).then((rs) => {
-            console.log(rs)
             if(rs.status){
                  const data=[];
                  const cashout=[];
+                 const blocked=[];
                  for(var i=0;i<rs.data.length;i++){
                      const item=rs.data[i];
                      if(item.type=='Cash Out'){
                          cashout.push(item)
+                     }else if(item.type=='Blocked'){
+                         item.status="Blocked"
+                         blocked.push(item)
                      }else{
                          data.push(item)
                      }
                  }
-                this.setState({data,cashout,loading:false})
+                this.setState({data,blocked,cashout,loading:false})
             }
         })
     }
@@ -118,6 +127,9 @@ class Index extends Component {
         this.setState({showPin:false});
         this.props.navigation.goBack()
     }
+    handleSelect=(item)=>{
+        this.setState({detail:true,item});
+    }
     FirstRoute = (loading,refreshing,data,type) => {
         return(<>
             {data.length>0?<FlatList
@@ -129,52 +141,49 @@ class Index extends Component {
                     onRefresh={()=>this.handleGetTransaction(true)} />}
                     data={data}
                     renderItem={({item,index}) =>{
-                    const ref = item.ref?JSON.parse(item.ref):{account:'123 456 780'};
+                    // const ref = item.ref?JSON.parse(item.ref):{account:'123 456 780'};
                     var string = item.description;
-                    var length = 10000;
+                    var length = 40;
                     var trimmedString = string.length > length ?
                         string.substring(0, length - 3) + "..." : string;
+                        let num = item.toUserId
+                        let arr = num.toString().split(".")
+                        arr[0] = arr[0].padStart(8, "0")
+                        let account = item.toUserId==0?item.toUsername:arr.join(".")
                     return(
 
                     <>
-                    <View style={{width:'100%',borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?100:0}}>
+                    <TouchableOpacity onLongPress={null} onPress={()=>this.handleSelect(item)} style={{width:'100%',borderRadius:10,backgroundColor:'#fff',marginTop:10,marginBottom:(index+1==data.length)?100:0}}>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
                             <View style={{width:'10%'}}>
                                 <Icons name={item.type=='Cash Out'?'arrow-up':'arrow-down'} color={'green'} size={20}/>
                             </View>
+                            <View style={{width:'70%'}}>
+                                <Text style={{fontSize:RFPercentage(2)}}>
+                                    {Func.GetPaymentStatus(item.type,item.toUsername)}
+                                </Text>
+                            </View>
                             <View style={{width:'30%'}}>
-                                <Text style={{fontSize:16}}>
-                                    {item.type}
-                                </Text>
-                            </View>
-                            <View style={{width:'20%'}}>
-                                <Text style={{fontSize:15,color:Colors.textColor}}>
-                                    ${item.amount}
-                                </Text>
-                            </View>
-                            <View style={{width:'40%',alignItems:'flex-end'}}>
-                                <Text style={{fontSize:13}}>
-
+                                <Text style={{fontSize:RFPercentage(2.5),color:Colors.textColor}}>
+                                    {item.amount}$
                                 </Text>
                             </View>
                         </View>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center'}}>
                             <View style={{width:'10%'}}>
-                                <Icons name={'user'} color={Colors.textColor} size={20}/>
+                                <Icons name={'corner-down-right'} color={Colors.textColor} size={20}/>
                             </View>
                             <View style={{width:'100%'}}>
-                                <Text style={{fontSize:13}}>
-                                    {item.description}
+                                <Text style={{fontSize:RFPercentage(1.8)}}>
+                                    {trimmedString}
                                 </Text>
                             </View>
                         </View>
                         <View style={{flexDirection:'row',width:'90%',alignSelf:'center',marginTop:10,alignItems:'center',paddingBottom:10}}>
-                            <View style={{width:'10%'}}>
 
-                            </View>
                             <View style={{width:'30%'}}>
-                                <Text style={{fontSize:13,color:Colors.textColor}}>
-                                    {ref.account&&"#"+ref.account}
+                                <Text style={{fontSize:RFPercentage(1.3),color:Colors.textColor}}>
+                                    {item.walletDetailNo&&"#"+item.walletDetailNo}
                                 </Text>
                             </View>
                             <View style={{width:'40%',alignItems:'flex-end'}}>
@@ -182,13 +191,13 @@ class Index extends Component {
                                     {moment(item.date).format('DD/MM/YYYY HH:mm')}
                                 </Text>
                             </View>
-                            <View style={{width:'20%',alignItems:'flex-end'}}>
-                                <Text style={{fontSize:RFPercentage(1.5)}}>
+                            <View style={{width:'30%',alignItems:'flex-end'}}>
+                                <Text style={{fontSize:RFPercentage(1.5),color:Func.GetColorStatus(item.status)}}>
                                     {item.status}
                                 </Text>
                             </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                         {data.length>5&&data.length==(index+1)&&<View style={{height:100}}/>}
                     </>
                 )}}
@@ -211,15 +220,14 @@ class Index extends Component {
             </>
     )}
     render() {
-        const {showPin,loading,index,routes,refreshing,data,cashout} = this.state;
+        const {detail,loading,blocked,index,showPin,routes,refreshing,data,cashout,item} = this.state;
         const {user,setting} = this.props;
         const { face } = this.props.route.params;
-        console.log(cashout)
         return (
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <View style={{zIndex:1}}>
-                    <HeaderText title={"My Money"} handleBack={()=>this.props.navigation.goBack()} rightIcon={index=='0'?'add':'attach-money'} handleRight={()=>this.props.navigation.navigate(index=='0'?'CashIn':'CashOut',{balance:user.userWallet.setledCash})}/>
+                    <HeaderText title={"My Money"} handleBack={()=>this.props.navigation.goBack()} rightIcon={index=='0'?'add':index=='1'?'attach-money':''} handleRight={()=>this.props.navigation.navigate(index=='0'?'CashIn':'CashOut',{balance:user.userWallet.setledCash})}/>
                     <View style={{width:width*0.95,alignSelf:'center',borderRadius:20,
                         backgroundColor:'#ffffff',marginTop:0,paddingBottom:10,justifyContent:'center',alignItems:'center'}}>
                         <View style={{marginTop:10,width:width*(0.95)-20,height:130,flexDirection:'row',alignItems:'center',backgroundColor:Colors.Blur,borderRadius:10}}>
@@ -254,15 +262,16 @@ class Index extends Component {
                             navigationState={{ index, routes }}
                             renderScene={SceneMap({
                                 '0': ()=>this.FirstRoute(loading,refreshing,data,'tra'),
-                                '1':  ()=>this.FirstRoute(loading,refreshing,cashout,'out')
+                                '1':  ()=>this.FirstRoute(loading,refreshing,cashout,'out'),
+                                '2':  ()=>this.FirstRoute(loading,refreshing,blocked,'blo'),
                             })}
                             onIndexChange={index=>this.setState({index})}
                             // initialLayout={initialLayout}
                             renderTabBar={renderTabBar}
                         />
                     </View>
-
-                    {/*{showPin&&<PinCode touchId={face} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}*/}
+                    {detail&&item&&<WalletDetail item={item} handleClose={()=>this.setState({detail:false})}/>}
+                    {showPin&&<PinCode touchId={face} handleVerify={()=>this.setState({showPin:false})} handleClose={this.handleClose}/>}
 
 
                 </View>

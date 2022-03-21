@@ -1,42 +1,33 @@
 import React, { Component } from 'react';
 import {
-    StatusBar,
     StyleSheet,
     View,
-    Text,
-    SafeAreaView,
-    TouchableOpacity,
     Dimensions,
-    TextInput,
 } from 'react-native';
 import Swiper from 'react-native-swiper'
 import { Input,Header } from 'react-native-elements';
-import Icons from 'react-native-vector-icons/Feather';
-import {Colors} from '../utils/config'
 import FastImage from 'react-native-fast-image';
-import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 
-const SlideShow=(props)=>{
+const SlideShow=({top,items})=>{
 
         return (
-            <View style={{width:width,alignItems:'center'}}>
-                <Swiper autoplayTimeout={3}
-                    containerStyle={styles.wrapper} showsButtons={false} width={width} autoplay={true}>
-                <View style={styles.slide1}>
-                    {/*<FastImage*/}
-                    {/*           source={require('../assets/images/banner1.png')}*/}
-                    {/*           resizeMode={FastImage.resizeMode.contain}*/}
-                    {/*           style={{width,height:}}/>*/}
-                    <Text style={styles.text}>Welcome to Task Force</Text>
-                </View>
-                <View style={styles.slide2}>
-                    <Text style={styles.text}>Post a job</Text>
-                </View>
-                <View style={styles.slide3}>
-                    <Text style={styles.text}>Organize your task</Text>
-                </View>
-            </Swiper>
+            <View style={{width:width,alignItems:'center',marginTop:top&&top}}>
+                {items&&items.length>0&&
+                <Swiper autoplayTimeout={5} autoplay
+                        loop
+                        removeClippedSubviews={false}
+                    containerStyle={styles.wrapper} showsButtons={false} width={width}>
+                    {items.map((item,index) => {
+                        return (
+                            item.url&&<View style={styles.slide1}>
+                                <FastImage
+                                    source={{uri:item.url}}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                    style={[styles.slide1, {width: width * 0.95, height: '100%'}]}/>
+                            </View>)
+                    })}
+            </Swiper>}
             </View>
         );
 }
@@ -54,12 +45,12 @@ const HeaderText=(props)=>{
 }
 const styles = StyleSheet.create({
     wrapper: {
-        height:height*0.2,
+        height:width*0.4,
         borderRadius:10,
     },
     slide1: {
         flex: 1,
-        width:'95%',
+        width:width*0.95,
         alignSelf:'center',
         borderRadius:10,
         justifyContent: 'center',

@@ -12,27 +12,31 @@ import {
     ScrollView,
     Dimensions,
     FlatList,
-    Alert, ActivityIndicator, KeyboardAvoidingView, Keyboard,
+    Alert, ActivityIndicator, Keyboard,
 } from 'react-native';
 import {Rating, AirbnbRating, Button} from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {barHight, Colors} from '../../utils/config';
 import CustomPicker from '../../components/customPicker';
-import PINCode from '@haskkor/react-native-pincode'
+import moment from 'moment'
 import User from '../../api/User';
 import PinCode from '../../components/PinCode';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import schama from './validator';
 import {SliderPicker} from 'react-native-slider-picker';
+import {Confirm, MoneyWarning} from '../../components/Dialog';
+import {setLoading} from '../../redux/actions/loading';
+import {connect} from 'react-redux';
 const {width,height} = Dimensions.get('window')
 
-export default class Index extends Component {
+class Index extends Component {
     constructor(props) {
         super(props);
         this.props = props;
         const { item } = this.props.route.params
         this.state={
             showPin:false,
+            warning:false,
             loading:false,
             mainLoading:false,
             scroll:false,
@@ -41,6 +45,7 @@ export default class Index extends Component {
             proModal:false,
             currentValue:0,
             confirm:false,
+            dispute:false,
             values:{
                 comment:'',
                 rate:'',
@@ -53,19 +58,22 @@ export default class Index extends Component {
     componentDidMount(): void {
         this.fadeIn()
     }
-    handleKeyShow=(status)=>{
-        if(status){
-            this.setState({scroll:true})
-        }else{
-            this.setState({scroll:false})
+    handleKeyShow=(status)=> {
+        if (Platform.OS == 'ios') {
+            if (status) {
+                this.setState({scroll: true})
+            } else {
+                this.setState({scroll: false})
+            }
         }
     }
+
     handleInput=async (f,v)=>{
         const newState={... this.state}
         newState.values[f]=v;
         this.setState(newState)
-
     }
+
     handleNext=async ()=>{
             this.setState({showPin:false,mainLoading:true})
             await this.handleChangeStatus();
@@ -75,6 +83,7 @@ export default class Index extends Component {
     handleSubmit=async ()=>{
         const { item ,userId} = this.props.route.params
         const {id,value,values} = this.state;
+        this.setState({mainLoading:true,dispute:false})
         const reason=values.reason.length>0?"Reason: "+values.reason+" /n":""
         const ms=reason+(item.unSatified+1)+"X Organizer Unsatified, Progress to "+value+"0%";
         this.setState({confirm:false,proModal:false,mainLoading:true})
@@ -104,6 +113,17 @@ export default class Index extends Component {
             await User.Post("/api/JobComment", body)
         }
     }
+    handleConfirm=async ()=>{
+        const { item } = this.props.route.params
+        this.setState({dispute:false,mainLoading:true});
+        const body= {
+            "id": 0,
+            "jobPostId": item.id,
+        }
+        await User.Post('/api/Dispute',body);
+        this.setState({mainLoading:false});
+        this.props.navigation.goBack();
+    }
     handleChangeStatus=async ()=>{
         const { item } = this.props.route.params
         const {values} = this.state;
@@ -116,6 +136,14 @@ export default class Index extends Component {
             "comment": values.comment
         })
     }
+    viewAttachment=()=>{
+        const { item,agent,date } = this.props.route.params
+        this.props.navigation.navigate("ViewPdf",{url:item.disputeFileUrl})
+    }
+    handleWarning=async ()=>{
+        this.setState({warning:false})
+        this.props.navigation.navigate("CashIn",{post:true})
+    }
     fadeIn = async () => {
         await this.setState({fadeAnimation:new Animated.Value(0)})
         Animated.timing(this.state.fadeAnimation, {
@@ -123,10 +151,26 @@ export default class Index extends Component {
             duration: 600
         }).start();
     };
+    checkBalance=async ()=>{
+            const {values} = this.state;
+            const { user } = this.props;
+            const { item,agent } = this.props.route.params;
+            const balance=user.userWallet.setledCash;
+            const fee = (item.reward+item.extraCharge)*0.05;
+                if(fee>balance){
+                    this.setState({warning:true,dispute:false})
+                }else{
+                    this.handleConfirm()
+                }
+
+
+    }
     render() {
-        const {mainLoading,proModal,currentValue,value,confirm,loading,showPin,values,scroll} = this.state
-        const { item } = this.props.route.params
+        const {warning,dispute,mainLoading,proModal,currentValue,value,confirm,loading,showPin,values,scroll} = this.state
+        const { item,agent,date } = this.props.route.params
         const data={error:{},focus:{},values}
+        const user=agent?item.user:item.agent;
+        const winner=item.disputeWinner=='agent'?item.agent.lastName+" "+item.agent.firstName:item.user.lastName+" "+item.user.firstName;
     return (
         <>
         <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
@@ -150,20 +194,23 @@ export default class Index extends Component {
                     <View style={{height:scroll?height*1.3:height}}>
                         <View style={{flexDirection:'row',width:'100%'}}>
                             <View style={{width:'25%',height:90,alignItems:'center',justifyContent:'center'}}>
-                                <Image source={item.agent.profileURL&&item.agent.profileURL!=''?{uri:item.agent.profileURL}:require('../../assets/images/avatar.png')}
+                                <Image source={user.profileURL&&user.profileURL!=''?{uri:user.profileURL}:require('../../assets/images/avatar.png')}
                                        style={{width:60,height:60,borderRadius:10}}/>
                             </View>
                             <View style={{width:'75%',height:90,justifyContent:'center'}}>
                                 <View style={{width:'100%',height:60}}>
                                     <Text style={{fontSize:16,color:'#333333',height:20}}>
-                                        {item.agent.lastName} {item.agent.firstName}
+                                        {user.lastName} {user.firstName}
                                     </Text>
                                     <Text style={{fontSize:16,color:Colors.textColor,height:20}}>
-                                        {item.agent.address?item.agent.address:"N/A"}
+                                        {user.address?user.address:"N/A"}
                                     </Text>
-                                    <Text style={{fontSize:13,color:'#333333',height:16}}>
-                                        Start Task: 02/Dec/2020
+                                    <Text style={{fontSize:13,color:'#333333',height:20}}>
+                                        Start Task: {moment(item.startedDate).format('DD/MM/YYYY')}
                                     </Text>
+                                    {item.completedDate&&<Text style={{fontSize:13,color:'#333333',height:16}}>
+                                        Close Task: {moment(item.completedDate).format('DD/MM/YYYY')}
+                                    </Text>}
                                 </View>
                             </View>
                         </View>
@@ -179,7 +226,7 @@ export default class Index extends Component {
                         </View>
                     </View>
                         <Text style={{fontSize:16,color:Colors.primary,marginTop:0,}}>Rate Task</Text>
-                        <View style={{width:'90%',alignSelf:'center',alignItems:'center',height:RFPercentage(10),marginTop:-30}}>
+                        <View style={{width:'90%',alignSelf:'center',alignItems:'center',height:RFPercentage(10),marginTop:-30,paddingBottom:30}}>
                             <AirbnbRating
                                 count={5}
                                 reviews={["", "", "", "", ""]}
@@ -188,22 +235,51 @@ export default class Index extends Component {
                                 size={RFPercentage(5)}
                                 style={{bottom:0}}
                             />
-
+                            {agent&&<TouchableOpacity activeOpacity={1} style={{width:'100%',height:100,position:'absolute'}}/>}
                         </View>
-                        <CustomPicker onFocus={this.handleKeyShow} handleInput={this.handleInput} input label={'Comment'} title={'Type your comment here'} name={'comment'} textarea value={data}/>
-                        <TouchableOpacity onPress={()=>this.setState({showPin:true})} style={{width:250,height:100,alignSelf:'center',marginTop:20,borderRadius:10,
+                        {/*<CustomPicker onFocus={this.handleKeyShow} col={2} handleInput={this.handleInput} input label={'Reason'} title={'Type here  ....'} name={'reason'} textarea value={data}/>*/}
+                        <CustomPicker view={agent}  col={2} onFocus={this.handleKeyShow} input={!agent} handleInput={this.handleInput} label={'Comment'} title={'Type your comment here'} name={'comment'} textarea value={data}/>
+                        {!agent&&<>
+                        {item.status!="completed"&&<TouchableOpacity onPress={()=>this.setState({showPin:true})} style={{width:250,height:100,alignSelf:'center',marginTop:20,borderRadius:10,
                             backgroundColor:Colors.textColor,alignItems:'center',justifyContent:'center'}}>
                             <Text style={{color:'#fff',fontSize:20}}>Confirm Payment</Text>
                             <Text style={{color:'#fff',fontSize:25}}>${item.extraCharge+item.reward}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>this.setState({proModal:true})} style={{width:250,height:60,alignSelf:'center',marginTop:20,borderRadius:10,
+                        </TouchableOpacity>}
+                            {item.unSatified<2?<TouchableOpacity onPress={()=>this.setState({proModal:true})} style={{width:250,height:60,alignSelf:'center',marginTop:20,borderRadius:10,
                             backgroundColor:"#ff3445",alignItems:'center',justifyContent:'center'}}>
                             {loading?<ActivityIndicator color={'#ffff'}/>:<View style={{flexDirection:'row',alignItems:'center'}}>
                                 <Icons name={'sentiment-dissatisfied'} color={'#fff'} size={RFPercentage(4)}/>
                                 {item.unSatified>0&&<Text style={{color:'#fff',fontSize:RFPercentage(3),marginRight:5}}>{item.unSatified}X</Text>}
                                 <Text style={{color:'#fff',fontSize:RFPercentage(3)}}> Unsatisfied</Text>
                             </View>}
-                        </TouchableOpacity>
+                        </TouchableOpacity>:
+                                !item.isDispute&&<TouchableOpacity onPress={()=>this.setState({dispute:true})} style={{width:250,height:60,alignSelf:'center',marginTop:20,borderRadius:10,
+                                    backgroundColor:"#ff3445",alignItems:'center',justifyContent:'center'}}>
+                                    {loading?<ActivityIndicator color={'#ffff'}/>:<View style={{flexDirection:'row',alignItems:'center'}}>
+                                        <Icons name={'forward-to-inbox'} color={'#fff'} size={RFPercentage(4)}/>
+                                        <Text style={{color:'#fff',fontSize:RFPercentage(3)}}> Submit Dispute</Text>
+                                    </View>}
+                                </TouchableOpacity>}
+                        </>}
+                        <View style={{width:250,height:60,alignSelf:'center',marginTop:10,borderRadius:10,alignItems:'center',justifyContent:'center'}}>
+                            {!item.disputeWinner&&item.isDispute&&<View style={{flexDirection:'row',alignItems:'center'}}>
+                                <Icons name={'pan-tool'} color={'orange'} size={RFPercentage(3)}/>
+                                <Text style={{color:'orange',fontSize:RFPercentage(3)}}> Disputed</Text>
+                            </View>}
+                            {item.disputeWinner&&item.isDispute&&<View style={{flexDirection:'row',alignItems:'center'}}>
+                                <Icons name={'done-all'} color={'green'} size={RFPercentage(4)}/>
+                                <Text style={{color:'green',fontSize:RFPercentage(3)}}> Winner: {winner}</Text>
+                            </View>}
+                        </View>
+                        {item.disputeFileUrl&&<TouchableOpacity onPress={this.viewAttachment}
+                            style={{width:250,height:60,alignSelf:'center',marginTop:20,borderRadius:10,
+                            backgroundColor:"#0b6d79",alignItems:'center',justifyContent:'center'}}>
+                            {loading?<ActivityIndicator color={'#ffff'}/>:
+                                <View style={{flexDirection:'row',alignItems:'center'}}>
+                                <Icons name={'attach-file'} color={'#fff'} size={RFPercentage(4)}/>
+                                <Text style={{color:'#fff',fontSize:RFPercentage(3)}}> View Attachment</Text>
+                            </View>}
+                        </TouchableOpacity>}
                     </View>
                     </View>
                 </ScrollView>
@@ -311,29 +387,29 @@ export default class Index extends Component {
                     </TouchableOpacity>
                 </TouchableOpacity>
             </Modal>}
-            {mainLoading&&<View style={{width,height:height,position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
+            {warning&&<MoneyWarning handleClose={()=>this.setState({warning:false})} handleConfirm={this.handleWarning} title={'Warning!'} subtitle={'Your balance is not enough'} visible={warning}/>}
+
+            {dispute&&<Confirm handleClose={()=>this.setState({dispute:false})} handleConfirm={this.checkBalance} title={'Warning!'}
+                               subtitle={'You are about to enter dispute mode,5% of the amount will be deducted when a dispute verdict is reach by our dispute officers'} visible={dispute}/>}
+
+            {mainLoading&&<View style={{width,height:'100%',position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
                 <ActivityIndicator size={'large'} color={Colors.textColor}/>
             </View>}
         </>
     );
   }
 }
-const styles = StyleSheet.create({
-    textStyle:{
-        color:'#5e5e5e',
-        fontSize:13,
-        marginTop:2
-    },
-    cardItem:{
-        width:'90%',height:height*0.1,backgroundColor:'#fff',borderRadius:10,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        flexDirection:'row',
-        elevation: 5,
+const mapStateToProps = state => {
+    return {
+        user: state.user.user,
     }
-});
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        set: (loading) => {
+            dispatch(setLoading(loading))
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Index)

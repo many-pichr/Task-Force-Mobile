@@ -10,18 +10,19 @@ import {
     Alert,
     ActivityIndicator,
 } from 'react-native';
-import { Input,Header,Button } from 'react-native-elements';
 import moment from 'moment'
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import OptionsMenu from "react-native-option-menu";
 import * as Progress from "react-native-progress";
 import User from '../api/User'
+import Toast from 'react-native-simple-toast';
 import {Confirm} from './Dialog';
 import { Avatar, Badge, withBadge } from 'react-native-elements'
 import {Colors, Fonts} from '../utils/config';
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import Lang from '../Language';
+import Clipboard from '@react-native-community/clipboard';
 const {width,height} = Dimensions.get('window')
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -39,7 +40,7 @@ const CustomItem=(props)=>{
     }
     const {lang} = props;
     return (
-            <TouchableOpacity onPress={props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom}]}>
+            <TouchableOpacity onPress={props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom,width:'90%',alignSelf:'center'}]}>
 
                     <View style={{width:'95%',alignSelf:'center',justifyContent:'center'}}>
                        <View style={{width:'100%'}}>
@@ -147,7 +148,7 @@ const ItemFavorite=(props)=>{
             </TouchableOpacity>
             <View style={{alignSelf:'flex-end',position:'absolute',width:50,height:80,justifyContent:'center',alignItems:'center',borderRadius:15,flexDirection:'row'}}>
                 <OptionsMenu
-                    customButton={<Icons name={'more-vert'} color={Colors.textColor} size={30}/>}
+                    customButton={<RenderActionButton/>}
                     buttonStyle={{marginRight:10, resizeMode: "contain" }}
                     destructiveIndex={2}
                     options={["Apply","View", "Delete","Cancel"]}
@@ -162,14 +163,13 @@ const ItemFavorite=(props)=>{
     );
 }
 const ItemCandidate=(props)=>{
-    const [check, setCheck] = useState(false);
     const [confirm, setConfirm] = useState(false);
     function handleConfirm(){
         setConfirm(false)
         props.handleSelect()
     }
     return (<>
-        <TouchableOpacity onPress={props.viewUser} style={[styles.cardItem1,{marginBottom:props.bottom,backgroundColor:'#F5F7FA'}]}>
+        <TouchableOpacity onPress={props.viewUser} style={[styles.cardItem1,{marginBottom:props.bottom,backgroundColor:'#F5F7FA',width:'95%',alignSelf:'center'}]}>
             <View style={{flexDirection:'row',width:'100%'}}>
                 <View style={{width:'25%',alignItems:'center',justifyContent:'center'}}>
                     <Image source={props.item.userProfileURL?{uri:props.item.userProfileURL}:require('../assets/images/avatar.png')}
@@ -181,7 +181,7 @@ const ItemCandidate=(props)=>{
                             {props.item.userLastName} {props.item.userFirstName}
                         </Text>
                         <Text style={{fontSize:RFPercentage(1.7),color:Colors.textColor,paddingTop:10}}>
-                            {moment(new Date(props.item.date)).format('DD/MM/YYYY HH:MM')}
+                            {moment(new Date(props.item.createdDate)).format('DD/MM/YYYY HH:mm')}
                         </Text>
                         {/*<Text style={{fontSize:13,color:'#333333'}}>*/}
                         {/*    Sensok, Phnom Penh, Cambodia*/}
@@ -214,29 +214,45 @@ const ItemCandidate=(props)=>{
 }
 const ItemPost=(props)=>{
     const {lang} = props;
+    const status=props.item.status;
+    const options=props.agent?["View","Close"]:status=='Pending'?["View","Edit","View Candidate", "Cancel Task","Close"]:
+        status=='completed'?["View","View Candidate","Close"]:
+        ["View","View Candidate", "Cancel Tasks","Close"];
+    const actions=props.agent?[
+        ()=>props.handleAction(1,props.item),
+    ]:status=='Pending'?[()=>props.handleAction(0,props.item),
+        ()=>props.handleAction(2,props.item),
+        ()=>props.handleAction(1,props.item),
+        ()=>props.handleAction(3,props.item)]:
+        status=='completed'?[()=>props.handleAction(0,props.item),
+            ()=>props.handleAction(1,props.item)]:
+        [()=>props.handleAction(0,props.item),
+        ()=>props.handleAction(1,props.item),
+        ()=>props.handleAction(3,props.item)];
     return (
-        <TouchableOpacity onPress={props.onPress} style={[styles.cardItem,{marginBottom:props.bottom}]}>
-                <View style={{width:'95%',alignSelf:'center',height:90,justifyContent:'center'}}>
+        <TouchableOpacity onPress={props.onPress} style={[styles.cardItem2,{marginBottom:props.bottom}]}>
+                <View style={{width:'95%',alignSelf:'center',justifyContent:'center'}}>
                     <View style={{width:'100%'}}>
-                        <Text style={{fontFamily:Fonts.primary,fontSize:16,color:'#333333'}}>
+                        <Text style={{fontFamily:Fonts.primary,fontSize:RFPercentage(2),color:'#333333'}}>
                             {props.item.title}
                         </Text>
-                        <Text style={{fontSize:15,color:Colors.textColor,marginVertical:0}}>
+                        <Text style={{fontSize:RFPercentage(1.8),color:Colors.textColor,marginVertical:0}}>
                             {props.item.jobCategory.name}
                         </Text>
-                        <Text style={{fontSize:13,color:'#333333'}}>
+                        <Text style={{fontSize:RFPercentage(1.8),color:'#333333'}}>
                             {props.item.address?props.item.address:"N/A"}
                         </Text>
+
                     </View>
                 </View>
-            <View style={{flexDirection:'row',width:'95%',alignSelf:'center',height:30,marginTop:-10}}>
+            <View style={{flexDirection:'row',width:'95%',alignSelf:'center'}}>
                 <View style={{width:'40%',justifyContent:'center'}}>
                     <Text style={{color:Colors.textColor,fontSize:18}}>${props.item.reward+props.item.extraCharge}</Text>
                 </View>
-                <View style={{width:'60%',height:30,alignItems:'center',flexDirection:'row'}}>
+                <View style={{width:'60%',alignItems:'center',flexDirection:'row'}}>
                     <View style={{width:'100%',flexDirection:'row'}}>
                         <View style={{width:'60%',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
-                            <Text style={{color:Colors.textColor,fontSize:12}}>{moment(props.item.createDate).format('DD/MM/YYYY')}</Text>
+                            {/*<Text style={{color:Colors.textColor,fontSize:12}}>{moment(props.agent?props.createDate:props.item.createDate).format('DD/MM/YYYY')}</Text>*/}
                         </View>
                         {/*<View style={{width:'15%',flexDirection:'row',height:25,borderRadius:10,justifyContent:'center',alignItems:'center'}}>*/}
                         {/*    {props.isPost&&<>*/}
@@ -244,7 +260,7 @@ const ItemPost=(props)=>{
                         {/*    <Text style={{color:Colors.textColor}}>{props.item.jobCandidates.length}</Text>*/}
                         {/*    </>}*/}
                         {/*</View>*/}
-                        <View style={{width:'40%',padding:5,backgroundColor:props.item.status=='cancel'||props.item.status=='Pending'?'rgba(244,128,0,0.31)':'rgba(63,244,23,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
+                        <View style={{width:'40%',paddingVertical:2,backgroundColor:props.item.status=='cancel'||props.item.status=='Pending'?'rgba(244,128,0,0.31)':'rgba(63,244,23,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>
                             <Text style={{fontFamily:Fonts.primary,fontSize:RFPercentage(1.5),color:props.item.status=='cancel'||props.item.status=='Pending'?'#d66e00':'#13ad1a'}}>{props.item.status=='selected'?Lang[lang].accepted:Lang[lang][props.item.status.toLowerCase()]}</Text>
                         </View>
                         {/*<View style={{marginLeft:5,width:60,height:25,backgroundColor:'rgba(255,75,111,0.17)',borderRadius:10,justifyContent:'center',alignItems:'center'}}>*/}
@@ -252,21 +268,31 @@ const ItemPost=(props)=>{
                         {/*</View>*/}
 
                     </View>
+
                 </View>
 
             </View>
+                {props.item.jobPostNo&&
+                    <View style={{flexDirection:'row',width:'95%',alignSelf:'center'}}>
+                        <TouchableOpacity onPress={()=>copyToClipboard(props.item.jobPostNo)}
+                                          style={{flexDirection:'row',alignItems:'center',width:'50%'}}>
+                            <Text style={{fontSize:11,color:'#7a7a7a'}}>
+                                {"#"+props.item.jobPostNo}
+                            </Text>
+                            <Icon name={'copy'} size={10}/>
+                        </TouchableOpacity>
+                        <View style={{width:'50%',borderRadius:10,justifyContent:'center',alignItems:'flex-end'}}>
+                            <Text style={{color:Colors.textColor,fontSize:RFPercentage(1.5)}}>{moment(props.agent?props.createdDate:props.item.createdDate).format('DD/MM/YYYY HH:mm')}</Text>
+                        </View>
+                    </View>
+                }
             <View style={{width:50,height:50,position:'absolute',alignSelf:'flex-end',justifyContent:'center',alignItems:'center'}}>
             <OptionsMenu
-                customButton={<Icons name={'more-vert'} color={Colors.textColor} size={30}/>}
-                buttonStyle={{marginRight:10, resizeMode: "contain" }}
+                customButton={<RenderActionButton/>}
+                buttonStyle={{marginRight:10, resizeMode: "contain"}}
                 destructiveIndex={2}
-                options={props.agent?["View","Cancel Task","Close"]:["View","Edit", "Delete","Close"]}
-                actions={props.agent?[
-                    ()=>props.handleAction(1,props.item),
-                    ()=>props.handleAction(7,props.item),
-                ]:[()=>props.handleAction(1,props.item),
-                    ()=>props.handleAction(2,props.item),
-                    ()=>props.handleAction(3,props.item)]}/>
+                options={options}
+                actions={actions}/>
             </View>
             {props.item.status=='Pending'&&props.item.jobCandidates.length>0&&<Badge
                 status="error"
@@ -277,6 +303,8 @@ const ItemPost=(props)=>{
                 badgeStyle={{paddingHorizontal:5,justifyContent:'center'}}
                 containerStyle={{ position: 'absolute', top: -6, right: 0 }}
             />}
+
+
         </TouchableOpacity>
     );
 }
@@ -296,10 +324,10 @@ const renderStar=(rate)=>{
         <TouchableOpacity onPress={props.onPress} style={[styles.cardItem,{marginBottom:props.bottom,height:130}]}>
                 <View style={{width:'95%',alignSelf:'center',height:100,justifyContent:'center'}}>
                     <View style={{width:'100%',height:60}}>
-                        <Text style={{fontSize:16,color:'#333333',height:20}}>
+                        <Text style={{fontSize:16,color:'#333333'}}>
                             {props.item.title}
                         </Text>
-                        <Text style={{fontSize:16,color:Colors.textColor,height:20,marginVertical:3}}>
+                        <Text style={{fontSize:16,color:Colors.textColor,marginVertical:1}}>
                             {props.item.jobCategory.name}
                         </Text>
                         <View style={{width:'100%',flexDirection:'row',alignItems:'center'}}>
@@ -324,17 +352,18 @@ const renderStar=(rate)=>{
             </View>
             <View style={{position:'absolute',width:50,height:50,justifyContent:'center',alignItems:'center',alignSelf:'flex-end'}}>
                 <OptionsMenu
-                    customButton={<Icons name={'more-vert'} color={Colors.textColor} size={30}/>}
+                    customButton={<RenderActionButton/>}
                     buttonStyle={{marginRight:10, resizeMode: "contain",width:100 }}
-                    destructiveIndex={2}
-                    options={props.agent?["Update Progress","View Post","Comment", "Cancel Task","Close"]:["View Post","Comment", "Cancel Task","Close"]}
+                    destructiveIndex={props.agent?3:3}
+                    options={props.agent?["Update Progress","View Post","Comment","Close"]:["View Post","View Agent","Comment", "Cancel Task","Close"]}
                     actions={props.agent?[
                         ()=>props.handleAction(6,props.item),
                         ()=>props.handleAction(1,props.item),
                         ()=>props.handleAction(4,props.item),
-                            ()=>props.handleAction(7,props.item),
+                            // ()=>props.handleAction(7,props.item),
                         ]:
-                        [()=>props.handleAction(1,props.item),
+                        [()=>props.handleAction(0,props.item),
+                        ()=>props.handleAction(8,props.item),
                         ()=>props.handleAction(4,props.item),
                             ()=>props.handleAction(7,props.item),]}/>
             </View>
@@ -342,13 +371,11 @@ const renderStar=(rate)=>{
     );
 }
 const ItemComplete=(props)=>{
-    const [check, setCheck] = useState(false);
     const isCompleted=props.item.isCompleted&&props.item.isPaid;
     const {lang} = props;
-    console.log('123456789===>',props.item)
 
     return (
-        <TouchableOpacity disabled={props.item.status==='completed'} onPress={props.isPost&&props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom,}]}>
+        <TouchableOpacity disabled={props.item.status==='completed'} onPress={props.isPost&&props.onPress} style={[styles.cardItem1,{marginBottom:props.bottom}]}>
             <View style={{width:'95%',alignSelf:'center',justifyContent:'center'}}>
                 <View style={{width:'100%'}}>
                     <View style={{flexDirection:'row'}}>
@@ -370,7 +397,7 @@ const ItemComplete=(props)=>{
                         </View>
                             {props.item.unSatified>0&&<View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-end',marginLeft:5}}>
                                 <Icons name={'sentiment-dissatisfied'} color={Colors.textColor} size={RFPercentage(2.5)}/>
-                                <Text style={{color:Colors.textColor}}>X{props.item.unSatified}</Text>
+                                <Text style={{color:Colors.textColor}}>{props.item.isDispute?"Dispute":"X"+props.item.unSatified}</Text>
                             </View>}
                         </View>
                     </View>
@@ -392,24 +419,39 @@ const ItemComplete=(props)=>{
             </View>
             <View style={{position:'absolute',width:50,height:50,justifyContent:'center',alignItems:'center',alignSelf:'flex-end'}}>
                 <OptionsMenu
-                    customButton={<Icons name={'more-vert'} color={Colors.textColor} size={30}/>}
+                    customButton={<RenderActionButton/>}
                     buttonStyle={{marginRight:10, resizeMode: "contain",width:100 }}
                     destructiveIndex={2}
-                    options={props.agent?["View Post","Comment", "Cancel Task","Close"]:props.item.status==='completed'?["Comment", "Cancel Task","Close"]:["Review","Comment", "Cancel Task","Close"]}
-                    actions={props.agent?[
-
-                            ()=>props.handleAction(1,props.item),
-                            ()=>props.handleAction(4,props.item),
-                            ()=>props.handleAction(7,props.item),
-                        ]:props.item.status==='completed'?[
+                    options={props.agent?(props.item.status==='completed'?["View Post","Review","Comment","Close"]:["View Post","Comment","Close"]):
+                        (props.item.status==='completed'?["Review","Comment","View Agent","Close"]:["Review","View Agent","Comment","Close"])}
+                    actions={props.agent?(props.item.status==='completed'?[
+                        ()=>props.handleAction(1,props.item),
+                        ()=>props.handleAction(5,props.item,props.createDate),
                         ()=>props.handleAction(4,props.item),
-                        ()=>props.handleAction(7,props.item),]:
-                        [()=>props.onPress(),
+                        // ()=>props.handleAction(7,props.item),
+                    ]:[
+                            ()=>props.handleAction(1,props.item),
+                            ()=>props.handleAction(4,props.item)
+                        ]):(props.item.status==='completed'?[
+                            ()=>props.onPress(),
                             ()=>props.handleAction(4,props.item),
-                            ()=>props.handleAction(7,props.item),]}/>
+                            ()=>props.handleAction(8,props.item)
+                            ,]:
+                            [
+                            ()=>props.onPress(),
+                            ()=>props.handleAction(8,props.item),
+                            ()=>props.handleAction(4,props.item),
+                            // ()=>props.handleAction(7,props.item)
+                            ,])}/>
             </View>
         </TouchableOpacity>
     );
+}
+export function RenderActionButton() {
+
+    return(<View style={{paddingHorizontal:5}}>
+        <Icons name={'more-vert'} color={Colors.textColor} size={30}/>
+    </View>)
 }
 const styles = StyleSheet.create({
     cardItem:{
@@ -419,6 +461,16 @@ const styles = StyleSheet.create({
     cardItem1:{
         width:'100%',backgroundColor:'#fff',borderRadius:10,
         marginTop: 10,paddingVertical:10
+    },
+    cardItem2:{
+        width:'100%',backgroundColor:'#fff',borderRadius:10,
+        marginTop: 10,paddingVertical:5
     }
 });
+const copyToClipboard = (txt) => {
+    Toast.showWithGravity(txt+' Copied to clipboard', Toast.SHORT, Toast.TOP);
+    Clipboard.setString(txt);
+};
+
+
 export {ItemComplete,CustomItem,ItemCandidate,ItemProgress,ItemFavorite,ItemPost}

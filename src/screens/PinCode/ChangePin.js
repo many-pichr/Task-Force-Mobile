@@ -12,7 +12,7 @@ import {
     ScrollView,
     Dimensions,
     FlatList,
-    RefreshControl, KeyboardAvoidingView, Keyboard,
+    RefreshControl, KeyboardAvoidingView, Keyboard, ActivityIndicator,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -28,26 +28,6 @@ import User from '../../api/User';
 import * as Keychain from "react-native-keychain";
 import {Colors} from '../../utils/config';
 const {width,height} = Dimensions.get('window')
-
-const list=[
-    {
-        title:'ABA Bank',
-        img:require('./img/aba.png')
-    },
-    {
-        title:'Wing Money',
-        img:require('./img/wing.png')
-    },
-    {
-        title:'Credit Card or Debit',
-        img:require('./img/card.png')
-    },
-    {
-        title:'Pay Pal',
-        img:require('./img/paypal.png')
-    },
-
-]
 class Index extends Component {
     constructor(props) {
         super(props);
@@ -55,6 +35,7 @@ class Index extends Component {
             check:null,
             data:[1,2,3,4,5],
             refreshing:false,
+            loading:false,
             current:'',
             newpin:'',
             confirm:'',
@@ -63,15 +44,6 @@ class Index extends Component {
         this.myRef = React.createRef();
     }
     componentDidMount(): void {
-        this.fadeIn()
-        setTimeout(()=>{
-            // this.fadeIn();
-            this.setState({loading: false})
-        }, 2000);
-        // Geolocation.getCurrentPosition(info => this.setState({long:info.coords.longitude,lat:info.coords.latitude}));
-    }
-    handleTab=(index)=>{
-        this.setState({index:index})
     }
     handleNext=()=>{
         this.props.navigation.navigate('Start')
@@ -83,28 +55,33 @@ class Index extends Component {
             duration: 600
         }).start();
     };
-    handleVerify=async ()=>{
-        const {map,amount,check,showPin} = this.state;
-        this.setState({showPin:false})
-        // this.props.set(true)
-        await User.Post("/api/User/top-up", {
-            "amount": amount,
-            "bank": "testing",
-            "ref": "testing"
+    handleSubmit=async ()=>{
+        const {confirm} = this.state;
+        const {user} = this.props;
+        const credentials = await Keychain.getGenericPassword();
+        const token = credentials.password;
+        this.setState({loading:true})
+        await User.Post("/api/User/set-pin", {
+            "userId": user.id,
+            "pin": confirm,
         })
         await User.CheckUser().then((rs) => {
             if(rs.status){
                 this.props.setUser(rs.data)
-                Keychain.setGenericPassword(JSON.stringify(rs.data), rs.data.token)
-                this.props.navigation.goBack();
+                Keychain.setGenericPassword(JSON.stringify(rs.data), token)
+                this.props.navigation.goBack()
             }
         })
-        this.props.set(false)
+        this.setState({loading:false})
     }
     render() {
-        const {map,current,newpin,confirm,check,showPin} = this.state;
+        const {map,current,newpin,confirm,check,loading} = this.state;
         const {user} = this.props;
+        const checkPin=current.length==4&&user.pinCode!=current;
+        const validator=!checkPin&&(current.length==4&&newpin.length==4)&&newpin==confirm
+
         return (
+            <>
             <View style={{ flex: 1, alignItems: 'center',backgroundColor:'#F5F7FA' }}>
                 <StatusBar  barStyle = "dark-content" hidden = {false} backgroundColor={'transparent'} translucent/>
                 <TouchableOpacity activeOpacity={1} style={{zIndex:1}} onPress={Keyboard.dismiss}>
@@ -120,6 +97,7 @@ class Index extends Component {
                         onChangeText={val=>this.setState({current:current.length==4&&current.length<val.length?current:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
+                        errorMessage={checkPin&&"Current pin not match!"}
                         secureTextEntry={true}
                         label={"Enter Current Pin"}
                         leftIcon={
@@ -134,11 +112,12 @@ class Index extends Component {
                         containerStyle={{marginTop:10}}
                         inputContainerStyle={{width:'100%'}}
                         value={newpin}
-                        disabled={current.length!=4}
+                        disabled={!(current.length==4&&!checkPin)}
                         labelStyle={{color:Colors.textColor}}
                         onChangeText={val=>this.setState({newpin:newpin.length==4&&newpin.length<val.length?newpin:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
+                        secureTextEntry={true}
                         label={"Enter New Pin"}
                         leftIcon={
                             <Icon
@@ -157,6 +136,7 @@ class Index extends Component {
                         onChangeText={val=>this.setState({confirm:confirm.length==4&&confirm.length<val.length?confirm:val})}
                         keyboardType={'numeric'}
                         placeholder='****'
+                        secureTextEntry={true}
                         errorMessage={confirm.length==4&&newpin!=confirm?"Pin not match!":""}
                         label={"Confirm Pin"}
                         leftIcon={
@@ -168,8 +148,8 @@ class Index extends Component {
                         }
                     />
                     <View style={{height:100,width:width,alignSelf:'center',alignItems:'center'}}>
-                        <TouchableOpacity
-                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:RFPercentage(8),backgroundColor:Colors.textColor,borderRadius:10}}>
+                        <TouchableOpacity disabled={!validator} onPress={this.handleSubmit}
+                                          style={{justifyContent:'center',alignItems:'center',width:'80%',height:RFPercentage(8),backgroundColor:validator?Colors.textColor:"#cbcbcb",borderRadius:10}}>
 
                             <Text style={{color:'#fff',fontSize:25}}>Submit</Text>
 
@@ -179,8 +159,11 @@ class Index extends Component {
                 <View style={{position:'absolute',width,height:150,backgroundColor:Colors.primary,borderBottomLeftRadius:20,borderBottomRightRadius:20}}>
 
                 </View>
-                {showPin&&<PinCode handleVerify={this.handleVerify} handleClose={()=>this.setState({showPin:false})}/>}
             </View>
+        {loading&&<View style={{width,height:height,position:'absolute',backgroundColor:'rgba(0,0,0,0.16)',alignItems:'center',justifyContent:'center'}}>
+            <ActivityIndicator size={'large'} color={Colors.textColor}/>
+        </View>}
+        </>
         );
     }
 }

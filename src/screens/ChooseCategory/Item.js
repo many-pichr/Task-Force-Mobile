@@ -9,20 +9,32 @@ import {
   Dimensions,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
+import {Colors} from '../../utils/config';
+import TextTicker from 'react-native-text-ticker'
+import {RFPercentage} from 'react-native-responsive-fontsize';
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = SCREEN_WIDTH / 3;
 
-export const Item = ({ source, title }) => {
-  const [checked, setChecked] = useState(false);
+export const Item = ({ url, title,handleCheck,checked }) => {
   return (
     <TouchableOpacity
       style={styles.imageContainer}
-      onPress={() => setChecked((prevState) => !prevState)}
+      onPress={handleCheck}
     >
       <View style={styles.imageWrapper}>
-        <Image source={source} style={styles.image} />
+        <Image source={url?{uri:url}:require('../../assets/images/image.jpeg')} style={styles.image} />
       </View>
-      <Text style={styles.imageLabel}>{title}</Text>
+
+      <TextTicker
+          style={styles.imageLabel}
+          duration={3000}
+          loop
+          bounce
+          repeatSpacer={50}
+          marqueeDelay={1000}
+      >
+        {title}
+      </TextTicker>
       {checked && (
         <View style={styles.overlay}>
           <FeatherIcon name="check" size={50} color="#fff" />
@@ -31,12 +43,17 @@ export const Item = ({ source, title }) => {
     </TouchableOpacity>
   );
 };
-export const ItemFavorite = ({ source, title }) => {
+export const ItemFavorite = ({ source, title,index,handleCheck }) => {
   const [checked, setChecked] = useState(false);
+
+  function handleCheck() {
+    // setChecked((prevState) => !prevState)
+    handleCheck(index,true)
+  }
   return (
       <TouchableOpacity
           style={styles.imageContainer}
-          onPress={() => setChecked((prevState) => !prevState)}
+          onPress={handleCheck}
       >
         <View style={styles.imageWrapper}>
           <Image source={source} style={styles.image} />
@@ -55,13 +72,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: 150,
     width: ITEM_WIDTH,
-
     justifyContent: "center",
     alignItems: "center",
   },
 
   overlay: {
-    top: 5,
+    top: 6,
     borderRadius: 50,
     position: "absolute",
     width: 100,
@@ -96,8 +112,9 @@ const styles = StyleSheet.create({
   },
 
   imageLabel: {
-    fontSize: 16,
+    fontSize: RFPercentage(2),
     marginVertical: 10,
-    color:'#7F838D'
+    color:Colors.textColor,
+    alignSelf: 'center'
   },
 });

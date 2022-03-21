@@ -1,12 +1,17 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-export const Header = () => {
+import {View, Text, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
+import Icon from "react-native-vector-icons/MaterialIcons";
+const { width, height } = Dimensions.get("window");
+import {Colors} from '../../utils/config'
+export const Header = ({onBack}) => {
   return (
     <View style={styles.headerWrapper}>
-      <Text style={styles.titleText}>Welcome</Text>
-      <Text style={styles.titleText}>Choose the Categories</Text>
+      <View style={{flexDirection:'row',alignItems:'center'}}>
+        <TouchableOpacity onPress={onBack}>
+          <Icon name={'chevron-left'} color={Colors.textColor} size={30}/>
+        </TouchableOpacity>
+      <Text style={styles.titleText}>Choose Categories</Text>
+      </View>
     </View>
   );
 };
@@ -19,16 +24,16 @@ const styles = StyleSheet.create({
   },
 
   headerWrapper: {
-    height: 200,
-    width:'90%',
+    height: 100,
+    width:width*0.9,
     alignSelf:'center',
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
 
   titleText: {
     marginLeft: 15,
     fontSize: 25,
-    color: "#158aff",
+    color: Colors.textColor,
     marginVertical: 10
   },
 });

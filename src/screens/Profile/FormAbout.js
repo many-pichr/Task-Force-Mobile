@@ -59,7 +59,6 @@ class Index extends Component {
     render() {
         const {loading,text} = this.state
         const {user} = this.props;
-        console.log(user)
         const {params } = this.props.route
         return (
             <>

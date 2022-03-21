@@ -52,7 +52,6 @@ class Index extends Component {
     handleGetPost=async (refreshing)=>{
         await User.GetList('/api/JobInterested/CurrentUser').then((rs) => {
             if(rs.status){
-                console.log(rs.data,222)
                 this.setState({data:rs.data,refreshing:false,loading:false})
             }
         })
@@ -70,11 +69,7 @@ class Index extends Component {
     };
     handleRemove=async (item)=>{
         this.setState({loading:true})
-        await User.DeleteInterested(item.id).then((rs) => {
-            if(rs.status){
-                console.log(rs.data,555)
-            }
-        })
+        await User.DeleteInterested(item.id)
         this.handleGetPost(false)
     }
     handleSubmit=async (item)=>{

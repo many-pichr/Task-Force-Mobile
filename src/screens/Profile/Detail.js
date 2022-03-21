@@ -12,7 +12,7 @@ import {
     ScrollView,
     Dimensions,
     FlatList,
-    RefreshControl,
+    RefreshControl, ActivityIndicator,
 } from 'react-native';
 import {ListScreen} from '../../components/ListScreen';
 import {CustomItem, ItemFavorite, ItemPost} from '../../components/Items';
@@ -56,7 +56,8 @@ class Index extends Component {
             education:[],
             skills:[],
             start:true,
-            refreshing:false
+            refreshing:false,
+            loading:true,
 
         }
         this.myRef = React.createRef();
@@ -75,9 +76,7 @@ class Index extends Component {
     }
     handleGetPost=async (refreshing)=>{
         const {view,userId} = this.props;
-
         const user = view?this.props.users:this.props.user;
-        console.log(user,11222,view)
         await User.GetList(view?"/api/Experience/ByUser/"+userId:'/api/Experience/ByUser').then((rs) => {
             if(rs.status){
                 this.setState({experience:rs.data})
@@ -89,12 +88,11 @@ class Index extends Component {
             }
         })
         await User.GetList(view?"/api/UserSkill/ByUser/"+userId:'/api/UserSkill/ByUser').then((rs) => {
-            console.log(rs.data)
             if(rs.status){
                 this.setState({skills:rs.data})
             }
         })
-        // this.props.set(false)
+       this.setState({loading:false})
     }
     handleNext=()=>{
         this.props.navigation.navigate('Signin')
@@ -149,23 +147,30 @@ class Index extends Component {
 
      }
     render() {
-        const {refreshing,skills,education,experience} = this.state
+        const {refreshing,skills,education,experience,loading} = this.state
         const {view,setting} = this.props;
         const user = view?this.props.users:this.props.user;
         const {lang}  = setting;
         return (
-            <><ScrollView refreshControl={<RefreshControl
-                colors={["#9Bd35A", Colors.textColor]}
-                tintColor={Colors.textColor}
-                refreshing={refreshing}
-                onRefresh={()=>this.handleGetPost(true)} />} showsVerticalScrollIndicator={false}>
-                    <View style={{width:'100%',marginTop:0}}>
-                        <About lang={lang} onAdd={()=>this.handleAction(1)}  about={user.about} view={view}/>
-                        <Experience lang={lang} data={experience} onPress={this.handleAction} view={view}/>
-                        <Education lang={lang} data={education} onPress={this.handleAction} view={view}/>
-                        <Skill lang={lang} data={skills} onPress={this.handleAction} view={view}/>
-                    </View>
-            </ScrollView>
+            <>
+                {loading ?
+                    <View style={{width, height: '65%', alignItems: 'center', justifyContent: 'center'}}>
+                        {!this.props.load&&<ActivityIndicator size={'large'} color={Colors.primary}/>}
+                    </View> :
+                    <ScrollView refreshControl={<RefreshControl
+                        colors={["#9Bd35A", Colors.primary]}
+                        tintColor={Colors.primary}
+                        refreshing={refreshing}
+                        onRefresh={() => this.handleGetPost(true)}/>} showsVerticalScrollIndicator={false}>
+                        <View style={{width: '100%', marginTop: 0,paddingBottom:300}}>
+
+                            <About lang={lang} onAdd={() => this.handleAction(1)} about={user.about} view={view}/>
+                            <Experience lang={lang} data={experience} onPress={this.handleAction} view={view}/>
+                            <Education lang={lang} data={education} onPress={this.handleAction} view={view}/>
+                            <Skill lang={lang} data={skills} onPress={this.handleAction} view={view}/>
+                        </View>
+                    </ScrollView>
+                }
                 </>
         );
     }

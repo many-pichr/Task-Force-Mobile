@@ -4,7 +4,6 @@ import { Input,Header } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../../utils/config'
 import Icon from 'react-native-vector-icons/Feather';
-import Timeline from 'react-native-timeline-flatlist'
 import {RFPercentage} from 'react-native-responsive-fontsize';
 const {width,height} = Dimensions.get('window')
 const list=[

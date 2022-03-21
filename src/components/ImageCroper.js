@@ -1,7 +1,6 @@
 import React, { useState,useRef } from 'react';
 import {Animated, StyleSheet, View, Text, Image, TouchableOpacity, Dimensions, Modal} from 'react-native';
-import { Input,Header } from 'react-native-elements';
-import Icons from 'react-native-vector-icons/Feather';
+
 import {RFPercentage} from 'react-native-responsive-fontsize';
 import {CropView} from 'react-native-image-crop-tools';
 const {width,height} = Dimensions.get('window')
@@ -25,8 +24,7 @@ const ImageCroper=(props)=>{
                 </View>
                 <View style={{height:'10%',alignSelf:'center',flexDirection:'row',width:'90%'}}>
                     <TouchableOpacity
-                        onPress={props.handleClose
-                        }
+                        onPress={props.handleClose}
                         style={{backgroundColor:'#f43212',justifyContent:'center',alignItems:'center',borderRadius:20,width:'45%',height:RFPercentage(7)}}>
                         <Text style={{fontSize:20,color:'#fff'}}>Cancel</Text>
                     </TouchableOpacity>
